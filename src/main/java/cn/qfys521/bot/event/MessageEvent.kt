@@ -14,5 +14,5 @@ import io.github.kloping.qqbot.api.message.MessageEvent
 
 
 val MessageEvent<*,*>.originalContent: String
-    get() =  if (message[0].toString()  == String.format("@<*%s>" , sender.bot.id)) message[1].toString() else message[0].toString()
+    get() =  if (message[0].toString()  == String.format("<@!%s>" , sender.bot.id)) message[1].toString() else message[0].toString()
 
