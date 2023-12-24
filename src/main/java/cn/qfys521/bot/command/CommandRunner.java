@@ -10,7 +10,7 @@
 
 package cn.qfys521.bot.command;
 
-import cn.qfys521.bot.anotation.Command;
+import cn.qfys521.bot.annotation.Command;
 import io.github.kloping.qqbot.api.message.MessageReceiveEvent;
 import io.github.kloping.qqbot.api.v2.GroupMessageEvent;
 import io.github.kloping.qqbot.impl.ListenerHost;

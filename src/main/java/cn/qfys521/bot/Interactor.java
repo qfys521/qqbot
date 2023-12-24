@@ -10,13 +10,15 @@
 
 package cn.qfys521.bot;
 
-import cn.qfys521.bot.anotation.Command;
+import cn.qfys521.bot.annotation.Command;
+import cn.qfys521.bot.event.MessageEventKt;
 import io.github.kloping.qqbot.api.message.MessageEvent;
 
 public class Interactor {
     @Command("hello")
     public void hello(MessageEvent messageEvent) {
         messageEvent.send("hello world");
+        MessageEventKt.getOriginalContent(messageEvent);
     }
 
 

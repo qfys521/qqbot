@@ -11,7 +11,7 @@
 package cn.qfys521.bot.command;
 
 
-import cn.qfys521.bot.anotation.Command;
+import cn.qfys521.bot.annotation.Command;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
