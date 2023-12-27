@@ -19,7 +19,7 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
     - name: Build with gradle
-      run: sudo ./gradlew shadowJar
+      run: sudo bash ./gradlew shadowJar
     - uses: actions/upload-artifact@v3
       with:
         name: upload build file
