@@ -31,3 +31,7 @@ test {
 kotlin {
     jvmToolchain(17)
 }
+shadowJar {
+    manifest.attributes.put("Implementation-Version", archiveVersion)
+    manifest.attributes.put("Main-Class", "cn.qfys521.bot.BotApplication")
+}

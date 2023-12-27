@@ -10,15 +10,18 @@
 
 package cn.qfys521.bot;
 
+
 import cn.qfys521.bot.command.CommandRunner;
 import cn.qfys521.bot.command.RegisterCommand;
+import cn.qfys521.bot.core.Bot;
+import cn.qfys521.bot.core.CoreInteractors;
+import cn.qfys521.bot.interactors.Interactor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.kloping.MySpringTool.interfaces.Logger;
 import io.github.kloping.qqbot.Starter;
 import lombok.Data;
 
 import java.io.File;
-import java.io.IOException;
 
 public class BotApplication {
     public static Starter starter;
@@ -31,21 +34,24 @@ public class BotApplication {
             starter = Bot.login(loginApplication.getAppid(), loginApplication.getToken(), loginApplication.getSecret());
             starter.registerListenerHost(CommandRunner.listenerHost);
             starter.run();
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            System.err.println(e);
             System.exit(-1);
         }
 
     }
 
     private static void regCmd() {
-        RegisterCommand.registerCommand(new Class[]{Interactor.class});
+        RegisterCommand.registerCommand(new Class[]{
+                Interactor.class,
+                CoreInteractors.class
+        });
     }
 
     public static Logger getLogger() {
         return starter.getBot().logger;
     }
+
 }
 
 @Data

@@ -11,6 +11,7 @@
 package cn.qfys521.bot.command;
 
 
+import cn.qfys521.bot.annotation.Author;
 import cn.qfys521.bot.annotation.Command;
 
 import java.lang.reflect.Method;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 
 public class RegisterCommand {
     public static ArrayList<Method> methodArrayList = new ArrayList<>();
+    public static ArrayList<Class<?>> classArrayList = new ArrayList<>();
 
     public static void registerCommand(Class<?>[] clazz) {
         for (Class<?> cl : clazz) {
@@ -26,6 +28,10 @@ public class RegisterCommand {
                 if (command != null) {
                     methodArrayList.add(m);
                 }
+            }
+            Author author = cl.getAnnotation(Author.class);
+            if (author != null) {
+                classArrayList.add(cl);
             }
         }
     }
