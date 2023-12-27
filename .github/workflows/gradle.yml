@@ -12,8 +12,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: chmod -R 777 ./
-      run: chmod -R 777 ./
+    - name: chmod
+      run: sudo chmod 777 -R ./
       
     - uses: actions/checkout@v3
     - name: Set up JDK 17
@@ -24,3 +24,8 @@ jobs:
         
     - name: Build with gradle
       run: ./gradlew shadowJar
+
+    - uses: actions/upload-artifact@v3
+      with:
+        name: upload build file
+        path: ./build/libs
