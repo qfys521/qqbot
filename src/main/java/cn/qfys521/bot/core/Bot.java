@@ -8,7 +8,7 @@
  * Coding moderately is beneficial to the brain, but overindulgence in coding is harmful to the body. Arrange your time reasonably and enjoy a happy life.
  */
 
-package cn.qfys521.bot;
+package cn.qfys521.bot.core;
 
 
 import io.github.kloping.qqbot.Starter;

@@ -11,56 +11,63 @@
 package cn.qfys521.bot.command;
 
 import cn.qfys521.bot.annotation.Command;
-import io.github.kloping.qqbot.api.message.MessageReceiveEvent;
 import io.github.kloping.qqbot.api.v2.GroupMessageEvent;
 import io.github.kloping.qqbot.impl.ListenerHost;
+import io.github.kloping.qqbot.impl.message.BaseMessageChannelReceiveEvent;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Objects;
 
 import static cn.qfys521.bot.BotApplication.getLogger;
+import static cn.qfys521.bot.BotApplication.starter;
 
 public class CommandRunner {
     public static ListenerHost listenerHost = new ListenerHost() {
         @EventReceiver
         private void onEvent(GroupMessageEvent messageEvent) {
             ArrayList<Method> arrayList = RegisterCommand.methodArrayList;
+            getLogger().info("messageEvent.getMessage().get(0).toString().replaceFirst(\" \" , \"\").split(\" \")[0]\n" + messageEvent.getMessage().get(0).toString().replaceFirst(" ", "").split(" ")[0]);
             for (Method method : arrayList) {
-//                getLogger().info("messageEvent.getMessage().get(0).toString().split(\" \")[1]\n"+messageEvent.getMessage().get(0).toString().split(" ")[1]);
-//                getLogger().info("messageEvent.getMessage().get(0).toString()\n"+messageEvent.getMessage().get(0).toString());
-                getLogger().info("messageEvent.getMessage().get(0).toString().replaceFirst(\" \" , \"\").split(\" \")[0]\n" + messageEvent.getMessage().get(0).toString().replaceFirst(" ", "").split(" ")[0]);
-                if (Objects.equals(messageEvent.getMessage().get(0).toString().replaceFirst(" ", "").split(" ")[0], method.getAnnotation(Command.class).value())) {
-                    try {
-                        method.invoke(method.getDeclaringClass().newInstance(), messageEvent);
-                    } catch (Exception e) {
+                String[] strings = method.getAnnotation(Command.class).value();
+                for (String string : strings) {
+                    if (Objects.equals(messageEvent.getMessage().get(0).toString().replaceFirst(" ", "").split(" ")[0], string)) {
+                        try {
+                            method.invoke(method.getDeclaringClass().newInstance(), messageEvent);
+                        } catch (Exception e) {
 
-                        StringBuffer stringBuffer = new StringBuffer();
-                        for (StackTraceElement stackTraceElement : e.getStackTrace()) {
-                            stringBuffer.append("\n").append(stackTraceElement.toString());
+                            StringBuilder stringBuffer = new StringBuilder();
+                            for (StackTraceElement stackTraceElement : e.getStackTrace()) {
+                                stringBuffer.append("\n").append(stackTraceElement.toString());
+                            }
+                            getLogger().error(e.toString() + stringBuffer);
                         }
-                        getLogger().error(e.toString() + stringBuffer);
                     }
                 }
             }
+
         }
 
         @EventReceiver
-        private void onMessage(MessageReceiveEvent messageEvent) {
+        private void onMessage(BaseMessageChannelReceiveEvent messageEvent) {
             ArrayList<Method> arrayList = RegisterCommand.methodArrayList;
+            getLogger().info(messageEvent.getMessage().get(1).toString().replaceFirst(String.format("<@!%s>", starter.getBot().getId()), ""));
             for (Method method : arrayList) {
-                if (Objects.equals(messageEvent.getMessage().get(1).toString().replaceFirst(" ", "").split(" ")[0], method.getAnnotation(Command.class).value())) {
-                    try {
-                        method.invoke(method.getDeclaringClass().newInstance(), messageEvent);
-                    } catch (Exception e) {
-
-                        StringBuffer stringBuffer = new StringBuffer();
-                        for (StackTraceElement stackTraceElement : e.getStackTrace()) {
-                            stringBuffer.append("\n").append(stackTraceElement.toString());
+                String[] strings = method.getAnnotation(Command.class).value();
+                for (String string : strings) {
+                    if (Objects.equals(messageEvent.getMessage().get(1).toString().replaceFirst(String.format("<@!%s>", starter.getBot().getId()), "").replaceFirst(" ", "").split(" ")[0], string)) {
+                        try {
+                            method.invoke(method.getDeclaringClass().newInstance(), messageEvent);
+                        } catch (Exception e) {
+                            StringBuilder stringBuffer = new StringBuilder();
+                            for (StackTraceElement stackTraceElement : e.getStackTrace()) {
+                                stringBuffer.append("\n").append(stackTraceElement.toString());
+                            }
+                            getLogger().error(e.toString() + stringBuffer);
                         }
-                        getLogger().error(e.toString() + stringBuffer);
                     }
                 }
+
             }
         }
     };
