@@ -15,11 +15,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: chmod -R ./ 777
+      run: chmod -R ./ 777
+      
     - uses: actions/checkout@v3
     - name: Set up JDK 17
       uses: actions/setup-java@v3
       with:
         java-version: '17'
         distribution: 'temurin'
+        
     - name: Build with gradle
       run: ./gradlew shadowJar
