@@ -10,6 +10,8 @@
 
 package cn.qfys521.bot.annotation;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -24,7 +26,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 public @interface Command {
-    String[] value();
+    @NotNull String[] value();
 
     boolean inCommandList() default true;
 }
