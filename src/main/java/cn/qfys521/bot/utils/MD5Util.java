@@ -29,7 +29,7 @@ public class MD5Util {
             MessageDigest md5 = MessageDigest.getInstance("md5");
             digest = md5.digest(obj.toString().getBytes(StandardCharsets.UTF_8));
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            //
         }
         //16是表示转换为16进制数
         assert digest != null;

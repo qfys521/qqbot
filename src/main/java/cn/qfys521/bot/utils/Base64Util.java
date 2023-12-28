@@ -21,7 +21,7 @@ public class Base64Util {
     final static Base64.Encoder encoder = Base64.getEncoder();
     final static Base64.Decoder decoder = Base64.getDecoder();
 
-    Base64Util(String text) {
+    public Base64Util() {
     }
 
     /**

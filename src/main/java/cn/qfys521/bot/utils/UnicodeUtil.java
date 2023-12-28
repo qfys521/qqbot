@@ -25,15 +25,15 @@ public class UnicodeUtil {
      */
     public String unicodeEncode(String string) {
         char[] utfBytes = string.toCharArray();
-        String unicodeBytes = "";
-        for (int i = 0; i < utfBytes.length; i++) {
-            String hexB = Integer.toHexString(utfBytes[i]);
+        StringBuilder unicodeBytes = new StringBuilder();
+        for (char utfByte : utfBytes) {
+            String hexB = Integer.toHexString(utfByte);
             if (hexB.length() <= 2) {
                 hexB = "00" + hexB;
             }
-            unicodeBytes = unicodeBytes + "\\u" + hexB;
+            unicodeBytes.append("\\u").append(hexB);
         }
-        return unicodeBytes;
+        return unicodeBytes.toString();
     }
 
     /**
