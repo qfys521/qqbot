@@ -2,6 +2,7 @@
 
 --- 
 使用QQ官方api,框架使用`kloping/qqpd-bot-java`
+> 请注意:本项目仍然在***早期开发***中,如有bug,欢迎填写`issue`或者发起`Pull request`.
 
 ## 命令注册
 
@@ -28,3 +29,15 @@ private static void regCmd() {
 }
 ```
 
+## 如何使用
+1,构建
+```shell
+chmod 777 -R ./
+./gradlew shadowJar
+# Build in ./build/libs/qqbot-${version}-all.jar
+```
+2,运行
+```shell
+java -jar qqbot-${version}-all.jar
+# ${version} 填入你的版本
+```
