@@ -14,26 +14,49 @@ package cn.qfys521.bot;
 import cn.qfys521.bot.command.CommandRunner;
 import cn.qfys521.bot.command.RegisterCommand;
 import cn.qfys521.bot.core.Bot;
-import cn.qfys521.bot.core.CoreInteractors;
+import cn.qfys521.bot.core.interactors.CoreInteractors;
 import cn.qfys521.bot.interactors.Interactor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.kloping.MySpringTool.interfaces.Logger;
 import io.github.kloping.qqbot.Starter;
 import lombok.Data;
 
+import java.io.Console;
 import java.io.File;
+import java.io.FileWriter;
+import java.util.Objects;
 
 public class BotApplication {
     public static Starter starter;
 
+    @SuppressWarnings("all")
     public static void main(String[] args) {
+        Console console = System.console();
         ObjectMapper objectMapper = new ObjectMapper();
+        LoginApplication loginApplication = new LoginApplication();
         try {
-            LoginApplication loginApplication = objectMapper.readValue(new File("login.json"), LoginApplication.class);
+            File file = new File("login.json");
+            if (!file.exists()) {
+
+                file.createNewFile();
+                loginApplication.setAppid(null);
+                loginApplication.setToken(null);
+                loginApplication.setSecret(null);
+                FileWriter fileWriter = new FileWriter(file);
+                String jsonStr = objectMapper.writeValueAsString(loginApplication);
+                fileWriter.write(jsonStr);
+                fileWriter.close();
+                console.printf("请填写login.json");
+                System.exit(0);
+            }
+            loginApplication = objectMapper.readValue(file, LoginApplication.class);
             regCmd();
             starter = Bot.login(loginApplication.getAppid(), loginApplication.getToken(), loginApplication.getSecret());
             starter.registerListenerHost(CommandRunner.listenerHost);
             starter.run();
+            if (Objects.equals(console.readLine(), "exit")) {
+                System.exit(0);
+            }
         } catch (Exception e) {
             System.err.println(e);
             System.exit(-1);

@@ -12,12 +12,14 @@ package cn.qfys521.bot.interactors;
 
 import cn.qfys521.bot.annotation.Author;
 import cn.qfys521.bot.annotation.Command;
+import cn.qfys521.bot.config.ConfigApplication;
 import cn.qfys521.bot.event.MessageEventKt;
-import cn.qfys521.bot.utils.HttpUtils;
-import cn.qfys521.bot.utils.LuckAlgorithm;
-import cn.qfys521.bot.utils.minecraft.algorithm.FuzzyMatcher;
-import cn.qfys521.bot.utils.minecraft.algorithm.PrepopulatedList;
-import cn.qfys521.bot.utils.minecraft.all;
+import cn.qfys521.bot.interactors.config.Coin;
+import cn.qfys521.bot.interactors.utils.HttpUtils;
+import cn.qfys521.bot.interactors.utils.LuckAlgorithm;
+import cn.qfys521.bot.interactors.utils.minecraft.algorithm.FuzzyMatcher;
+import cn.qfys521.bot.interactors.utils.minecraft.algorithm.PrepopulatedList;
+import cn.qfys521.bot.interactors.utils.minecraft.all;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import io.github.kloping.qqbot.api.message.MessageEvent;
@@ -27,13 +29,16 @@ import io.github.kloping.qqbot.entities.ex.Markdown;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import static cn.qfys521.bot.BotApplication.starter;
 
+@SuppressWarnings("unused")
 @Author("qfys521")
 public class Interactor {
-    HttpUtils get = new HttpUtils();
+    final HttpUtils get = new HttpUtils();
 
+    @SuppressWarnings("all")
     @Command({"/jrrp", "/今日人品"})
     public void jrrp(MessageEvent<?, ?> event) {
         long userID = event.getSender().getId().hashCode();
@@ -160,7 +165,23 @@ public class Interactor {
                 event.send(
                         "ID:" + oriMessage[2] + "\n" + sb);
             }
-
+        }
+    }
+    @Command("/签到")
+    public void sign(MessageEvent<?,?> event){
+        ConfigApplication configApplication = new ConfigApplication(new Coin() , "coin.json");
+        Coin coin = (Coin) configApplication.getDataOrFail();
+        if(!coin.getLastSign(event.getSender().getOpenid())){
+            int c = Math.abs(new Random().nextInt(100));
+            coin.addLastCoin(event.getSender().getOpenid() , c);
+            event.send("签到成功!\n"
+                    +"当前时间为"+new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date())+"\n"
+                    +"您本次签到,获得了"+c+"枚Coin,您当前一共拥有"+coin.getCoinCount(event.getSender().getOpenid())+"枚Coin."
+            );
+            coin.updateLastDate(event.getSender().getOpenid());
+            configApplication.saveOrFail();
+        }else {
+            event.send("您已经签到过啦,请明天再试吧!\n"+"上一次签到时间:"+coin.getLastDate().get(event.getSender().getOpenid())+"\n您的Coin数量:"+coin.getCoinCount(event.getSender().getOpenid()));
         }
     }
 }
