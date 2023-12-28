@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
+@SuppressWarnings("unused")
 @Author("qfys521")
 public class CoreInteractors {
     @Command({"/help", "/帮助", "/菜单"})
@@ -47,11 +48,7 @@ public class CoreInteractors {
     @Command({"/echo", "/复述", "/say", "说"})
     public void echo(MessageEvent<?, ?> event) {
         String oriMessage = MessageEventKt.getOriginalContent(event).split(" ")[2];
-        if (oriMessage == null) {
-            event.send("用法:/echo <内容>");
-        } else {
-            event.send(oriMessage);
-        }
+        event.send(Objects.requireNonNullElse(oriMessage, "用法:/echo <内容>"));
     }
     @Command({"/关于", "/about"})
     public void about(MessageEvent<?, ?> messageEvent) {

@@ -21,7 +21,7 @@ import java.util.Objects;
 
 import static cn.qfys521.bot.BotApplication.getLogger;
 import static cn.qfys521.bot.BotApplication.starter;
-
+@SuppressWarnings("unused")
 public class CommandRunner {
     public static ListenerHost listenerHost = new ListenerHost() {
         @EventReceiver
@@ -33,7 +33,7 @@ public class CommandRunner {
                 for (String string : strings) {
                     if (Objects.equals(messageEvent.getMessage().get(0).toString().replaceFirst(" ", "").split(" ")[0], string)) {
                         try {
-                            method.invoke(method.getDeclaringClass().newInstance(), messageEvent);
+                            method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), messageEvent);
                         } catch (Exception e) {
 
                             StringBuilder stringBuffer = new StringBuilder();
@@ -57,7 +57,7 @@ public class CommandRunner {
                 for (String string : strings) {
                     if (Objects.equals(messageEvent.getMessage().get(1).toString().replaceFirst(String.format("<@!%s>", starter.getBot().getId()), "").replaceFirst(" ", "").split(" ")[0], string)) {
                         try {
-                            method.invoke(method.getDeclaringClass().newInstance(), messageEvent);
+                            method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), messageEvent);
                         } catch (Exception e) {
                             StringBuilder stringBuffer = new StringBuilder();
                             for (StackTraceElement stackTraceElement : e.getStackTrace()) {

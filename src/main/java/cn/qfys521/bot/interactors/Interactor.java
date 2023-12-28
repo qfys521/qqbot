@@ -29,11 +29,11 @@ import java.util.Date;
 import java.util.List;
 
 import static cn.qfys521.bot.BotApplication.starter;
-
+@SuppressWarnings("unused")
 @Author("qfys521")
 public class Interactor {
     HttpUtils get = new HttpUtils();
-
+    @SuppressWarnings("all")
     @Command({"/jrrp", "/今日人品"})
     public void jrrp(MessageEvent<?, ?> event) {
         long userID = event.getSender().getId().hashCode();
