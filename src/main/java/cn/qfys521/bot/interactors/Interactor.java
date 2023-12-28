@@ -13,11 +13,11 @@ package cn.qfys521.bot.interactors;
 import cn.qfys521.bot.annotation.Author;
 import cn.qfys521.bot.annotation.Command;
 import cn.qfys521.bot.event.MessageEventKt;
-import cn.qfys521.bot.utils.HttpUtils;
-import cn.qfys521.bot.utils.LuckAlgorithm;
-import cn.qfys521.bot.utils.minecraft.algorithm.FuzzyMatcher;
-import cn.qfys521.bot.utils.minecraft.algorithm.PrepopulatedList;
-import cn.qfys521.bot.utils.minecraft.all;
+import cn.qfys521.bot.interactors.utils.HttpUtils;
+import cn.qfys521.bot.interactors.utils.LuckAlgorithm;
+import cn.qfys521.bot.interactors.utils.minecraft.algorithm.FuzzyMatcher;
+import cn.qfys521.bot.interactors.utils.minecraft.algorithm.PrepopulatedList;
+import cn.qfys521.bot.interactors.utils.minecraft.all;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import io.github.kloping.qqbot.api.message.MessageEvent;
@@ -29,10 +29,12 @@ import java.util.Date;
 import java.util.List;
 
 import static cn.qfys521.bot.BotApplication.starter;
+
 @SuppressWarnings("unused")
 @Author("qfys521")
 public class Interactor {
-    HttpUtils get = new HttpUtils();
+    final HttpUtils get = new HttpUtils();
+
     @SuppressWarnings("all")
     @Command({"/jrrp", "/今日人品"})
     public void jrrp(MessageEvent<?, ?> event) {

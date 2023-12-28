@@ -18,8 +18,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 public class RegisterCommand {
-    public static ArrayList<Method> methodArrayList = new ArrayList<>();
-    public static ArrayList<Class<?>> classArrayList = new ArrayList<>();
+    public static final ArrayList<Method> methodArrayList = new ArrayList<>();
+    public static final ArrayList<Class<?>> classArrayList = new ArrayList<>();
 
     public static void registerCommand(Class<?>[] clazz) {
         for (Class<?> cl : clazz) {

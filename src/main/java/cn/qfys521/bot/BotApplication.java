@@ -14,7 +14,7 @@ package cn.qfys521.bot;
 import cn.qfys521.bot.command.CommandRunner;
 import cn.qfys521.bot.command.RegisterCommand;
 import cn.qfys521.bot.core.Bot;
-import cn.qfys521.bot.core.CoreInteractors;
+import cn.qfys521.bot.core.interactors.CoreInteractors;
 import cn.qfys521.bot.interactors.Interactor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.kloping.MySpringTool.interfaces.Logger;
@@ -28,6 +28,7 @@ import java.util.Objects;
 
 public class BotApplication {
     public static Starter starter;
+
     @SuppressWarnings("all")
     public static void main(String[] args) {
         Console console = System.console();
@@ -35,7 +36,7 @@ public class BotApplication {
         LoginApplication loginApplication = new LoginApplication();
         try {
             File file = new File("login.json");
-            if (!file.exists()){
+            if (!file.exists()) {
 
                 file.createNewFile();
                 loginApplication.setAppid(null);
@@ -53,7 +54,7 @@ public class BotApplication {
             starter = Bot.login(loginApplication.getAppid(), loginApplication.getToken(), loginApplication.getSecret());
             starter.registerListenerHost(CommandRunner.listenerHost);
             starter.run();
-            if(Objects.equals(console.readLine(), "exit")){
+            if (Objects.equals(console.readLine(), "exit")) {
                 System.exit(0);
             }
         } catch (Exception e) {

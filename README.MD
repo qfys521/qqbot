@@ -1,4 +1,4 @@
-# QQBot 
+# QQBot
 
 --- 
 使用QQ官方api,框架使用`kloping/qqpd-bot-java`
@@ -7,6 +7,7 @@
 ## 命令注册
 
 1,命令
+
 ```java
 @Author("qfys521")//类注解,作者qfys521
 public class Example{
@@ -16,7 +17,9 @@ public class Example{
     }
 }
 ```
+
 2,注册
+
 ```java
 //BotApplication.java
 
@@ -30,13 +33,17 @@ private static void regCmd() {
 ```
 
 ## 如何使用
+
 1,构建
+
 ```shell
 chmod 777 -R ./
 ./gradlew shadowJar
 # Build in ./build/libs/qqbot-${version}-all.jar
 ```
+
 2,运行
+
 ```shell
 java -jar qqbot-${version}-all.jar
 # ${version} 填入你的版本

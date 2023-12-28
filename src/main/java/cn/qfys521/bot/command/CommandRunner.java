@@ -21,9 +21,10 @@ import java.util.Objects;
 
 import static cn.qfys521.bot.BotApplication.getLogger;
 import static cn.qfys521.bot.BotApplication.starter;
+
 @SuppressWarnings("unused")
 public class CommandRunner {
-    public static ListenerHost listenerHost = new ListenerHost() {
+    public static final ListenerHost listenerHost = new ListenerHost() {
         @EventReceiver
         private void onEvent(GroupMessageEvent messageEvent) {
             ArrayList<Method> arrayList = RegisterCommand.methodArrayList;
