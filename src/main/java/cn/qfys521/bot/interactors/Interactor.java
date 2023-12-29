@@ -15,6 +15,8 @@ import cn.qfys521.bot.annotation.Command;
 import cn.qfys521.bot.config.ConfigApplication;
 import cn.qfys521.bot.event.MessageEventKt;
 import cn.qfys521.bot.interactors.config.Coin;
+import cn.qfys521.bot.interactors.config.Jrrp;
+import cn.qfys521.bot.interactors.utils.Base64Util;
 import cn.qfys521.bot.interactors.utils.HttpUtils;
 import cn.qfys521.bot.interactors.utils.LuckAlgorithm;
 import cn.qfys521.bot.interactors.utils.minecraft.algorithm.FuzzyMatcher;
@@ -26,10 +28,12 @@ import io.github.kloping.qqbot.api.message.MessageEvent;
 import io.github.kloping.qqbot.entities.ex.Image;
 import io.github.kloping.qqbot.entities.ex.Markdown;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 import static cn.qfys521.bot.BotApplication.starter;
 
@@ -37,12 +41,28 @@ import static cn.qfys521.bot.BotApplication.starter;
 @Author("qfys521")
 public class Interactor {
     final HttpUtils get = new HttpUtils();
+    @Command({"/重置jrrp" , "/resetJrrp"})
+    public void resetJrrp(MessageEvent<?,?> messageEvent){
+        ConfigApplication configApplication = new ConfigApplication(new Jrrp() , "jrrp.json");
+        Jrrp jrrp = (Jrrp) configApplication.getDataOrFail();
+        jrrp.setKey(Base64Util.encode(UUID.randomUUID().toString()));
+        configApplication.saveOrFail();
+    }
 
     @SuppressWarnings("all")
     @Command({"/jrrp", "/今日人品"})
     public void jrrp(MessageEvent<?, ?> event) {
-        long userID = event.getSender().getId().hashCode();
-        final String KEY = "77yBQCPvv6Ul4oCm4oCmJirvv6UqJiXigKbigKYmJeKApuKApiYqJjk4N2Y5OHNmODlzOGdyZ2h3aXVnaHNyaXVnaGVzcml1";
+        long userID = event.getSender().getOpenid().hashCode();
+        ConfigApplication configApplication = new ConfigApplication(new Jrrp() , "jrrp.json");
+        Jrrp jrrp = (Jrrp) configApplication.getDataOrFail();
+        String KEY = null;
+        if (jrrp.getKey() == null){
+            KEY = Base64Util.encode(UUID.randomUUID().toString());
+            jrrp.setKey(KEY);
+            configApplication.saveOrFail();
+        }else {
+            KEY = jrrp.getKey();
+        }
         int code = LuckAlgorithm.get(userID, KEY);
         if (code == 100) {
             event.send("您的人品值为:100!100!100!");
@@ -167,7 +187,7 @@ public class Interactor {
             }
         }
     }
-    @Command("/签到")
+    @Command({"/签到","/sign"})
     public void sign(MessageEvent<?,?> event){
         ConfigApplication configApplication = new ConfigApplication(new Coin() , "coin.json");
         Coin coin = (Coin) configApplication.getDataOrFail();
