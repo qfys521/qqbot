@@ -24,9 +24,12 @@ import cn.qfys521.bot.interactors.utils.minecraft.algorithm.PrepopulatedList;
 import cn.qfys521.bot.interactors.utils.minecraft.all;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.kloping.qqbot.api.message.MessageEvent;
 import io.github.kloping.qqbot.entities.ex.Image;
 import io.github.kloping.qqbot.entities.ex.Markdown;
+import lombok.Data;
+import lombok.Getter;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -203,6 +206,28 @@ public class Interactor {
             configApplication.saveOrFail();
         } else {
             event.send("您已经签到过啦,请明天再试吧!\n" + "上一次签到时间:" + coin.getLastDate().get(event.getSender().getOpenid()) + "\n您的Coin数量:" + coin.getCoinCount(event.getSender().getOpenid()));
+        }
+    }
+    @Command({"/getPlayerUUID" , "/获取玩家UUID" , "/玩家UUID获取"})
+    public void getPlayerUUID(MessageEvent<?,?> event){
+        String oriMessage = MessageEventKt.getOriginalContent(event);
+        String PlayerName = oriMessage.split(" ")[2];
+        String tmp = "OfflinePlayer:" + PlayerName;
+        UUID object = UUID.nameUUIDFromBytes(tmp.getBytes());
+        String offline = object.toString();
+        try {
+            String request = get.getUrlData("https://api.mojang.com/users/profiles/minecraft/" + PlayerName);
+            @Data
+            class bean{
+                private String id;
+                private String name;
+            }
+            ObjectMapper objectMapper = new ObjectMapper();
+            bean b = objectMapper.readValue(request , bean.class);
+            String online = b.getId();
+            event.send("PlayerName:" + PlayerName + "\n" + "离线uuid为: " + offline.replaceAll("-", "") + "\n" + "正版uuid为:" + online);
+        } catch (Exception e) {
+            event.send("PlayerName:" + PlayerName + "\n" + "离线uuid为: " + offline.replaceAll("-", "") + "\n" + "啊这。。。。该玩家没有正版呢(悲)");
         }
     }
 }
