@@ -16,23 +16,27 @@ import lombok.Setter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+
 @Getter
 @Setter
 public class Coin {
-    HashMap<String , String> lastDate;
-    HashMap<String , Long> coin;
+    HashMap<String, String> lastDate;
+    HashMap<String, Long> coin;
 
-    public long getCoinCount(String name){
-        return getCoin().getOrDefault(name , 0L);
+    public long getCoinCount(String name) {
+        return getCoin().getOrDefault(name, 0L);
     }
-    public boolean getLastSign(String name){
-        return getLastDate().getOrDefault(name , "1970-01-01").equals(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+
+    public boolean getLastSign(String name) {
+        return getLastDate().getOrDefault(name, "1970-01-01").equals(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
     }
-    public void addLastCoin(String name , long c){
+
+    public void addLastCoin(String name, long c) {
         long coin = getCoinCount(name);
-        getCoin().put(name , coin+c);
+        getCoin().put(name, coin + c);
     }
-    public void updateLastDate(String name){
-        getLastDate().put(name , new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+
+    public void updateLastDate(String name) {
+        getLastDate().put(name, new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
     }
 }

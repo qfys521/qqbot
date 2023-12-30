@@ -14,5 +14,5 @@ import lombok.Data;
 
 @Data
 public class Jrrp {
-        public String Key;
+    public String Key;
 }

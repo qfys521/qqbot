@@ -11,7 +11,6 @@
 package cn.qfys521.bot.config;
 
 
-import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -19,49 +18,54 @@ import lombok.SneakyThrows;
 import java.io.File;
 import java.io.IOException;
 
-public class ConfigApplication{
+public class ConfigApplication {
     Object t;
     File file;
     @Getter
     ObjectMapper objectMapper = new ObjectMapper();
-    public ConfigApplication(Object t , File file){
+
+    public ConfigApplication(Object t, File file) {
         this.t = t;
         this.file = file;
     }
-    public ConfigApplication(Object t ,String fileName){
+
+    public ConfigApplication(Object t, String fileName) {
         this.t = t;
         this.file = new File(fileName);
     }
 
-    public void saveOrFail(){
+    public void saveOrFail() {
         try {
-            objectMapper.writeValue(file , t);
+            objectMapper.writeValue(file, t);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
+
     @SneakyThrows
-    public Object getDataOrFail(){
+    public Object getDataOrFail() {
         createNewFile();
         try {
-            return t = objectMapper.readValue(file , t.getClass());
+            return t = objectMapper.readValue(file, t.getClass());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
+
     @SuppressWarnings("all")
-    private void createNewFile(){
-        if (!file.exists()){
+    private void createNewFile() {
+        if (!file.exists()) {
             try {
                 file.createNewFile();
-                objectMapper.writeValue(file , t);
-            }catch (Exception e){
+                objectMapper.writeValue(file, t);
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
     }
+
     @SneakyThrows
-    public String toString(){
+    public String toString() {
         return objectMapper.writeValueAsString(t);
     }
 }

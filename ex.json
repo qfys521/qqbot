@@ -1,1 +1,12 @@
-{"user":[{"user":"Li Ming","age":17},{"user":"Xiao Hua","age":18}]}
+{
+  "user": [
+    {
+      "user": "Li Ming",
+      "age": 17
+    },
+    {
+      "user": "Xiao Hua",
+      "age": 18
+    }
+  ]
+}

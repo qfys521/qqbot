@@ -11,12 +11,12 @@
 package cn.qfys521.bot.interactors.utils.minecraft;
 
 
-import cn.qfys521.bot.interactors.utils.minecraft.Enchantments.Enchantments;
-import cn.qfys521.bot.interactors.utils.minecraft.Entitys.Entitys;
 import cn.qfys521.bot.interactors.utils.minecraft.Biomes.Biomes;
 import cn.qfys521.bot.interactors.utils.minecraft.Blocks.Blocks;
 import cn.qfys521.bot.interactors.utils.minecraft.Blocks.Liquid;
 import cn.qfys521.bot.interactors.utils.minecraft.Effects.Effects;
+import cn.qfys521.bot.interactors.utils.minecraft.Enchantments.Enchantments;
+import cn.qfys521.bot.interactors.utils.minecraft.Entitys.Entitys;
 import cn.qfys521.bot.interactors.utils.minecraft.Entitys.Items;
 
 import java.util.ArrayList;

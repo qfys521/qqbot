@@ -28,7 +28,6 @@ import io.github.kloping.qqbot.api.message.MessageEvent;
 import io.github.kloping.qqbot.entities.ex.Image;
 import io.github.kloping.qqbot.entities.ex.Markdown;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -41,9 +40,10 @@ import static cn.qfys521.bot.BotApplication.starter;
 @Author("qfys521")
 public class Interactor {
     final HttpUtils get = new HttpUtils();
-    @Command({"/重置jrrp" , "/resetJrrp"})
-    public void resetJrrp(MessageEvent<?,?> messageEvent){
-        ConfigApplication configApplication = new ConfigApplication(new Jrrp() , "jrrp.json");
+
+    @Command({"/重置jrrp", "/resetJrrp"})
+    public void resetJrrp(MessageEvent<?, ?> messageEvent) {
+        ConfigApplication configApplication = new ConfigApplication(new Jrrp(), "jrrp.json");
         Jrrp jrrp = (Jrrp) configApplication.getDataOrFail();
         jrrp.setKey(Base64Util.encode(UUID.randomUUID().toString()));
         configApplication.saveOrFail();
@@ -53,14 +53,14 @@ public class Interactor {
     @Command({"/jrrp", "/今日人品"})
     public void jrrp(MessageEvent<?, ?> event) {
         long userID = event.getSender().getOpenid().hashCode();
-        ConfigApplication configApplication = new ConfigApplication(new Jrrp() , "jrrp.json");
+        ConfigApplication configApplication = new ConfigApplication(new Jrrp(), "jrrp.json");
         Jrrp jrrp = (Jrrp) configApplication.getDataOrFail();
         String KEY = null;
-        if (jrrp.getKey() == null){
+        if (jrrp.getKey() == null) {
             KEY = Base64Util.encode(UUID.randomUUID().toString());
             jrrp.setKey(KEY);
             configApplication.saveOrFail();
-        }else {
+        } else {
             KEY = jrrp.getKey();
         }
         int code = LuckAlgorithm.get(userID, KEY);
@@ -187,21 +187,22 @@ public class Interactor {
             }
         }
     }
-    @Command({"/签到","/sign"})
-    public void sign(MessageEvent<?,?> event){
-        ConfigApplication configApplication = new ConfigApplication(new Coin() , "coin.json");
+
+    @Command({"/签到", "/sign"})
+    public void sign(MessageEvent<?, ?> event) {
+        ConfigApplication configApplication = new ConfigApplication(new Coin(), "coin.json");
         Coin coin = (Coin) configApplication.getDataOrFail();
-        if(!coin.getLastSign(event.getSender().getOpenid())){
+        if (!coin.getLastSign(event.getSender().getOpenid())) {
             int c = Math.abs(new Random().nextInt(100));
-            coin.addLastCoin(event.getSender().getOpenid() , c);
+            coin.addLastCoin(event.getSender().getOpenid(), c);
             event.send("签到成功!\n"
-                    +"当前时间为"+new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date())+"\n"
-                    +"您本次签到,获得了"+c+"枚Coin,您当前一共拥有"+coin.getCoinCount(event.getSender().getOpenid())+"枚Coin."
+                    + "当前时间为" + new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date()) + "\n"
+                    + "您本次签到,获得了" + c + "枚Coin,您当前一共拥有" + coin.getCoinCount(event.getSender().getOpenid()) + "枚Coin."
             );
             coin.updateLastDate(event.getSender().getOpenid());
             configApplication.saveOrFail();
-        }else {
-            event.send("您已经签到过啦,请明天再试吧!\n"+"上一次签到时间:"+coin.getLastDate().get(event.getSender().getOpenid())+"\n您的Coin数量:"+coin.getCoinCount(event.getSender().getOpenid()));
+        } else {
+            event.send("您已经签到过啦,请明天再试吧!\n" + "上一次签到时间:" + coin.getLastDate().get(event.getSender().getOpenid()) + "\n您的Coin数量:" + coin.getCoinCount(event.getSender().getOpenid()));
         }
     }
 }
