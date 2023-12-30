@@ -29,8 +29,11 @@ import io.github.kloping.qqbot.api.message.MessageEvent;
 import io.github.kloping.qqbot.entities.ex.Image;
 import io.github.kloping.qqbot.entities.ex.Markdown;
 import lombok.Data;
-import lombok.Getter;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -43,6 +46,7 @@ import static cn.qfys521.bot.BotApplication.starter;
 @Author("qfys521")
 public class Interactor {
     final HttpUtils get = new HttpUtils();
+    StringBuilder sb = new StringBuilder();
 
     @Command({"/重置jrrp", "/resetJrrp"})
     public void resetJrrp(MessageEvent<?, ?> messageEvent) {
@@ -208,26 +212,120 @@ public class Interactor {
             event.send("您已经签到过啦,请明天再试吧!\n" + "上一次签到时间:" + coin.getLastDate().get(event.getSender().getOpenid()) + "\n您的Coin数量:" + coin.getCoinCount(event.getSender().getOpenid()));
         }
     }
-    @Command({"/getPlayerUUID" , "/获取玩家UUID" , "/玩家UUID获取"})
-    public void getPlayerUUID(MessageEvent<?,?> event){
+
+    @Command({"/getPlayerUUID", "/获取玩家UUID", "/玩家UUID获取"})
+    public void getPlayerUUID(MessageEvent<?, ?> event) {
         String oriMessage = MessageEventKt.getOriginalContent(event);
-        String PlayerName = oriMessage.split(" ")[2];
+        String PlayerName = oriMessage.split(" ")[2].replaceAll(" ", "");
         String tmp = "OfflinePlayer:" + PlayerName;
         UUID object = UUID.nameUUIDFromBytes(tmp.getBytes());
         String offline = object.toString();
         try {
             String request = get.getUrlData("https://api.mojang.com/users/profiles/minecraft/" + PlayerName);
+
             @Data
-            class bean{
+            class bean {
                 private String id;
                 private String name;
             }
             ObjectMapper objectMapper = new ObjectMapper();
-            bean b = objectMapper.readValue(request , bean.class);
+            bean b = objectMapper.readValue(request, bean.class);
             String online = b.getId();
+            event.send(b.getId() + "\n" + b.getId() + "\n" + b.getClass());
             event.send("PlayerName:" + PlayerName + "\n" + "离线uuid为: " + offline.replaceAll("-", "") + "\n" + "正版uuid为:" + online);
         } catch (Exception e) {
             event.send("PlayerName:" + PlayerName + "\n" + "离线uuid为: " + offline.replaceAll("-", "") + "\n" + "啊这。。。。该玩家没有正版呢(悲)");
         }
+    }
+
+    @Command({"/类查询"})
+    public void ReflectionInteractor(MessageEvent<?, ?> event) throws Exception {
+        String name = MessageEventKt.getOriginalContent(event).split(" ")[2];
+        Class cl = Class.forName(name);
+        Class superclass = cl.getSuperclass();
+        String modifiers = Modifier.toString(cl.getModifiers());
+        if (modifiers.length() > 0)
+            sb.append("class ").append(name);
+        if (superclass != null && superclass != Object.class)
+            sb.append(" extends " + " ").append(superclass.getName());
+        sb.append("\n{\n");
+        try {
+            Constructor[] constructors = cl.getDeclaredConstructors();
+            for (Constructor c : constructors) {
+                String cName = c.getName();
+                sb.append("   ");
+                String cModifier = Modifier.toString(c.getModifiers());
+                if (cModifier.length() > 0)
+                    sb.append(cModifier).append(" ").append("\n");
+                sb.append(cName).append("(");
+                Class[] parmaTypes = c.getParameterTypes();
+                for (int j = 0; j < parmaTypes.length; j++) {
+                    if (j > 0)
+                        sb.append(", ");
+                    sb.append(parmaTypes[j].getName());
+                }
+                sb.append(");" + "\n");
+            }
+        } catch (Exception e) {
+            throw new Exception(e);
+        }
+        sb.append("\n");
+        try {
+            Method[] methods = cl.getDeclaredMethods();
+            for (Method m : methods) {
+                Class<?> retType = m.getReturnType();
+                String mName = m.getName();
+                sb.append("    ");
+                String s = Modifier.toString(m.getModifiers());
+                if (s.length() > 0)
+                    sb.append(s).append(" ");
+                sb.append(retType.getName()).append(" ").append(mName).append("(");
+                Class[] paramTypes = m.getParameterTypes();
+                for (int j = 0; j < paramTypes.length; j++) {
+                    if (j > 0)
+                        sb.append("'");
+                    sb.append(paramTypes[j].getName()).append(" ");
+                }
+                sb.append(");" + "\n");
+            }
+        } catch (Exception e) {
+            throw new Exception(e);
+        }
+        sb.append("\n");
+        try {
+            Field[] fields = cl.getDeclaredFields();
+
+            for (Field f : fields) {
+                Class<?> aClass = f.getType();
+                String fName = f.getName();
+                sb.append("   ");
+                String _modifiers = Modifier.toString(f.getModifiers());
+                if (_modifiers.length() > 0)
+                    sb.append(_modifiers).append(" ");
+                sb.append(aClass.getName()).append(" ").append(fName).append(";").append("\n");
+            }
+
+        } catch (Exception e) {
+            throw new Exception(e);
+        }
+        sb.append(" } " + "\n");
+        event.send(String.valueOf(sb));
+    }
+
+    @Command({"/生成UUID"})
+    public void newUUID(MessageEvent<?, ?> event) {
+        event.send(UUID.randomUUID().toString());
+    }
+
+    @Command({"/批量UUID"})
+    public void newUUID_(MessageEvent<?, ?> event) {
+        int oriMessage = Integer.valueOf(MessageEventKt.getOriginalContent(event).split(" ")[2]);
+        if (oriMessage > 0 && oriMessage <= 50) {
+            StringBuilder stringBuilder = new StringBuilder();
+            for (int i = 0; i < oriMessage; i++) {
+                stringBuilder.append(UUID.randomUUID()).append("\n");
+            }
+            event.send(stringBuilder.toString());
+        } else event.send("数量必须为[1,50]");
     }
 }
