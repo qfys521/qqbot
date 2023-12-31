@@ -16,6 +16,7 @@ import cn.qfys521.bot.config.ConfigApplication;
 import cn.qfys521.bot.event.MessageEventKt;
 import cn.qfys521.bot.interactors.config.Coin;
 import cn.qfys521.bot.interactors.config.Jrrp;
+import cn.qfys521.bot.interactors.config.User;
 import cn.qfys521.bot.interactors.utils.Base64Util;
 import cn.qfys521.bot.interactors.utils.HttpUtils;
 import cn.qfys521.bot.interactors.utils.LuckAlgorithm;
@@ -35,10 +36,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 import static cn.qfys521.bot.BotApplication.starter;
 
@@ -211,6 +209,19 @@ public class Interactor {
         } else {
             event.send("您已经签到过啦,请明天再试吧!\n" + "上一次签到时间:" + coin.getLastDate().get(event.getSender().getOpenid()) + "\n您的Coin数量:" + coin.getCoinCount(event.getSender().getOpenid()));
         }
+        configApplication.saveOrFail();
+//        if (!coin.getLastSign(event.getSender().getOpenid())) {
+//            int c = Math.abs(new Random().nextInt(100));
+//            coin.addLastCoin(event.getSender().getOpenid(), c);
+//            event.send("签到成功!\n"
+//                    + "当前时间为" + new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date()) + "\n"
+//                    + "您本次签到,获得了" + c + "枚Coin,您当前一共拥有" + coin.getCoinCount(event.getSender().getOpenid()) + "枚Coin."
+//            );
+//            coin.updateLastDate(event.getSender().getOpenid());
+//            configApplication.saveOrFail();
+//        } else {
+//            event.send("您已经签到过啦,请明天再试吧!\n" + "上一次签到时间:" + coin.getLastDate().get(event.getSender().getOpenid()) + "\n您的Coin数量:" + coin.getCoinCount(event.getSender().getOpenid()));
+//        }
     }
 
     @Command({"/getPlayerUUID", "/获取玩家UUID", "/玩家UUID获取"})

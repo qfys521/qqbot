@@ -37,11 +37,8 @@ public class CommandRunner {
                             method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), messageEvent);
                         } catch (Exception e) {
 
-                            StringBuilder stringBuffer = new StringBuilder();
-                            for (StackTraceElement stackTraceElement : e.getStackTrace()) {
-                                stringBuffer.append("\n").append(stackTraceElement.toString());
-                            }
-                            getLogger().error(e.toString() + stringBuffer);
+                            throw new RuntimeException(e);
+
                         }
                     }
                 }

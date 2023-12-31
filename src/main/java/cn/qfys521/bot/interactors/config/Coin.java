@@ -14,29 +14,50 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Optional;
 
 @Getter
 @Setter
 public class Coin {
-    HashMap<String, String> lastDate;
-    HashMap<String, Long> coin;
+    HashMap<String, Long> coin = new HashMap<>();
+    HashMap<String, String> lastDate = new HashMap<>();
+
+    public Coin() {
+        coin = new HashMap<>();
+        lastDate = new HashMap<>();
+    }
 
     public long getCoinCount(String name) {
-        return getCoin().getOrDefault(name, 0L);
+        if (coin == null) {
+            return 0;
+        }
+        return coin.getOrDefault(name, 0L);
     }
 
     public boolean getLastSign(String name) {
-        return getLastDate().getOrDefault(name, "1970-01-01").equals(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+        Optional<HashMap<String, String>> lastDateOptional = Optional.ofNullable(lastDate);
+        Optional<String> lastDateStringOptional = lastDateOptional.map(m -> m.getOrDefault(name, "1970-01-01"));
+        String lastDate = lastDateStringOptional.orElse("");
+        return lastDate.equals(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
     }
 
+
     public void addLastCoin(String name, long c) {
-        long coin = getCoinCount(name);
-        getCoin().put(name, coin + c);
+        if (coin == null) {
+            coin = new HashMap<>(); // 初始化 coin HashMap
+        }
+        long coinCount = getCoinCount(name);
+        coin.put(name, coinCount + c);
     }
 
     public void updateLastDate(String name) {
-        getLastDate().put(name, new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+        if (lastDate == null) {
+            lastDate = new HashMap<>(); // 初始化 lastDate HashMap
+        }
+        lastDate.put(name, LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
     }
 }
