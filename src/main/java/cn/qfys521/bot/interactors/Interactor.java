@@ -48,7 +48,7 @@ public class Interactor {
     final HttpUtils get = new HttpUtils();
     StringBuilder sb = new StringBuilder();
 
-    @Command({"/重置jrrp", "/resetJrrp"})
+    @Command(value = {"/重置jrrp", "/resetJrrp"} , inCommandList = false)
     public void resetJrrp(MessageEvent<?, ?> messageEvent) {
         ConfigApplication configApplication = new ConfigApplication(new Jrrp(), "jrrp.json");
         Jrrp jrrp = (Jrrp) configApplication.getDataOrFail();
