@@ -15,8 +15,8 @@ import cn.qfys521.bot.annotation.Command;
 import cn.qfys521.bot.config.ConfigApplication;
 import cn.qfys521.bot.event.MessageEventKt;
 import cn.qfys521.bot.interactors.config.Coin;
+import cn.qfys521.bot.interactors.config.GetId;
 import cn.qfys521.bot.interactors.config.Jrrp;
-import cn.qfys521.bot.interactors.config.User;
 import cn.qfys521.bot.interactors.utils.Base64Util;
 import cn.qfys521.bot.interactors.utils.HttpUtils;
 import cn.qfys521.bot.interactors.utils.LuckAlgorithm;
@@ -30,6 +30,8 @@ import io.github.kloping.qqbot.api.message.MessageEvent;
 import io.github.kloping.qqbot.entities.ex.Image;
 import io.github.kloping.qqbot.entities.ex.Markdown;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -233,14 +235,10 @@ public class Interactor {
         String offline = object.toString();
         try {
             String request = get.getUrlData("https://api.mojang.com/users/profiles/minecraft/" + PlayerName);
+            event.send(request);
 
-            @Data
-            class bean {
-                private String id;
-                private String name;
-            }
             ObjectMapper objectMapper = new ObjectMapper();
-            bean b = objectMapper.readValue(request, bean.class);
+            GetId b = objectMapper.readValue(request, GetId.class);
             String online = b.getId();
             event.send(b.getId() + "\n" + b.getId() + "\n" + b.getClass());
             event.send("PlayerName:" + PlayerName + "\n" + "离线uuid为: " + offline.replaceAll("-", "") + "\n" + "正版uuid为:" + online);
