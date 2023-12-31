@@ -11,12 +11,16 @@
 package cn.qfys521.bot.config;
 
 
+import cn.qfys521.bot.exception.ConfigException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import lombok.Getter;
 import lombok.SneakyThrows;
 
 import java.io.File;
 import java.io.IOException;
+
+import static cn.qfys521.bot.BotApplication.getLogger;
 
 public class ConfigApplication {
     Object t;
@@ -42,15 +46,19 @@ public class ConfigApplication {
         }
     }
 
-    @SneakyThrows
     public Object getDataOrFail() {
         createNewFile();
         try {
             return t = objectMapper.readValue(file, t.getClass());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            if (e instanceof MismatchedInputException) {
+                throw new ConfigException("Config file is empty or invalid", e);
+            } else {
+                throw new ConfigException("Failed to read config file", e);
+            }
         }
     }
+
 
     @SuppressWarnings("all")
     private void createNewFile() {
