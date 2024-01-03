@@ -52,23 +52,24 @@ public class BotApplication {
         }
 
     }
-    private static File configInit(){
-        File file = new File("log/"+new SimpleDateFormat("yyyy-MM-dd").format(new Date())+".log");
-                if(!file.getParentFile().exists()) {
-                    file.getParentFile().mkdirs();
-                }
-                        if (!file.exists()){
-                                        try {
-                                            file.createNewFile();
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
-                        }
-                        return file;
+
+    private static File configInit() {
+        File file = new File("log/" + new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + ".log");
+        if (!file.getParentFile().exists()) {
+            file.getParentFile().mkdirs();
+        }
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return file;
 
     }
 
-private static void init() {
+    private static void init() {
         Scanner scanner = new Scanner(System.in, Charset.defaultCharset());
         ConfigApplication configApplication = new ConfigApplication(new LoginApplication(), "login.json");
         LoginApplication loginApplication = (LoginApplication) configApplication.getDataOrFail();

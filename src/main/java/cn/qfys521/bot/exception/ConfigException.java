@@ -10,8 +10,6 @@
 
 package cn.qfys521.bot.exception;
 
-import java.io.IOException;
-
 public class ConfigException extends RuntimeException {
 
     public ConfigException(String message) {

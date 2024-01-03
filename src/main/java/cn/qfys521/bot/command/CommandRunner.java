@@ -11,12 +11,14 @@
 package cn.qfys521.bot.command;
 
 import cn.qfys521.bot.annotation.Command;
+import cn.qfys521.bot.annotation.Usage;
 import io.github.kloping.qqbot.api.v2.GroupMessageEvent;
 import io.github.kloping.qqbot.impl.ListenerHost;
 import io.github.kloping.qqbot.impl.message.BaseMessageChannelReceiveEvent;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 
 import static cn.qfys521.bot.BotApplication.getLogger;
@@ -36,6 +38,14 @@ public class CommandRunner {
                         try {
                             method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), messageEvent);
                         } catch (Exception e) {
+                            if (method.getAnnotation(Usage.class) != null) {
+                                messageEvent.send("Usage: "
+                                        + Arrays.toString(method.getAnnotation(Usage.class).value())
+                                        .replaceAll(", ", "," +
+                                                ",\n"));
+                            } else {
+                                messageEvent.send("不正确的用法。");
+                            }
 
                             throw new RuntimeException(e);
 
@@ -57,11 +67,15 @@ public class CommandRunner {
                         try {
                             method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), messageEvent);
                         } catch (Exception e) {
-                            StringBuilder stringBuffer = new StringBuilder();
-                            for (StackTraceElement stackTraceElement : e.getStackTrace()) {
-                                stringBuffer.append("\n").append(stackTraceElement.toString());
+                            if (method.getAnnotation(Usage.class) != null) {
+                                messageEvent.send("Usage: "
+                                        + Arrays.toString(method.getAnnotation(Usage.class).value())
+                                        .replaceAll(", ", "," +
+                                                ",\n"));
+                            } else {
+                                messageEvent.send("不正确的用法。");
                             }
-                            getLogger().error(e.toString() + stringBuffer);
+                            throw new RuntimeException(e);
                         }
                     }
                 }

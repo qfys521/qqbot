@@ -20,8 +20,6 @@ import lombok.SneakyThrows;
 import java.io.File;
 import java.io.IOException;
 
-import static cn.qfys521.bot.BotApplication.getLogger;
-
 public class ConfigApplication {
     Object t;
     File file;

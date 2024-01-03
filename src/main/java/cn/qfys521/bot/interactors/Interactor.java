@@ -29,16 +29,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.kloping.qqbot.api.message.MessageEvent;
 import io.github.kloping.qqbot.entities.ex.Image;
 import io.github.kloping.qqbot.entities.ex.Markdown;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 import static cn.qfys521.bot.BotApplication.starter;
 
@@ -48,7 +48,7 @@ public class Interactor {
     final HttpUtils get = new HttpUtils();
     StringBuilder sb = new StringBuilder();
 
-    @Command(value = {"/重置jrrp", "/resetJrrp"} , inCommandList = false)
+    @Command(value = {"/重置jrrp", "/resetJrrp"}, inCommandList = false)
     public void resetJrrp(MessageEvent<?, ?> messageEvent) {
         ConfigApplication configApplication = new ConfigApplication(new Jrrp(), "jrrp.json");
         Jrrp jrrp = (Jrrp) configApplication.getDataOrFail();

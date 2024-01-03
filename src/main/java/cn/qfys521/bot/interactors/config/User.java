@@ -15,7 +15,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class User{
+public class User {
     private String id;
     private int coin;
     private String lastDate;
