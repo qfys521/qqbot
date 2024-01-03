@@ -21,7 +21,11 @@ import io.github.kloping.MySpringTool.interfaces.Logger;
 import io.github.kloping.qqbot.Starter;
 import lombok.Data;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -37,7 +41,9 @@ public class BotApplication {
             LoginApplication loginApplication = (LoginApplication) configApplication.getDataOrFail();
             System.out.printf("正在准备启动程序...\n");
             regCmd();
+            File file = configInit();
             starter = Bot.login(loginApplication.getAppid(), loginApplication.getToken(), loginApplication.getSecret());
+            starter.APPLICATION.logger.setOutFile(file.getAbsolutePath());
             starter.registerListenerHost(CommandRunner.listenerHost);
             starter.run();
         } catch (Exception e) {
@@ -46,8 +52,23 @@ public class BotApplication {
         }
 
     }
+    private static File configInit(){
+        File file = new File("log/"+new SimpleDateFormat("yyyy-MM-dd").format(new Date())+".log");
+                if(!file.getParentFile().exists()) {
+                    file.getParentFile().mkdirs();
+                }
+                        if (!file.exists()){
+                                        try {
+                                            file.createNewFile();
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                        }
+                        return file;
 
-    private static void init() {
+    }
+
+private static void init() {
         Scanner scanner = new Scanner(System.in, Charset.defaultCharset());
         ConfigApplication configApplication = new ConfigApplication(new LoginApplication(), "login.json");
         LoginApplication loginApplication = (LoginApplication) configApplication.getDataOrFail();
