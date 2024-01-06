@@ -1,5 +1,5 @@
 /*
- * Copyright (c) qfys521 2023.
+ * Copyright (c) qfys521 2024.
  *
  * 本文件 `CommandRunner.java`使用版权 `AGPL-3.0`.
  * 适度编码益脑，沉迷编码伤身，合理安排时间，享受快乐生活。
@@ -46,9 +46,7 @@ public class CommandRunner {
                             } else {
                                 messageEvent.send("不正确的用法。");
                             }
-
                             throw new RuntimeException(e);
-
                         }
                     }
                 }

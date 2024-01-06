@@ -1,5 +1,5 @@
 /*
- * Copyright (c) qfys521 2023.
+ * Copyright (c) qfys521 2024.
  *
  * 本文件 `Interactor.java`使用版权 `AGPL-3.0`.
  * 适度编码益脑，沉迷编码伤身，合理安排时间，享受快乐生活。
@@ -12,7 +12,9 @@ package cn.qfys521.bot.interactors;
 
 import cn.qfys521.bot.annotation.Author;
 import cn.qfys521.bot.annotation.Command;
+import cn.qfys521.bot.annotation.Usage;
 import cn.qfys521.bot.config.ConfigApplication;
+import cn.qfys521.bot.config.DataConfigApplication;
 import cn.qfys521.bot.event.MessageEventKt;
 import cn.qfys521.bot.interactors.config.Coin;
 import cn.qfys521.bot.interactors.config.GetId;
@@ -49,8 +51,9 @@ public class Interactor {
     StringBuilder sb = new StringBuilder();
 
     @Command(value = {"/重置jrrp", "/resetJrrp"}, inCommandList = false)
+    @Usage({"/重置jrrp", "/resetJrrp"})
     public void resetJrrp(MessageEvent<?, ?> messageEvent) {
-        ConfigApplication configApplication = new ConfigApplication(new Jrrp(), "jrrp.json");
+        ConfigApplication configApplication = new DataConfigApplication(new Jrrp(), "jrrp.json");
         Jrrp jrrp = (Jrrp) configApplication.getDataOrFail();
         jrrp.setKey(Base64Util.encode(UUID.randomUUID().toString()));
         configApplication.saveOrFail();
@@ -58,9 +61,10 @@ public class Interactor {
 
     @SuppressWarnings("all")
     @Command({"/jrrp", "/今日人品"})
+    @Usage({"/jrrp", "/今日人品"})
     public void jrrp(MessageEvent<?, ?> event) {
         long userID = event.getSender().getOpenid().hashCode();
-        ConfigApplication configApplication = new ConfigApplication(new Jrrp(), "jrrp.json");
+        ConfigApplication configApplication = new DataConfigApplication(new Jrrp(), "jrrp.json");
         Jrrp jrrp = (Jrrp) configApplication.getDataOrFail();
         String KEY = null;
         if (jrrp.getKey() == null) {
@@ -90,6 +94,7 @@ public class Interactor {
     }
 
     @Command({"/time", "/时间"})
+    @Usage({"/time", "/时间"})
     public void time(MessageEvent<?, ?> event) {
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -97,6 +102,7 @@ public class Interactor {
     }
 
     @Command({"/yulu", "/语录", "/随机语录"})
+    @Usage({"/yulu", "/语录", "/随机语录"})
     public void yulu(MessageEvent<?, ?> event) {
         try {
             event.send(get.getUrlData("https://api.oick.cn/yulu/api.php"));
@@ -108,6 +114,10 @@ public class Interactor {
     }
 
     @Command(value = {"/setu", "/涩图", "/色图", "/涩涩"}, inCommandList = false)
+    @Usage({
+            "/setu", "/涩图", "/色图", "/涩涩",
+            "/setu <tag>" ,"/涩图 <tag>", "/色图 <tag>", "/涩涩 <tag>"
+    })
     public void setu(MessageEvent<?, ?> event) {
         Markdown markdown = new Markdown("102010154_1703343254");
 
@@ -129,6 +139,7 @@ public class Interactor {
     }
 
     @Command({"/tgou", "/舔狗", "/随机舔狗"})
+    @Usage({"/tgou", "/舔狗", "/随机舔狗"})
     public void tgou(MessageEvent<?, ?> event) {
         try {
             event.send(get.getUrlData("https://api.oick.cn/dog/api.php"));
@@ -140,6 +151,7 @@ public class Interactor {
     }
 
     @Command({"/du", "/毒鸡汤", "/毒汤"})
+    @Usage({"/du", "/毒鸡汤", "/毒汤"})
     public void du(MessageEvent<?, ?> event) {
         try {
             event.send(get.getUrlData("https://api.oick.cn/dutang/api.php"));
@@ -151,6 +163,7 @@ public class Interactor {
     }
 
     @Command({"/yiyan", "/一言", "/随机一言"})
+    @Usage({"/yiyan", "/一言", "/随机一言"})
     public void yiyan(MessageEvent<?, ?> event) {
         try {
             event.send(get.getUrlData("https://api.oick.cn/yiyan/api.php"));
@@ -163,6 +176,7 @@ public class Interactor {
     }
 
     @Command({"/getID", "/获取ID", "/ID对照"})
+    @Usage({"/getID <name>", "/获取ID <name>", "/ID对照 <name>"})
     public void getID(MessageEvent<?, ?> event) {
         String[] oriMessage = MessageEventKt.getOriginalContent(event).split(" ");
         if (oriMessage[2] == null) {
@@ -196,8 +210,9 @@ public class Interactor {
     }
 
     @Command({"/签到", "/sign"})
+    @Usage({"/签到", "/sign"})
     public void sign(MessageEvent<?, ?> event) {
-        ConfigApplication configApplication = new ConfigApplication(new Coin(), "coin.json");
+        ConfigApplication configApplication = new DataConfigApplication(new Coin(), "coin.json");
         Coin coin = (Coin) configApplication.getDataOrFail();
         if (!coin.getLastSign(event.getSender().getOpenid())) {
             int c = Math.abs(new Random().nextInt(100));
@@ -227,6 +242,7 @@ public class Interactor {
     }
 
     @Command({"/getPlayerUUID", "/获取玩家UUID", "/玩家UUID获取"})
+    @Usage({"/getPlayerUUID <PlayerName>", "/获取玩家UUID <PlayerName>", "/玩家UUID获取 <PlayerName>"})
     public void getPlayerUUID(MessageEvent<?, ?> event) {
         String oriMessage = MessageEventKt.getOriginalContent(event);
         String PlayerName = oriMessage.split(" ")[2].replaceAll(" ", "");
@@ -248,6 +264,7 @@ public class Interactor {
     }
 
     @Command({"/类查询"})
+    @Usage({"/类查询 <ClassForName>"})
     public void ReflectionInteractor(MessageEvent<?, ?> event) throws Exception {
         String name = MessageEventKt.getOriginalContent(event).split(" ")[2];
         Class cl = Class.forName(name);
@@ -322,11 +339,13 @@ public class Interactor {
     }
 
     @Command({"/生成UUID"})
+    @Usage({"/生成UUID"})
     public void newUUID(MessageEvent<?, ?> event) {
         event.send(UUID.randomUUID().toString());
     }
 
     @Command({"/批量UUID"})
+    @Usage({"/批量UUID <count[0,50)>"})
     public void newUUID_(MessageEvent<?, ?> event) {
         int oriMessage = Integer.valueOf(MessageEventKt.getOriginalContent(event).split(" ")[2]);
         if (oriMessage > 0 && oriMessage <= 50) {

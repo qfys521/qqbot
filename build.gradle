@@ -33,7 +33,7 @@ dependencies {
 test {
     useJUnitPlatform()
 }
-java{
+java {
     targetCompatibility = JavaVersion.VERSION_17
     sourceCompatibility = JavaVersion.VERSION_17
 }
@@ -42,14 +42,14 @@ kotlin {
 }
 shadowJar {
     manifest {
-        attributes.put("Project" , gradle.getRootProject().getName())
+        attributes.put("Project", gradle.getRootProject().getName())
         attributes.put("Implementation-Version", archiveVersion)
         attributes.put("Main-Class", "cn.qfys521.bot.BotApplication")
-        attributes.put("JavaVersion" , JavaVersion.VERSION_17)
-        attributes.put("Build-Date" , new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()))
-        attributes.put("Github" , 'https://www.github.com/codethink-cn/qqbot')
-        attributes.put("LICENSE" , "AGPL-3.0")
-        attributes.put("Build-Script" , "Gradle")
-        attributes.put("Build-Script-Version" , gradle.gradleVersion)
+        attributes.put("JavaVersion", JavaVersion.VERSION_17)
+        attributes.put("Build-Date", new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()))
+        attributes.put("Github", 'https://www.github.com/codethink-cn/qqbot')
+        attributes.put("LICENSE", "AGPL-3.0")
+        attributes.put("Build-Script", "Gradle")
+        attributes.put("Build-Script-Version", gradle.gradleVersion)
     }
 }

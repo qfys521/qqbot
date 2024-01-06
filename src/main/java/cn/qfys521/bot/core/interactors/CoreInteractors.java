@@ -1,5 +1,5 @@
 /*
- * Copyright (c) qfys521 2023.
+ * Copyright (c) qfys521 2024.
  *
  * 本文件 `CoreInteractors.java`使用版权 `AGPL-3.0`.
  * 适度编码益脑，沉迷编码伤身，合理安排时间，享受快乐生活。
@@ -12,6 +12,7 @@ package cn.qfys521.bot.core.interactors;
 
 import cn.qfys521.bot.annotation.Author;
 import cn.qfys521.bot.annotation.Command;
+import cn.qfys521.bot.annotation.Usage;
 import cn.qfys521.bot.command.RegisterCommand;
 import cn.qfys521.bot.event.MessageEventKt;
 import cn.qfys521.bot.interactors.utils.Base64Util;
@@ -29,6 +30,7 @@ import java.util.Objects;
 @Author("qfys521")
 public class CoreInteractors {
     @Command({"/help", "/帮助", "/菜单"})
+    @Usage("/help")
     public void helpMenu(MessageEvent<?, ?> messageEvent) {
         ArrayList<Method> method = RegisterCommand.methodArrayList;
         StringBuilder stringBuilder = new StringBuilder();
@@ -45,13 +47,15 @@ public class CoreInteractors {
         messageEvent.send(stringBuilder.toString());
     }
 
-    @Command({"/echo", "/复述", "/say", "说"})
+    @Command({"/echo", "/复述", "/say", "/说"})
+    @Usage({"/echo <Message>" , "/say <Message>" , "/说 <消息>" , "/复述 <消息>"})
     public void echo(MessageEvent<?, ?> event) {
         String oriMessage = MessageEventKt.getOriginalContent(event).split(" ")[2];
         event.send(Objects.requireNonNullElse(oriMessage, "用法:/echo <内容>"));
     }
 
     @Command({"/关于", "/about"})
+    @Usage({"/关于" , "/about"})
     public void about(MessageEvent<?, ?> messageEvent) {
         StringBuilder stringBuilder = new StringBuilder();
         String a = """
@@ -81,6 +85,7 @@ public class CoreInteractors {
     }
 
     @Command("/Base64")
+    @Usage("/Base64 <encode/decode> <text>")
     public void Base64(MessageEvent<?, ?> messageEvent) {
         String oriMessage = MessageEventKt.getOriginalContent(messageEvent);
         String[] oriMsg = oriMessage.split(" ");
@@ -104,6 +109,7 @@ public class CoreInteractors {
     }
 
     @Command("/MD5")
+    @Usage("/MD5 <text>")
     public void MD5(MessageEvent<?, ?> event) {
         String oriMessage = MessageEventKt.getOriginalContent(event);
         if (oriMessage.split(" ")[2] == null) {
@@ -114,6 +120,7 @@ public class CoreInteractors {
     }
 
     @Command("/Unicode")
+    @Usage("/Unicode <encode/decode> <text>")
     public void Unicode(MessageEvent<?, ?> messageEvent) {
         UnicodeUtil unicodeUtil = new UnicodeUtil();
         String oriMessage = MessageEventKt.getOriginalContent(messageEvent);
@@ -137,7 +144,8 @@ public class CoreInteractors {
         }
     }
 
-    @Command("/UrlCode")
+    @Command("/Urlcode")
+    @Usage("/Urlcode <decode/encode> <text>")
     public void UrlCode(MessageEvent<?, ?> messageEvent) {
         URLCodeUtil util = new URLCodeUtil();
         String oriMessage = MessageEventKt.getOriginalContent(messageEvent);

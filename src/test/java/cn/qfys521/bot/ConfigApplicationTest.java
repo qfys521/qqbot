@@ -11,6 +11,7 @@
 package cn.qfys521.bot;
 
 import cn.qfys521.bot.config.ConfigApplication;
+import cn.qfys521.bot.config.CoreConfigApplication;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -21,7 +22,7 @@ public class ConfigApplicationTest {
     @Test
     public void ConfigWriteTest() {
         User user = new User();
-        ConfigApplication configApplication = new ConfigApplication(user, "userData.json");
+        ConfigApplication configApplication = new CoreConfigApplication(user, "userData.json");
         user.setUser("Li Ming");
         user.setAge(17);
         configApplication.saveOrFail();
@@ -31,7 +32,7 @@ public class ConfigApplicationTest {
     @SneakyThrows
     @Test
     public void ConfigReadTest() {
-        Coin coin = (Coin) new ConfigApplication(new Coin(), "coin.json").getDataOrFail();
+        Coin coin = (Coin) new CoreConfigApplication(new Coin(), "coin.json").getDataOrFail();
         System.out.println(coin.getUser() + " has " + coin.getCoin() + " coins.");
     }
 
@@ -39,7 +40,7 @@ public class ConfigApplicationTest {
     @Test
     public void ConfigExTest() {
         Users user = new Users();
-        ConfigApplication configApplication = new ConfigApplication(user, "ex.json");
+        ConfigApplication configApplication = new CoreConfigApplication(user, "ex.json");
 
         User user1 = new User();
         user1.setAge(17);

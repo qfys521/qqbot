@@ -1,5 +1,5 @@
 /*
- * Copyright (c) qfys521 2023.
+ * Copyright (c) qfys521 2024.
  *
  * 本文件 `BotApplication.java`使用版权 `AGPL-3.0`.
  * 适度编码益脑，沉迷编码伤身，合理安排时间，享受快乐生活。
@@ -14,6 +14,7 @@ package cn.qfys521.bot;
 import cn.qfys521.bot.command.CommandRunner;
 import cn.qfys521.bot.command.RegisterCommand;
 import cn.qfys521.bot.config.ConfigApplication;
+import cn.qfys521.bot.config.CoreConfigApplication;
 import cn.qfys521.bot.core.Bot;
 import cn.qfys521.bot.core.interactors.CoreInteractors;
 import cn.qfys521.bot.interactors.Interactor;
@@ -37,7 +38,7 @@ public class BotApplication {
 
         try {
             init();
-            ConfigApplication configApplication = new ConfigApplication(new LoginApplication(), "login.json");
+            ConfigApplication configApplication = new CoreConfigApplication(new LoginApplication(), "login.json");
             LoginApplication loginApplication = (LoginApplication) configApplication.getDataOrFail();
             System.out.printf("正在准备启动程序...\n");
             regCmd();
@@ -71,7 +72,8 @@ public class BotApplication {
 
     private static void init() {
         Scanner scanner = new Scanner(System.in, Charset.defaultCharset());
-        ConfigApplication configApplication = new ConfigApplication(new LoginApplication(), "login.json");
+        System.out.println(1);
+        ConfigApplication configApplication = new CoreConfigApplication(new LoginApplication(), "login.json");
         LoginApplication loginApplication = (LoginApplication) configApplication.getDataOrFail();
         if ((Objects.equals(loginApplication.getAppid(), "")) || (loginApplication.getAppid() == null) ||
                 (Objects.equals(loginApplication.getToken(), "")) || (loginApplication.getSecret() == null) ||
