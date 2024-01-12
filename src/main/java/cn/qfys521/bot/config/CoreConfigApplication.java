@@ -12,6 +12,6 @@ package cn.qfys521.bot.config;
 
 public class CoreConfigApplication extends ConfigApplication {
     public CoreConfigApplication(Object t, String fileName) {
-        super(t, "data/core/"+t.getClass().getName()+"/"+fileName);
+        super(t, "data/core/" + t.getClass().getPackageName() + "/" + fileName);
     }
 }

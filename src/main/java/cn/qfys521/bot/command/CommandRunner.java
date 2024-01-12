@@ -18,7 +18,6 @@ import io.github.kloping.qqbot.impl.message.BaseMessageChannelReceiveEvent;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Objects;
 
 import static cn.qfys521.bot.BotApplication.getLogger;
@@ -39,10 +38,12 @@ public class CommandRunner {
                             method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), messageEvent);
                         } catch (Exception e) {
                             if (method.getAnnotation(Usage.class) != null) {
-                                messageEvent.send("Usage: "
-                                        + Arrays.toString(method.getAnnotation(Usage.class).value())
-                                        .replaceAll(", ", "," +
-                                                ",\n"));
+                                StringBuilder stringBuilder = new StringBuilder();
+                                stringBuilder.append("用法: ").append("\n");
+                                for (String string1 : method.getAnnotation(Usage.class).value()) {
+                                    stringBuilder.append(string1).append("\n");
+                                }
+                                messageEvent.send(stringBuilder + e.getMessage());
                             } else {
                                 messageEvent.send("不正确的用法。");
                             }
@@ -66,10 +67,12 @@ public class CommandRunner {
                             method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), messageEvent);
                         } catch (Exception e) {
                             if (method.getAnnotation(Usage.class) != null) {
-                                messageEvent.send("Usage: "
-                                        + Arrays.toString(method.getAnnotation(Usage.class).value())
-                                        .replaceAll(", ", "," +
-                                                ",\n"));
+                                StringBuilder stringBuilder = new StringBuilder();
+                                stringBuilder.append("用法: ").append("\n");
+                                for (String string1 : method.getAnnotation(Usage.class).value()) {
+                                    stringBuilder.append(string1).append("\n");
+                                }
+                                messageEvent.send(stringBuilder + e.getMessage());
                             } else {
                                 messageEvent.send("不正确的用法。");
                             }

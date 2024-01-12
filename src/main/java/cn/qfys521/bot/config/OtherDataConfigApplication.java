@@ -10,9 +10,9 @@
 
 package cn.qfys521.bot.config;
 
-public class OtherDataConfigApplication extends ConfigApplication{
+public class OtherDataConfigApplication extends ConfigApplication {
 
     public OtherDataConfigApplication(Object t, String fileName) {
-        super(t, "data/other/"+t.getClass().getName()+"/"+fileName);
+        super(t, "data/other/" + t.getClass().getPackageName() + "/" + fileName);
     }
 }

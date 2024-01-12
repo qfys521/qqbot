@@ -116,7 +116,7 @@ public class Interactor {
     @Command(value = {"/setu", "/涩图", "/色图", "/涩涩"}, inCommandList = false)
     @Usage({
             "/setu", "/涩图", "/色图", "/涩涩",
-            "/setu <tag>" ,"/涩图 <tag>", "/色图 <tag>", "/涩涩 <tag>"
+            "/setu <tag>", "/涩图 <tag>", "/色图 <tag>", "/涩涩 <tag>"
     })
     public void setu(MessageEvent<?, ?> event) {
         Markdown markdown = new Markdown("102010154_1703343254");

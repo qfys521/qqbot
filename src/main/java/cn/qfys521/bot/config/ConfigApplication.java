@@ -58,7 +58,7 @@ public abstract class ConfigApplication {
     private void createNewFile() {
         if (!file.exists()) {
             try {
-                if (!file.getParentFile().exists()){
+                if (!file.getParentFile().exists()) {
                     file.getParentFile().mkdirs();
                 }
                 file.createNewFile();
