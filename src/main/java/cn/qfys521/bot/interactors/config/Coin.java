@@ -13,8 +13,12 @@ package cn.qfys521.bot.interactors.config;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -22,7 +26,7 @@ import java.util.Optional;
 @Setter
 public class Coin {
     HashMap<String, Long> coin = new HashMap<>();
-    HashMap<String, String> lastDate = new HashMap<>();
+    HashMap<String, Long> lastDate = new HashMap<>();
 
     public Coin() {
         coin = new HashMap<>();
@@ -37,10 +41,11 @@ public class Coin {
     }
 
     public boolean getLastSign(String name) {
-        Optional<HashMap<String, String>> lastDateOptional = Optional.ofNullable(lastDate);
-        Optional<String> lastDateStringOptional = lastDateOptional.map(m -> m.getOrDefault(name, "1970-01-01"));
-        String lastDate = lastDateStringOptional.orElse("");
-        return lastDate.equals(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        Optional<HashMap<String, Long>> lastDateOptional = Optional.ofNullable(lastDate);
+        Optional<Long> lastDateStringOptional = lastDateOptional.map(m -> m.getOrDefault(name, 0L));
+        Long lastDate = lastDateStringOptional.orElse(0L);
+        return new SimpleDateFormat("yyyy-MM-dd").format(new Date(lastDate))
+                .equals(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
     }
 
 
@@ -56,6 +61,6 @@ public class Coin {
         if (lastDate == null) {
             lastDate = new HashMap<>(); // 初始化 lastDate HashMap
         }
-        lastDate.put(name, LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        lastDate.put(name, System.currentTimeMillis());
     }
 }
