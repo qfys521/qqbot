@@ -227,18 +227,6 @@ public class Interactor {
             event.send("您已经签到过啦,请明天再试吧!\n" + "上一次签到时间:" + new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(coin.getLastDate().get(event.getSender().getOpenid())) + "\n您的Coin数量:" + coin.getCoinCount(event.getSender().getOpenid()));
         }
         configApplication.saveOrFail();
-//        if (!coin.getLastSign(event.getSender().getOpenid())) {
-//            int c = Math.abs(new Random().nextInt(100));
-//            coin.addLastCoin(event.getSender().getOpenid(), c);
-//            event.send("签到成功!\n"
-//                    + "当前时间为" + new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date()) + "\n"
-//                    + "您本次签到,获得了" + c + "枚Coin,您当前一共拥有" + coin.getCoinCount(event.getSender().getOpenid()) + "枚Coin."
-//            );
-//            coin.updateLastDate(event.getSender().getOpenid());
-//            configApplication.saveOrFail();
-//        } else {
-//            event.send("您已经签到过啦,请明天再试吧!\n" + "上一次签到时间:" + coin.getLastDate().get(event.getSender().getOpenid()) + "\n您的Coin数量:" + coin.getCoinCount(event.getSender().getOpenid()));
-//        }
     }
 
     @Command({"/getPlayerUUID", "/获取玩家UUID", "/玩家UUID获取"})
@@ -267,24 +255,24 @@ public class Interactor {
     @Usage({"/类查询 <ClassForName>"})
     public void ReflectionInteractor(MessageEvent<?, ?> event) throws Exception {
         String name = MessageEventKt.getOriginalContent(event).split(" ")[2];
-        Class cl = Class.forName(name);
-        Class superclass = cl.getSuperclass();
+        Class<?> cl = Class.forName(name);
+        Class<?> superclass = cl.getSuperclass();
         String modifiers = Modifier.toString(cl.getModifiers());
-        if (modifiers.length() > 0)
+        if (!modifiers.isEmpty())
             sb.append("class ").append(name);
         if (superclass != null && superclass != Object.class)
             sb.append(" extends " + " ").append(superclass.getName());
         sb.append("\n{\n");
         try {
-            Constructor[] constructors = cl.getDeclaredConstructors();
-            for (Constructor c : constructors) {
+            Constructor<?>[] constructors = cl.getDeclaredConstructors();
+            for (Constructor<?> c : constructors) {
                 String cName = c.getName();
                 sb.append("   ");
                 String cModifier = Modifier.toString(c.getModifiers());
-                if (cModifier.length() > 0)
+                if (!cModifier.isEmpty())
                     sb.append(cModifier).append(" ").append("\n");
                 sb.append(cName).append("(");
-                Class[] parmaTypes = c.getParameterTypes();
+                Class<?>[] parmaTypes = c.getParameterTypes();
                 for (int j = 0; j < parmaTypes.length; j++) {
                     if (j > 0)
                         sb.append(", ");
@@ -303,10 +291,10 @@ public class Interactor {
                 String mName = m.getName();
                 sb.append("    ");
                 String s = Modifier.toString(m.getModifiers());
-                if (s.length() > 0)
+                if (!s.isEmpty())
                     sb.append(s).append(" ");
                 sb.append(retType.getName()).append(" ").append(mName).append("(");
-                Class[] paramTypes = m.getParameterTypes();
+                Class<?>[] paramTypes = m.getParameterTypes();
                 for (int j = 0; j < paramTypes.length; j++) {
                     if (j > 0)
                         sb.append("'");
@@ -326,7 +314,7 @@ public class Interactor {
                 String fName = f.getName();
                 sb.append("   ");
                 String _modifiers = Modifier.toString(f.getModifiers());
-                if (_modifiers.length() > 0)
+                if (!_modifiers.isEmpty())
                     sb.append(_modifiers).append(" ");
                 sb.append(aClass.getName()).append(" ").append(fName).append(";").append("\n");
             }
@@ -347,7 +335,7 @@ public class Interactor {
     @Command({"/批量UUID"})
     @Usage({"/批量UUID <count[0,50)>"})
     public void newUUID_(MessageEvent<?, ?> event) {
-        int oriMessage = Integer.valueOf(MessageEventKt.getOriginalContent(event).split(" ")[2]);
+        int oriMessage = Integer.parseInt(MessageEventKt.getOriginalContent(event).split(" ")[2]);
         if (oriMessage > 0 && oriMessage <= 50) {
             StringBuilder stringBuilder = new StringBuilder();
             for (int i = 0; i < oriMessage; i++) {

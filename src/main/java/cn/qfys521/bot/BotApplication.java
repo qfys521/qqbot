@@ -53,7 +53,7 @@ public class BotApplication {
         }
 
     }
-
+    @SuppressWarnings("all")
     private static File configInit() {
         File file = new File("log/" + new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + ".log");
         if (!file.getParentFile().exists()) {

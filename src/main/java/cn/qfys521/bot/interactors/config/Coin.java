@@ -13,10 +13,8 @@ package cn.qfys521.bot.interactors.config;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
@@ -25,8 +23,8 @@ import java.util.Optional;
 @Getter
 @Setter
 public class Coin {
-    HashMap<String, Long> coin = new HashMap<>();
-    HashMap<String, Long> lastDate = new HashMap<>();
+    public HashMap<String, Long> coin;
+    public HashMap<String, Long> lastDate;
 
     public Coin() {
         coin = new HashMap<>();
