@@ -1,5 +1,5 @@
 /*
- * Copyright (c) qfys521 2023.
+ * Copyright (c) qfys521 2024.
  *
  * 本文件 `CommandRunner.java`使用版权 `AGPL-3.0`.
  * 适度编码益脑，沉迷编码伤身，合理安排时间，享受快乐生活。
@@ -11,6 +11,7 @@
 package cn.qfys521.bot.command;
 
 import cn.qfys521.bot.annotation.Command;
+import cn.qfys521.bot.annotation.Usage;
 import io.github.kloping.qqbot.api.v2.GroupMessageEvent;
 import io.github.kloping.qqbot.impl.ListenerHost;
 import io.github.kloping.qqbot.impl.message.BaseMessageChannelReceiveEvent;
@@ -36,12 +37,17 @@ public class CommandRunner {
                         try {
                             method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), messageEvent);
                         } catch (Exception e) {
-
-                            StringBuilder stringBuffer = new StringBuilder();
-                            for (StackTraceElement stackTraceElement : e.getStackTrace()) {
-                                stringBuffer.append("\n").append(stackTraceElement.toString());
+                            if (method.getAnnotation(Usage.class) != null) {
+                                StringBuilder stringBuilder = new StringBuilder();
+                                stringBuilder.append("用法: ").append("\n");
+                                for (String string1 : method.getAnnotation(Usage.class).value()) {
+                                    stringBuilder.append(string1).append("\n");
+                                }
+                                messageEvent.send(stringBuilder + e.getMessage());
+                            } else {
+                                messageEvent.send("不正确的用法。");
                             }
-                            getLogger().error(e.toString() + stringBuffer);
+                            throw new RuntimeException(e);
                         }
                     }
                 }
@@ -60,11 +66,17 @@ public class CommandRunner {
                         try {
                             method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), messageEvent);
                         } catch (Exception e) {
-                            StringBuilder stringBuffer = new StringBuilder();
-                            for (StackTraceElement stackTraceElement : e.getStackTrace()) {
-                                stringBuffer.append("\n").append(stackTraceElement.toString());
+                            if (method.getAnnotation(Usage.class) != null) {
+                                StringBuilder stringBuilder = new StringBuilder();
+                                stringBuilder.append("用法: ").append("\n");
+                                for (String string1 : method.getAnnotation(Usage.class).value()) {
+                                    stringBuilder.append(string1).append("\n");
+                                }
+                                messageEvent.send(stringBuilder + e.getMessage());
+                            } else {
+                                messageEvent.send("不正确的用法。");
                             }
-                            getLogger().error(e.toString() + stringBuffer);
+                            throw new RuntimeException(e);
                         }
                     }
                 }

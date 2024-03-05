@@ -1,5 +1,5 @@
 /*
- * Copyright (c) qfys521 2023.
+ * Copyright (c) qfys521 2024.
  *
  * 本文件 `all.java`使用版权 `AGPL-3.0`.
  * 适度编码益脑，沉迷编码伤身，合理安排时间，享受快乐生活。
@@ -11,12 +11,12 @@
 package cn.qfys521.bot.interactors.utils.minecraft;
 
 
-import cn.qfys521.bot.interactors.utils.minecraft.Enchantments.Enchantments;
-import cn.qfys521.bot.interactors.utils.minecraft.Entitys.Entitys;
 import cn.qfys521.bot.interactors.utils.minecraft.Biomes.Biomes;
 import cn.qfys521.bot.interactors.utils.minecraft.Blocks.Blocks;
 import cn.qfys521.bot.interactors.utils.minecraft.Blocks.Liquid;
 import cn.qfys521.bot.interactors.utils.minecraft.Effects.Effects;
+import cn.qfys521.bot.interactors.utils.minecraft.Enchantments.Enchantments;
+import cn.qfys521.bot.interactors.utils.minecraft.Entitys.Entitys;
 import cn.qfys521.bot.interactors.utils.minecraft.Entitys.Items;
 
 import java.util.ArrayList;

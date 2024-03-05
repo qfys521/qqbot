@@ -11,7 +11,7 @@
 package cn.qfys521.bot;
 
 import cn.qfys521.bot.config.ConfigApplication;
-import lombok.Data;
+import cn.qfys521.bot.config.CoreConfigApplication;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -20,26 +20,27 @@ import org.junit.jupiter.api.Test;
 public class ConfigApplicationTest {
     @SneakyThrows
     @Test
-    public void ConfigWriteTest(){
+    public void ConfigWriteTest() {
         User user = new User();
-        ConfigApplication configApplication  =  new ConfigApplication(user, "userData.json");
+        ConfigApplication configApplication = new CoreConfigApplication(user, "userData.json");
         user.setUser("Li Ming");
         user.setAge(17);
         configApplication.saveOrFail();
         System.out.println(configApplication);
     }
+
     @SneakyThrows
     @Test
-    public void ConfigReadTest(){
-        Coin coin = (Coin) new ConfigApplication(new Coin() , "coin.json").getDataOrFail();
-        System.out.println(coin.getUser()+" has "+coin.getCoin()+" coins.");
+    public void ConfigReadTest() {
+        Coin coin = (Coin) new CoreConfigApplication(new Coin(), "coin.json").getDataOrFail();
+        System.out.println(coin.getUser() + " has " + coin.getCoin() + " coins.");
     }
 
     @SneakyThrows
     @Test
-    public void ConfigExTest(){
+    public void ConfigExTest() {
         Users user = new Users();
-        ConfigApplication configApplication = new ConfigApplication(user , "ex.json");
+        ConfigApplication configApplication = new CoreConfigApplication(user, "ex.json");
 
         User user1 = new User();
         user1.setAge(17);
@@ -49,26 +50,28 @@ public class ConfigApplicationTest {
         user2.setAge(18);
         user2.setUser("Xiao Hua");
 
-        user.setUser(new User[]{user1 , user2});
+        user.setUser(new User[]{user1, user2});
         configApplication.saveOrFail();
         System.out.println(configApplication);
     }
 }
+
 @Setter
 @Getter
-class User{
-       private String user;
-       private int age;
+class User {
+    private String user;
+    private int age;
 }
+
 @Getter
 @Setter
-class Coin{
+class Coin {
     private String user;
     private long coin;
 }
 
 @Getter
 @Setter
-class Users{
+class Users {
     private User[] user;
 }

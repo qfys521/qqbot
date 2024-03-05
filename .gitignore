@@ -45,4 +45,4 @@ bin/
 /.gradle
 /build
 ./.gitignore
-./login.json
+*.json
