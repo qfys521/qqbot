@@ -14,18 +14,17 @@ import cn.qfys521.bot.annotation.Author;
 import cn.qfys521.bot.annotation.Command;
 import cn.qfys521.bot.annotation.Usage;
 import cn.qfys521.bot.command.RegisterCommand;
+import cn.qfys521.bot.core.plugin.JavaPlugin;
+import cn.qfys521.bot.core.plugin.PluginManager;
 import cn.qfys521.bot.event.MessageEventKt;
-import cn.qfys521.bot.interactors.utils.Base64Util;
-import cn.qfys521.bot.interactors.utils.MD5Util;
-import cn.qfys521.bot.interactors.utils.URLCodeUtil;
-import cn.qfys521.bot.interactors.utils.UnicodeUtil;
+import cn.qfys521.bot.core.interactors.utils.Base64Util;
+import cn.qfys521.bot.core.interactors.utils.MD5Util;
+import cn.qfys521.bot.core.interactors.utils.URLCodeUtil;
+import cn.qfys521.bot.core.interactors.utils.UnicodeUtil;
 import io.github.kloping.qqbot.api.message.MessageEvent;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Objects;
+import java.util.*;
 
 @SuppressWarnings("unused")
 @Author("qfys521")
@@ -64,6 +63,7 @@ public class CoreInteractors {
     public void about(MessageEvent<?, ?> messageEvent) {
         StringBuilder stringBuilder = new StringBuilder();
         String a = """
+                
                 -={千枫Bot}=-
                 为您带来一些Simple小功能
                 ======作者======
@@ -122,6 +122,21 @@ public class CoreInteractors {
         } else {
             event.send(new MD5Util().toMD5(oriMessage.split(" ")[2]));
         }
+    }
+    @Command({"/插件列表" , "/plugins" })
+    @Usage({"/插件列表" , "/plugins" })
+    public void plugin(MessageEvent<?,?> event){
+        StringBuilder stringBuilder = new StringBuilder();
+        for (JavaPlugin plugin:PluginManager.getJavaPlugins()){
+            stringBuilder.append("\n")
+                    .append(plugin.getPluginInformation().getName())
+                    .append(" : ")
+                    .append(plugin.getPluginInformation().getVersion())
+                    .append("(")
+                    .append(plugin.getPluginInformation().getVersionCode())
+                    .append(")");
+        }
+        event.send("当前插件有："+stringBuilder);
     }
 
     @Command("/Unicode")
