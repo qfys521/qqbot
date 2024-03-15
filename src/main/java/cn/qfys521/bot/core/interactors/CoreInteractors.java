@@ -14,17 +14,24 @@ import cn.qfys521.bot.annotation.Author;
 import cn.qfys521.bot.annotation.Command;
 import cn.qfys521.bot.annotation.Usage;
 import cn.qfys521.bot.command.RegisterCommand;
+import cn.qfys521.bot.core.interactors.utils.*;
 import cn.qfys521.bot.core.plugin.JavaPlugin;
 import cn.qfys521.bot.core.plugin.PluginManager;
 import cn.qfys521.bot.event.MessageEventKt;
-import cn.qfys521.bot.core.interactors.utils.Base64Util;
-import cn.qfys521.bot.core.interactors.utils.MD5Util;
-import cn.qfys521.bot.core.interactors.utils.URLCodeUtil;
-import cn.qfys521.bot.core.interactors.utils.UnicodeUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import io.github.kloping.qqbot.api.message.MessageEvent;
+import io.github.kloping.qqbot.entities.ex.Markdown;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 
 import java.lang.reflect.Method;
+import java.net.URLEncoder;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
+
+import static cn.qfys521.bot.BotApplication.getLogger;
 
 @SuppressWarnings("unused")
 @Author("qfys521")
@@ -129,11 +136,11 @@ public class CoreInteractors {
         StringBuilder stringBuilder = new StringBuilder();
         for (JavaPlugin plugin:PluginManager.getJavaPlugins()){
             stringBuilder.append("\n")
-                    .append(plugin.getPluginInformation().getName())
+                    .append(plugin.getPluginInfo().getName())
                     .append(" : ")
-                    .append(plugin.getPluginInformation().getVersion())
+                    .append(plugin.getPluginInfo().getVersion())
                     .append("(")
-                    .append(plugin.getPluginInformation().getVersionCode())
+                    .append(plugin.getPluginInfo().getVersionCode())
                     .append(")");
         }
         event.send("当前插件有："+stringBuilder);

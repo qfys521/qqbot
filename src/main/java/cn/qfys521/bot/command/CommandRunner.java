@@ -29,7 +29,7 @@ public class CommandRunner {
         @EventReceiver
         private void onEvent(GroupMessageEvent messageEvent) {
             ArrayList<Method> arrayList = RegisterCommand.methodArrayList;
-            getLogger().info("messageEvent.getMessage().get(0).toString().replaceFirst(\" \" , \"\").split(\" \")[0]\n" + messageEvent.getMessage().get(0).toString().replaceFirst(" ", "").split(" ")[0]);
+            //getLogger().info("messageEvent.getMessage().get(0).toString().replaceFirst(\" \" , \"\").split(\" \")[0]\n" + messageEvent.getMessage().get(0).toString().replaceFirst(" ", "").split(" ")[0]);
             for (Method method : arrayList) {
                 String[] strings = method.getAnnotation(Command.class).value();
                 for (String string : strings) {

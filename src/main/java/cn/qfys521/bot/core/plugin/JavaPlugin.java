@@ -13,15 +13,15 @@ package cn.qfys521.bot.core.plugin;
 import lombok.Data;
 
 public abstract class JavaPlugin {
+
     public abstract void onLoad();
 
     public void onEnable() {
     }
-    public abstract JavaPlugin getInstance();
 
-    public abstract void onDisable();
-    public abstract PluginInformation getPluginInformation();
+    public abstract PluginInfo getPluginInfo();
     @Data
+    @Deprecated
     public class PluginInformation{
         String name;
         String[] authors;
@@ -29,5 +29,46 @@ public abstract class JavaPlugin {
         String version;
         int versionCode;
         Object[] other;
+    }
+
+    @Data
+    public class PluginInfo{
+        String name;
+        String[] authors;
+        String author;
+        String version;
+        int versionCode;
+        Object[] other;
+
+    }
+    public class PluginInfoBuilder{
+        PluginInfo pi = new PluginInfo();
+        public PluginInfoBuilder name(String name){
+            pi.setName(name);
+            return this;
+        }
+        public PluginInfoBuilder author(String author){
+            pi.setAuthor(author);
+            return this;
+        }
+        public PluginInfoBuilder authors(String[] authors){
+            pi.setAuthors(authors);
+            return this;
+        }
+        public PluginInfoBuilder version(String version){
+            pi.setVersion(version);
+            return this;
+        }
+        public PluginInfoBuilder versionCode(int versionCode){
+            pi.setVersionCode(versionCode);
+            return this;
+        }
+        public PluginInfoBuilder setOther(Object[] other){
+            pi.setOther(other);
+            return this;
+        }
+        public PluginInfo build(){
+            return pi;
+        }
     }
 }
