@@ -43,7 +43,7 @@ public class CommandRunner {
                                 for (String string1 : method.getAnnotation(Usage.class).value()) {
                                     stringBuilder.append(string1).append("\n");
                                 }
-                                messageEvent.send(stringBuilder + e.getMessage());
+                                messageEvent.send(stringBuilder + e.toString());
                             } else {
                                 messageEvent.send("不正确的用法。");
                             }
@@ -72,7 +72,7 @@ public class CommandRunner {
                                 for (String string1 : method.getAnnotation(Usage.class).value()) {
                                     stringBuilder.append(string1).append("\n");
                                 }
-                                messageEvent.send(stringBuilder + e.getMessage());
+                                messageEvent.send(stringBuilder + e.toString());
                             } else {
                                 messageEvent.send("不正确的用法。");
                             }

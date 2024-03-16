@@ -61,8 +61,10 @@ public class CoreInteractors {
     @Command({"/echo", "/复述", "/say", "/说"})
     @Usage({"/echo <Message>", "/say <Message>", "/说 <消息>", "/复述 <消息>"})
     public void echo(MessageEvent<?, ?> event) {
-        String oriMessage = MessageEventKt.getOriginalContent(event).split(" ")[2];
-        event.send(Objects.requireNonNullElse(oriMessage, "用法:/echo <内容>"));
+        var tmp = MessageEventKt.getOriginalContent(event).split(" ");
+        tmp[0] = tmp[1] = "";
+        String oriMessage = Arrays.toString(tmp);
+        event.send(oriMessage);
     }
 
     @Command({"/关于", "/about"})
