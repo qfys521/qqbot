@@ -36,27 +36,24 @@ import static cn.qfys521.bot.BotApplication.getLogger;
 @SuppressWarnings("unused")
 @Author("qfys521")
 public class CoreInteractors {
+    @Usage({"/help", "/帮助", "/菜单"})
     @Command({"/help", "/帮助", "/菜单"})
-    @Usage("/help")
     public void helpMenu(MessageEvent<?, ?> messageEvent) {
         ArrayList<Method> method = RegisterCommand.methodArrayList;
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("指令菜单\n");
-        ArrayList<String> arrayList = new ArrayList<>();
         for (Method methods : method) {
             Command command = methods.getAnnotation(Command.class);
             if (command != null) {
                 if (command.inCommandList()) {
-                    arrayList.addAll(Arrays.asList(methods.getAnnotation(Command.class).value()));
+                    stringBuilder.append("\n")
+                            .append(Arrays.toString(methods.getAnnotation(Command.class).value()));
                 }
             }
         }
-        Collections.sort(arrayList);
-        for (String s : arrayList) {
-            stringBuilder.append(s).append("\n");
-        }
         messageEvent.send(stringBuilder.toString());
     }
+
 
     @Command({"/echo", "/复述", "/say", "/说"})
     @Usage({"/echo <Message>", "/say <Message>", "/说 <消息>", "/复述 <消息>"})
