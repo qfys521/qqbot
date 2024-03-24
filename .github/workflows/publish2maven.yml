@@ -20,7 +20,7 @@ jobs:
         run: sudo chmod 777 -R ./
 
       - name: Publish package
-        run:  ./gradlew publish
+        run: sudo ./gradlew publish
         env:
           MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
