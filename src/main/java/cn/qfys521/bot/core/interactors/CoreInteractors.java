@@ -14,49 +14,78 @@ import cn.qfys521.bot.annotation.Author;
 import cn.qfys521.bot.annotation.Command;
 import cn.qfys521.bot.annotation.Usage;
 import cn.qfys521.bot.command.RegisterCommand;
+import cn.qfys521.bot.core.interactors.utils.*;
+import cn.qfys521.bot.core.plugin.JavaPlugin;
+import cn.qfys521.bot.core.plugin.PluginManager;
 import cn.qfys521.bot.event.MessageEventKt;
-import cn.qfys521.bot.interactors.utils.Base64Util;
-import cn.qfys521.bot.interactors.utils.MD5Util;
-import cn.qfys521.bot.interactors.utils.URLCodeUtil;
-import cn.qfys521.bot.interactors.utils.UnicodeUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import io.github.kloping.qqbot.api.message.MessageEvent;
+import io.github.kloping.qqbot.entities.ex.Markdown;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Objects;
+import java.net.URLEncoder;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.*;
+
+import static cn.qfys521.bot.BotApplication.getLogger;
 
 @SuppressWarnings("unused")
 @Author("qfys521")
 public class CoreInteractors {
+    @Usage({"/help", "/帮助", "/菜单"})
     @Command({"/help", "/帮助", "/菜单"})
-    @Usage("/help")
     public void helpMenu(MessageEvent<?, ?> messageEvent) {
-        ArrayList<Method> method = RegisterCommand.methodArrayList;
+//        ArrayList<Method> method = RegisterCommand.methodArrayList;
+//        StringBuilder stringBuilder = new StringBuilder();
+//        stringBuilder.append("指令菜单\n");
+//        for (Method methods : method) {
+//            Command command = methods.getAnnotation(Command.class);
+//            if (command != null) {
+//                if (command.inCommandList()) {
+//                    stringBuilder.append("\n")
+//                            .append(Arrays.toString(methods.getAnnotation(Command.class).value()));
+//                }
+//            }
+//        }
+//        messageEvent.send(stringBuilder.toString());
+        ArrayList<Method> commandMethods = RegisterCommand.methodArrayList;
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("指令菜单\n");
-        ArrayList<String> arrayList = new ArrayList<>();
-        for (Method methods : method) {
-            Command command = methods.getAnnotation(Command.class);
-            if (command != null) {
-                if (command.inCommandList()) {
-                    arrayList.addAll(Arrays.asList(methods.getAnnotation(Command.class).value()));
+        for (Method method : commandMethods){
+            Command command = method.getAnnotation(Command.class);
+            Usage usage = method.getAnnotation(Usage.class);
+            if (command != null){
+                StringBuilder cmdStr = new StringBuilder();
+                for (String cmd : command.value()){
+                    cmdStr.append(cmd).append(" ");
                 }
+                StringBuilder usageStr = new StringBuilder();
+
+                if (usage==null){
+                    usageStr.append("暂无用法。");
+                }else {
+                    for (String usa : usage.value()){
+                        usageStr.append(usa).append(" ");
+                    }
+                }
+                stringBuilder.append("命令: ").append(cmdStr).append("\n")
+                        .append("用法: ").append(usageStr);
             }
         }
-        Collections.sort(arrayList);
-        for (String s : arrayList) {
-            stringBuilder.append(s).append("\n");
-        }
-        messageEvent.send(stringBuilder.toString());
+        messageEvent.send("菜单: \n"+stringBuilder);
     }
+
 
     @Command({"/echo", "/复述", "/say", "/说"})
     @Usage({"/echo <Message>", "/say <Message>", "/说 <消息>", "/复述 <消息>"})
     public void echo(MessageEvent<?, ?> event) {
-        String oriMessage = MessageEventKt.getOriginalContent(event).split(" ")[2];
-        event.send(Objects.requireNonNullElse(oriMessage, "用法:/echo <内容>"));
+        var tmp = MessageEventKt.getOriginalContent(event).split(" ");
+        tmp[0] = tmp[1] = "";
+        String oriMessage = Arrays.toString(tmp);
+        event.send(oriMessage);
     }
 
     @Command({"/关于", "/about"})
@@ -64,6 +93,7 @@ public class CoreInteractors {
     public void about(MessageEvent<?, ?> messageEvent) {
         StringBuilder stringBuilder = new StringBuilder();
         String a = """
+                
                 -={千枫Bot}=-
                 为您带来一些Simple小功能
                 ======作者======
@@ -122,6 +152,21 @@ public class CoreInteractors {
         } else {
             event.send(new MD5Util().toMD5(oriMessage.split(" ")[2]));
         }
+    }
+    @Command({"/插件列表" , "/plugins" })
+    @Usage({"/插件列表" , "/plugins" })
+    public void plugin(MessageEvent<?,?> event){
+        StringBuilder stringBuilder = new StringBuilder();
+        for (JavaPlugin plugin:PluginManager.getJavaPlugins()){
+            stringBuilder.append("\n")
+                    .append(plugin.getPluginInfo().getName())
+                    .append(" : ")
+                    .append(plugin.getPluginInfo().getVersion())
+                    .append("(")
+                    .append(plugin.getPluginInfo().getVersionCode())
+                    .append(")");
+        }
+        event.send("当前插件有："+stringBuilder);
     }
 
     @Command("/Unicode")

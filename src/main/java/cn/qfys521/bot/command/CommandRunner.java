@@ -29,7 +29,7 @@ public class CommandRunner {
         @EventReceiver
         private void onEvent(GroupMessageEvent messageEvent) {
             ArrayList<Method> arrayList = RegisterCommand.methodArrayList;
-            getLogger().info("messageEvent.getMessage().get(0).toString().replaceFirst(\" \" , \"\").split(\" \")[0]\n" + messageEvent.getMessage().get(0).toString().replaceFirst(" ", "").split(" ")[0]);
+            //getLogger().info("messageEvent.getMessage().get(0).toString().replaceFirst(\" \" , \"\").split(\" \")[0]\n" + messageEvent.getMessage().get(0).toString().replaceFirst(" ", "").split(" ")[0]);
             for (Method method : arrayList) {
                 String[] strings = method.getAnnotation(Command.class).value();
                 for (String string : strings) {
@@ -43,7 +43,7 @@ public class CommandRunner {
                                 for (String string1 : method.getAnnotation(Usage.class).value()) {
                                     stringBuilder.append(string1).append("\n");
                                 }
-                                messageEvent.send(stringBuilder + e.getMessage());
+                                messageEvent.send(stringBuilder + e.toString());
                             } else {
                                 messageEvent.send("不正确的用法。");
                             }
@@ -72,7 +72,7 @@ public class CommandRunner {
                                 for (String string1 : method.getAnnotation(Usage.class).value()) {
                                     stringBuilder.append(string1).append("\n");
                                 }
-                                messageEvent.send(stringBuilder + e.getMessage());
+                                messageEvent.send(stringBuilder + e.toString());
                             } else {
                                 messageEvent.send("不正确的用法。");
                             }

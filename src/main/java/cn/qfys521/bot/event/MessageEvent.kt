@@ -13,10 +13,16 @@ import io.github.kloping.qqbot.api.message.MessageEvent
 
 
 val MessageEvent<*, *>.originalContent: String
-    get() = if (message[0].toString() == String.format(
-            "<@!%s>",
-            sender.bot.id
-        )
-    ) message[1].toString() else message[0].toString()
+    get() = getMessage(this)
 
+private fun getMessage(messageEvent: MessageEvent<*, *>): String {
+    val str: StringBuilder = StringBuilder()
+    for (i in messageEvent.message) {
+        if (messageEvent.message[0].toString() == String.format("<@!%s>", messageEvent.sender.bot.id))
+            continue
+        else
+            str.append(i.toString()).append(" ")
+    }
+    return str.toString()
+}
 

@@ -16,19 +16,27 @@ import cn.qfys521.bot.command.RegisterCommand;
 import cn.qfys521.bot.config.ConfigApplication;
 import cn.qfys521.bot.config.CoreConfigApplication;
 import cn.qfys521.bot.core.Bot;
+import cn.qfys521.bot.core.plugin.JavaPlugin;
+import cn.qfys521.bot.core.plugin.PluginManager;
 import cn.qfys521.bot.core.interactors.CoreInteractors;
-import cn.qfys521.bot.interactors.Interactor;
+import cn.qfys521.bot.core.loader.PluginLoader;
 import io.github.kloping.MySpringTool.interfaces.Logger;
 import io.github.kloping.qqbot.Starter;
 import lombok.Data;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Scanner;
+
+import static cn.qfys521.bot.exception.ThrowException.throwAs;
 
 public class BotApplication {
     public static Starter starter;
@@ -38,21 +46,15 @@ public class BotApplication {
 
         try {
             init();
-            ConfigApplication configApplication = new CoreConfigApplication(new LoginApplication(), "login.json");
-            LoginApplication loginApplication = (LoginApplication) configApplication.getDataOrFail();
-            System.out.printf("正在准备启动程序...\n");
-            regCmd();
-            File file = configInit();
-            starter = Bot.login(loginApplication.getAppid(), loginApplication.getToken(), loginApplication.getSecret());
-            starter.APPLICATION.logger.setOutFile(file.getAbsolutePath());
-            starter.registerListenerHost(CommandRunner.listenerHost);
-            starter.run();
+            start();
+            loadPlugin();
         } catch (Exception e) {
             System.err.println(e);
             System.exit(-1);
         }
 
     }
+
     @SuppressWarnings("all")
     private static File configInit() {
         File file = new File("log/" + new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + ".log");
@@ -70,10 +72,57 @@ public class BotApplication {
 
     }
 
+    private static void loadPlugin() {
+        var pluginMainClassList = readPlugin();
+        if (pluginMainClassList.isEmpty()) {
+            getLogger().info("插件列表为空,将跳过加载插件流程。");
+        }
+        for (Class<? extends JavaPlugin> cl : pluginMainClassList) {
+            try {
+                var pl = cl.newInstance();
+                pl.onLoad();
+                pl.onEnable();
+                PluginManager.getJavaPlugins().add(pl);
+            } catch (IllegalAccessException | InstantiationException e) {
+                throwAs(e);
+            }
+        }
+    }
+
+    private static ArrayList<Class<? extends JavaPlugin>> readPlugin() {
+        ArrayList<Class<? extends JavaPlugin>> classes = new ArrayList<>();
+
+            final var fileList = new File("./plugins").listFiles();
+            if (fileList != null) {
+                for (File f : fileList) {
+                    try {
+                        classes.add(PluginLoader.loadJar(f.getAbsolutePath()));
+                    } catch (IOException | ClassNotFoundException e) {
+                        throwAs(e);
+                    }
+                }
+            }
+        return classes;
+    }
+
+    private static void start() {
+        ConfigApplication configApplication = new CoreConfigApplication(new LoginApplication(), "login.json");
+        LoginApplication loginApplication = (LoginApplication) configApplication.getDataOrFail();
+        System.out.print("正在准备启动程序...\n");
+        registerCommand();
+        File file = configInit();
+        starter = Bot.login(loginApplication.getAppid(), loginApplication.getToken(), loginApplication.getSecret());
+        starter.APPLICATION.logger.setOutFile(file.getAbsolutePath());
+        starter.registerListenerHost(CommandRunner.listenerHost);
+        starter.run();
+    }
+
     private static void init() {
         Scanner scanner = new Scanner(System.in, Charset.defaultCharset());
         System.out.println(1);
         ConfigApplication configApplication = new CoreConfigApplication(new LoginApplication(), "login.json");
+        File pluginDir = new File("./plugins");
+        if (!pluginDir.exists()) pluginDir.mkdirs();
         LoginApplication loginApplication = (LoginApplication) configApplication.getDataOrFail();
         if ((Objects.equals(loginApplication.getAppid(), "")) || (loginApplication.getAppid() == null) ||
                 (Objects.equals(loginApplication.getToken(), "")) || (loginApplication.getSecret() == null) ||
@@ -95,9 +144,8 @@ public class BotApplication {
         }
     }
 
-    private static void regCmd() {
+    private static void registerCommand() {
         RegisterCommand.registerCommand(new Class[]{
-                Interactor.class,
                 CoreInteractors.class
         });
     }
