@@ -39,19 +39,43 @@ public class CoreInteractors {
     @Usage({"/help", "/帮助", "/菜单"})
     @Command({"/help", "/帮助", "/菜单"})
     public void helpMenu(MessageEvent<?, ?> messageEvent) {
-        ArrayList<Method> method = RegisterCommand.methodArrayList;
+//        ArrayList<Method> method = RegisterCommand.methodArrayList;
+//        StringBuilder stringBuilder = new StringBuilder();
+//        stringBuilder.append("指令菜单\n");
+//        for (Method methods : method) {
+//            Command command = methods.getAnnotation(Command.class);
+//            if (command != null) {
+//                if (command.inCommandList()) {
+//                    stringBuilder.append("\n")
+//                            .append(Arrays.toString(methods.getAnnotation(Command.class).value()));
+//                }
+//            }
+//        }
+//        messageEvent.send(stringBuilder.toString());
+        ArrayList<Method> commandMethods = RegisterCommand.methodArrayList;
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("指令菜单\n");
-        for (Method methods : method) {
-            Command command = methods.getAnnotation(Command.class);
-            if (command != null) {
-                if (command.inCommandList()) {
-                    stringBuilder.append("\n")
-                            .append(Arrays.toString(methods.getAnnotation(Command.class).value()));
+        for (Method method : commandMethods){
+            Command command = method.getAnnotation(Command.class);
+            Usage usage = method.getAnnotation(Usage.class);
+            if (command != null){
+                StringBuilder cmdStr = new StringBuilder();
+                for (String cmd : command.value()){
+                    cmdStr.append(cmd).append(" ");
                 }
+                StringBuilder usageStr = new StringBuilder();
+
+                if (usage==null){
+                    usageStr.append("暂无用法。");
+                }else {
+                    for (String usa : usage.value()){
+                        usageStr.append(usa).append(" ");
+                    }
+                }
+                stringBuilder.append("命令: ").append(cmdStr).append("\n")
+                        .append("用法: ").append(usageStr);
             }
         }
-        messageEvent.send(stringBuilder.toString());
+        messageEvent.send("菜单: \n"+stringBuilder);
     }
 
 
