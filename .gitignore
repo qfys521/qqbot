@@ -46,3 +46,5 @@ bin/
 /build
 ./.gitignore
 *.json
+/log
+/plugins
