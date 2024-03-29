@@ -10,7 +10,7 @@ plugins {
 apply from: rootProject.file('publish.gradle')
 
 group = 'cn.qfys521'
-version = '1.0.0'
+version = '1.0.1-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -55,4 +55,12 @@ shadowJar {
         attributes.put("Build-Script", "Gradle")
         attributes.put("Build-Script-Version", gradle.gradleVersion)
     }
+}
+
+publish.mustRunAfter {
+    shadowJar
+}
+publish.doLast {
+    delete rootProject.buildDir
+    println("流程结束")
 }
