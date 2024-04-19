@@ -70,18 +70,27 @@ public vote count(MessageEvent<?, ?> event) {
 
 ## 如何使用
 
-1,构建
+1,在开发中使用
+```groovy
+//添加maven仓库
+repositories {
+    maven{
+        name = "CodeThink-cn"
+        url = "https://nexus.codethink.cn/repository/maven-releases/"
+    }
+}
+//添加依赖
+dependencies {
+    compileOnly 'cn.qfys521:qqbot:1.0.0:all@jar'
+}
+```
+
+2,构建并运行
 
 ```shell
 # Linux
-chmod 777 -R ./
 ./gradlew shadowJar
 # Build in ./build/libs/qqbot-${version}-all.jar
-```
-
-2,运行
-
-```shell
 java -jar qqbot-${version}-all.jar
 # ${version} 填入你的版本
 ```
