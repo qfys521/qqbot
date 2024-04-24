@@ -27,11 +27,10 @@ import lombok.Data;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
 
 import static cn.qfys521.bot.exception.ThrowException.throwAs;
 
@@ -53,7 +52,7 @@ public class BotApplication {
     }
 
     @SuppressWarnings("all")
-    private static File configInit() {
+    private static File loggerFileInit() {
         File file = new File("log/" + new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + ".log");
         if (!file.getParentFile().exists()) {
             file.getParentFile().mkdirs();
@@ -76,29 +75,34 @@ public class BotApplication {
         }
         for (Class<? extends JavaPlugin> cl : pluginMainClassList) {
             try {
-                var pl = cl.newInstance();
+                var pl = cl.getDeclaredConstructor().newInstance();
                 pl.onLoad();
                 pl.onEnable();
                 PluginManager.getJavaPlugins().add(pl);
-            } catch (IllegalAccessException | InstantiationException e) {
+            } catch (IllegalAccessException
+                     | InstantiationException
+                     | NoSuchMethodException
+                     | InvocationTargetException e) {
+                getLogger().error("发生了异常，请报告给管理员。\n");
                 throwAs(e);
             }
         }
     }
 
+    @SuppressWarnings("unchecked")
     private static ArrayList<Class<? extends JavaPlugin>> readPlugin() {
         ArrayList<Class<? extends JavaPlugin>> classes = new ArrayList<>();
 
-            final var fileList = new File("./plugins").listFiles();
-            if (fileList != null) {
-                for (File f : fileList) {
-                    try {
-                        classes.add(PluginLoader.loadJar(f.getAbsolutePath()));
-                    } catch (IOException | ClassNotFoundException e) {
-                        throwAs(e);
-                    }
+        final var fileList = new File("./plugins").listFiles();
+        if (fileList != null) {
+            for (File f : fileList) {
+                try {
+                    classes.add(PluginLoader.loadJar(f.getAbsolutePath()));
+                } catch (IOException | ClassNotFoundException e) {
+                    throwAs(e);
                 }
             }
+        }
         return classes;
     }
 
@@ -107,32 +111,33 @@ public class BotApplication {
         LoginApplication loginApplication = (LoginApplication) configApplication.getDataOrFail();
         System.out.print("正在准备启动程序...\n");
         registerCommand();
-        File file = configInit();
-        starter = Bot.login(loginApplication.getAppid(), loginApplication.getToken(), loginApplication.getSecret());
+        File file = loggerFileInit();
+        starter = Bot.login(loginApplication.getAppId(), loginApplication.getToken(), loginApplication.getSecret());
         starter.APPLICATION.logger.setOutFile(file.getAbsolutePath());
         starter.registerListenerHost(CommandRunner.listenerHost);
         starter.run();
     }
 
+    @SuppressWarnings("all")
     private static void init() {
         Scanner scanner = new Scanner(System.in, Charset.defaultCharset());
-        System.out.println(1);
         ConfigApplication configApplication = new CoreConfigApplication(new LoginApplication(), "login.json");
         File pluginDir = new File("./plugins");
         if (!pluginDir.exists()) pluginDir.mkdirs();
         LoginApplication loginApplication = (LoginApplication) configApplication.getDataOrFail();
-        if ((Objects.equals(loginApplication.getAppid(), "")) || (loginApplication.getAppid() == null) ||
+        if ((Objects.equals(loginApplication.getAppId(), "")) || (loginApplication.getAppId() == null) ||
                 (Objects.equals(loginApplication.getToken(), "")) || (loginApplication.getSecret() == null) ||
-                (loginApplication.getSecret().equals("")) || (loginApplication.getToken() == null)) {
-            System.out.printf("啊这,,,您的登陆配置文件有误...\n");
-            System.out.printf("让我来为您启动引导程序吧!\n");
-            System.out.printf("请输入您Bot的Appid:\n");
+                (Objects.equals(loginApplication.getSecret(), "")) || (loginApplication.getToken() == null)) {
+            System.out.print("您的登陆配置文件有误或不存在\n");
+            System.out.print("让我来为您启动引导程序吧!\n");
+
+            System.out.print("请输入您Bot的AppId:\n");
             String appid = scanner.nextLine();//获取appid
-            System.out.printf("请输入您Bot的AppToken:\n");
+            System.out.print("请输入您Bot的AppToken:\n");
             String token = scanner.nextLine();//获取token
-            System.out.printf("最后一步,输入您的ClientSecret就可以啦!\n");
+            System.out.print("最后一步,输入您的ClientSecret就可以啦!\n");
             String secret = scanner.nextLine();//获取secret
-            loginApplication.setAppid(appid);
+            loginApplication.setAppId(appid);
             loginApplication.setToken(token);
             loginApplication.setSecret(secret);
             configApplication.saveOrFail();
@@ -160,7 +165,7 @@ public class BotApplication {
                 System.out.flush();
             }
         } catch (Exception e) {
-            // 异常处理代码
+            e.printStackTrace(System.out);
         }
     }
 
@@ -168,7 +173,7 @@ public class BotApplication {
 
 @Data
 class LoginApplication {
-    private String appid;
+    private String appId;
     private String token;
     private String secret;
 }

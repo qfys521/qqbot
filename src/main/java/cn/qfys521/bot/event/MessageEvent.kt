@@ -15,6 +15,7 @@ import io.github.kloping.qqbot.api.message.MessageEvent
 val MessageEvent<*, *>.originalContent: String
     get() = getMessage(this)
 
+
 private fun getMessage(messageEvent: MessageEvent<*, *>): String {
     val str: StringBuilder = StringBuilder()
     for (i in messageEvent.message) {

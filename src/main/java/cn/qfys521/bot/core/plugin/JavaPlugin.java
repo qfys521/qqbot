@@ -20,9 +20,10 @@ public abstract class JavaPlugin {
     }
 
     public abstract PluginInfo getPluginInfo();
+
     @Data
     @Deprecated
-    public class PluginInformation{
+    public class PluginInformation {
         String name;
         String[] authors;
         String author;
@@ -32,7 +33,7 @@ public abstract class JavaPlugin {
     }
 
     @Data
-    public class PluginInfo{
+    public class PluginInfo {
         String name;
         String[] authors;
         String author;
@@ -41,33 +42,41 @@ public abstract class JavaPlugin {
         Object[] other;
 
     }
-    public class PluginInfoBuilder{
+
+    public class PluginInfoBuilder {
         PluginInfo pi = new PluginInfo();
-        public PluginInfoBuilder name(String name){
+
+        public PluginInfoBuilder name(String name) {
             pi.setName(name);
             return this;
         }
-        public PluginInfoBuilder author(String author){
+
+        public PluginInfoBuilder author(String author) {
             pi.setAuthor(author);
             return this;
         }
-        public PluginInfoBuilder authors(String[] authors){
+
+        public PluginInfoBuilder authors(String[] authors) {
             pi.setAuthors(authors);
             return this;
         }
-        public PluginInfoBuilder version(String version){
+
+        public PluginInfoBuilder version(String version) {
             pi.setVersion(version);
             return this;
         }
-        public PluginInfoBuilder versionCode(int versionCode){
+
+        public PluginInfoBuilder versionCode(int versionCode) {
             pi.setVersionCode(versionCode);
             return this;
         }
-        public PluginInfoBuilder setOther(Object[] other){
+
+        public PluginInfoBuilder setOther(Object[] other) {
             pi.setOther(other);
             return this;
         }
-        public PluginInfo build(){
+
+        public PluginInfo build() {
             return pi;
         }
     }

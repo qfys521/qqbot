@@ -45,7 +45,7 @@ public class PluginLoader {
      * @return
      * @throws MalformedURLException
      */
-    private static final ClassLoader getClassLoader(String jarFilePath) throws MalformedURLException {
+    public static final ClassLoader getClassLoader(String jarFilePath) throws MalformedURLException {
         File jarFile = new File(jarFilePath);
         if (!jarFile.exists()) {
             return null;
@@ -63,7 +63,7 @@ public class PluginLoader {
      * @return
      * @throws IOException
      */
-    private static Properties getProperties(ClassLoader classLoader, String propertiesName) throws IOException {
+    public static Properties getProperties(ClassLoader classLoader, String propertiesName) throws IOException {
         InputStream propertiesStream = classLoader.getResourceAsStream(propertiesName);
         Properties properties = new Properties();
         properties.load(propertiesStream);
@@ -78,7 +78,7 @@ public class PluginLoader {
      * @return
      * @throws ClassNotFoundException
      */
-    private static Class loadClass(ClassLoader classLoader, String className) throws ClassNotFoundException {
+    public static Class loadClass(ClassLoader classLoader, String className) throws ClassNotFoundException {
         Class<?> clazz = classLoader.loadClass(className);
         return clazz;
     }

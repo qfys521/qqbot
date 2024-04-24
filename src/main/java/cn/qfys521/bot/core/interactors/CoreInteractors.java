@@ -54,20 +54,20 @@ public class CoreInteractors {
 //        messageEvent.send(stringBuilder.toString());
         ArrayList<Method> commandMethods = RegisterCommand.methodArrayList;
         StringBuilder stringBuilder = new StringBuilder();
-        for (Method method : commandMethods){
+        for (Method method : commandMethods) {
             Command command = method.getAnnotation(Command.class);
             Usage usage = method.getAnnotation(Usage.class);
-            if (command != null){
+            if (command != null) {
                 StringBuilder cmdStr = new StringBuilder();
-                for (String cmd : command.value()){
+                for (String cmd : command.value()) {
                     cmdStr.append(cmd).append(" ");
                 }
                 StringBuilder usageStr = new StringBuilder();
 
-                if (usage==null){
+                if (usage == null) {
                     usageStr.append("暂无用法。");
-                }else {
-                    for (String usa : usage.value()){
+                } else {
+                    for (String usa : usage.value()) {
                         usageStr.append(usa).append(" ");
                     }
                 }
@@ -75,7 +75,7 @@ public class CoreInteractors {
                         .append("用法: ").append(usageStr);
             }
         }
-        messageEvent.send("菜单: \n"+stringBuilder);
+        messageEvent.send("菜单: \n" + stringBuilder);
     }
 
 
@@ -93,7 +93,7 @@ public class CoreInteractors {
     public void about(MessageEvent<?, ?> messageEvent) {
         StringBuilder stringBuilder = new StringBuilder();
         String a = """
-                
+                                
                 -={千枫Bot}=-
                 为您带来一些Simple小功能
                 ======作者======
@@ -153,11 +153,12 @@ public class CoreInteractors {
             event.send(new MD5Util().toMD5(oriMessage.split(" ")[2]));
         }
     }
-    @Command({"/插件列表" , "/plugins" })
-    @Usage({"/插件列表" , "/plugins" })
-    public void plugin(MessageEvent<?,?> event){
+
+    @Command({"/插件列表", "/plugins"})
+    @Usage({"/插件列表", "/plugins"})
+    public void plugin(MessageEvent<?, ?> event) {
         StringBuilder stringBuilder = new StringBuilder();
-        for (JavaPlugin plugin:PluginManager.getJavaPlugins()){
+        for (JavaPlugin plugin : PluginManager.getJavaPlugins()) {
             stringBuilder.append("\n")
                     .append(plugin.getPluginInfo().getName())
                     .append(" : ")
@@ -166,7 +167,7 @@ public class CoreInteractors {
                     .append(plugin.getPluginInfo().getVersionCode())
                     .append(")");
         }
-        event.send("当前插件有："+stringBuilder);
+        event.send("当前插件有：" + stringBuilder);
     }
 
     @Command("/Unicode")
