@@ -51,7 +51,7 @@ public class CommandRunner {
         private void onFriend(FriendMessageEvent messageEvent){
             handleMessage(messageEvent);
         }
-        private void handleMessage(MessageV2Event<?, ?> messageEvent) {
+        private void handleMessage(MessageV2Event messageEvent) {
 
             String message = messageEvent.getMessage().get(0).toString().replaceFirst(" ", "").split(" ")[0];
             Method method = commandMap.get(message);
