@@ -39,13 +39,13 @@ public class CommandRunner {
         }
 
         @EventReceiver
-        private void onEvent(GroupMessageEvent messageEvent) {
+        private void onGroup(GroupMessageEvent messageEvent) {
             handleMessage(messageEvent);
         }
 
         @EventReceiver
-        private void onMessages(BaseMessageChannelReceiveEvent messageEvent) {
-            handleMessage(messageEvent);
+        private void onChannel(BaseMessageChannelReceiveEvent messageEvent) {
+            handleMessages(messageEvent);
         }
         
         @EventReceiver
