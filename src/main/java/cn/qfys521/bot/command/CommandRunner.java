@@ -76,7 +76,7 @@ public class CommandRunner {
         private void onChannelMessage(MessageEvent messageEvent){
             handleMessage(messageEvent);
         }
-*/
+
         @EventReceiver
         private void handlesMessage(MessageEvent messageEvent) {
 
@@ -92,9 +92,10 @@ public class CommandRunner {
                 }
             }
         }
+    */
 
         @EventReceiver
-        private void handleMessage(MessageV2Event messageEvent) {
+        private void handleMessage(MessageEvent messageEvent) {
 
             String message = messageEvent.getMessage().get(0).toString().replaceFirst(" ", "").split(" ")[0];
             Method method = commandMap.get(message);
