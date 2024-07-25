@@ -20,7 +20,7 @@ import cn.qfys521.bot.core.plugin.JavaPlugin;
 import cn.qfys521.bot.core.plugin.PluginManager;
 import cn.qfys521.bot.core.interactors.CoreInteractors;
 import cn.qfys521.bot.core.loader.PluginLoader;
-import io.github.kloping.MySpringTool.interfaces.Logger;
+import io.github.kloping.spt.interfaces.Logger;
 import io.github.kloping.qqbot.Starter;
 import lombok.Data;
 
