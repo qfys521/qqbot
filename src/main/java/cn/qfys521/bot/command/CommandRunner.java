@@ -37,7 +37,7 @@ public class CommandRunner {
             }
             commandMap = Collections.unmodifiableMap(map);
         }
-
+/*
         @EventReceiver
         private void onGroup(GroupMessageEvent messageEvent) {
             handleMessage(messageEvent);
@@ -66,7 +66,33 @@ public class CommandRunner {
                 }
             }
         }
+    */
+       @EventReceiver
+        private void onQQMessage(MessageEvent messageEvent){
+            handlesMessage(messageEvent);
+        }
+
+        @EventReceiver
+        private void onChannelMessage(MessageEvent messageEvent){
+            handleMessage(messageEvent);
+        }
+
         private void handlesMessage(MessageEvent messageEvent) {
+
+            String message = messageEvent.getMessage().get(0).toString().replaceFirst(" ", "").split(" ")[0];
+            Method method = commandMap.get(message);
+            if (method != null) {
+                try {
+                    method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), messageEvent);
+                } catch (Exception e) {
+                    String usage = getUsage(method);
+                    messageEvent.send(usage != null ? usage : "不正确的用法。" + e.toString());
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        private void handleMessage(MessageV2Event messageEvent) {
 
             String message = messageEvent.getMessage().get(0).toString().replaceFirst(" ", "").split(" ")[0];
             Method method = commandMap.get(message);
