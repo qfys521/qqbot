@@ -82,8 +82,8 @@ public class CommandRunner {
         //@EventReceiver
         private void handlesMessage(MessageEvent messageEvent) {
 
-            String message = messageEvent.getMessage();
-           messageEvent.send(Arrays.toString(message)+"\naaa");
+            String message = messageEvent.getMessage().get(0);
+           messageEvent.send(message+"\naaa");
             /*Method method = commandMap.get(message);
             if (method != null) {
                 try {
