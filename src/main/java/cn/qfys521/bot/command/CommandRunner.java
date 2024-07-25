@@ -14,6 +14,7 @@ import cn.qfys521.bot.annotation.Command;
 import cn.qfys521.bot.annotation.Usage;
 import io.github.kloping.qqbot.api.message.MessageEvent;
 import io.github.kloping.qqbot.api.v2.GroupMessageEvent;
+import io.github.kloping.qqbot.api.v2.FriendMessageEvent;
 import io.github.kloping.qqbot.impl.ListenerHost;
 import io.github.kloping.qqbot.impl.message.BaseMessageChannelReceiveEvent;
 
@@ -45,7 +46,11 @@ public class CommandRunner {
         private void onMessage(BaseMessageChannelReceiveEvent messageEvent) {
             handleMessage(messageEvent);
         }
-
+        
+        @EventReceiver
+        private void onFriend(FriendMessageEvent messageEvent){
+            handleMessage(messageEvent);
+        }
         private void handleMessage(MessageEvent<?, ?> messageEvent) {
 
             String message = messageEvent.getMessage().get(0).toString().replaceFirst(" ", "").split(" ")[0];
