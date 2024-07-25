@@ -15,6 +15,7 @@ import cn.qfys521.bot.annotation.Usage;
 import io.github.kloping.qqbot.api.v2.MessageV2Event;
 import io.github.kloping.qqbot.api.v2.GroupMessageEvent;
 import io.github.kloping.qqbot.api.v2.FriendMessageEvent;
+import io.github.kloping.qqbot.api.message.MessageEvent;
 import io.github.kloping.qqbot.impl.ListenerHost;
 import io.github.kloping.qqbot.impl.message.BaseMessageChannelReceiveEvent;
 
@@ -43,7 +44,7 @@ public class CommandRunner {
         }
 
         @EventReceiver
-        private void onMessage(BaseMessageChannelReceiveEvent messageEvent) {
+        private void onMessages(BaseMessageChannelReceiveEvent messageEvent) {
             handleMessage(messageEvent);
         }
         
@@ -52,6 +53,20 @@ public class CommandRunner {
             handleMessage(messageEvent);
         }
         private void handleMessage(MessageV2Event messageEvent) {
+
+            String message = messageEvent.getMessage().get(0).toString().replaceFirst(" ", "").split(" ")[0];
+            Method method = commandMap.get(message);
+            if (method != null) {
+                try {
+                    method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), messageEvent);
+                } catch (Exception e) {
+                    String usage = getUsage(method);
+                    messageEvent.send(usage != null ? usage : "不正确的用法。" + e.toString());
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        private void handlesMessage(MessageEvent messageEvent) {
 
             String message = messageEvent.getMessage().get(0).toString().replaceFirst(" ", "").split(" ")[0];
             Method method = commandMap.get(message);
