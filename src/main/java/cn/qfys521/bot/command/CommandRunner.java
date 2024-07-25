@@ -79,7 +79,7 @@ public class CommandRunner {
             handleMessage(messageEvent);
         }
 */
-        @EventReceiver
+        //@EventReceiver
         private void handlesMessage(MessageEvent messageEvent) {
 
             String message = messageEvent.getMessage().get(0).toString().replaceFirst(" ", "").split(" ")[1];
