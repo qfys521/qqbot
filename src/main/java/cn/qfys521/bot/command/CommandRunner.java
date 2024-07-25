@@ -45,7 +45,7 @@ public class CommandRunner {
 
         @EventReceiver
         private void onChannel(BaseMessageChannelReceiveEvent messageEvent) {
-            handleMessages(messageEvent);
+            handlesMessage(messageEvent);
         }
         
         @EventReceiver
