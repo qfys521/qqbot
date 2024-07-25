@@ -66,7 +66,7 @@ public class CommandRunner {
                 }
             }
         }
-    */
+    *
        @EventReceiver
         private void onQQMessage(MessageEvent messageEvent){
             handlesMessage(messageEvent);
@@ -76,7 +76,8 @@ public class CommandRunner {
         private void onChannelMessage(MessageEvent messageEvent){
             handleMessage(messageEvent);
         }
-
+*/
+        @EventReceiver
         private void handlesMessage(MessageEvent messageEvent) {
 
             String message = messageEvent.getMessage().get(0).toString().replaceFirst(" ", "").split(" ")[0];
@@ -92,6 +93,7 @@ public class CommandRunner {
             }
         }
 
+        @EventReceiver
         private void handleMessage(MessageV2Event messageEvent) {
 
             String message = messageEvent.getMessage().get(0).toString().replaceFirst(" ", "").split(" ")[0];
