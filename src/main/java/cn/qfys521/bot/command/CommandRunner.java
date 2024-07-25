@@ -82,7 +82,7 @@ public class CommandRunner {
         //@EventReceiver
         private void handlesMessage(MessageEvent messageEvent) {
 
-            String message = messageEvent.getMessage().get(0).toString().replaceFirst(" ", "").split(" ")[1];
+            String message = messageEvent.getMessage().get(0).toString().replaceFirst(" ", "").split(" ")[2];
            messageEvent.send(message+"\naaa");
             Method method = commandMap.get(message);
             if (method != null) {
