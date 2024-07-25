@@ -1,7 +1,8 @@
 # QQBot
 
 --- 
-使用QQ官方api,java-sdk使用`kloping/qqpd-bot-java`
+使用QQ官方api,
+java-sdk使用`kloping/qqpd-bot-java`
 > 请注意:本项目仍然在***早期开发***中,如有bug,欢迎填写`issue`或者发起`Pull request`.
 
 <details> <summary>目录</summary>
