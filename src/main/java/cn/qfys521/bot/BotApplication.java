@@ -72,6 +72,7 @@ public class BotApplication {
         var pluginMainClassList = readPlugin();
         if (pluginMainClassList.isEmpty()) {
             getLogger().info("插件列表为空,将跳过加载插件流程。");
+            return;
         }
         for (Class<? extends JavaPlugin> cl : pluginMainClassList) {
             try {
