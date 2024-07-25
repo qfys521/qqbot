@@ -56,7 +56,7 @@ shadowJar {
         attributes.put("Build-Script-Version", gradle.gradleVersion)
     }
 }
-
+/*
 publish.mustRunAfter {
     shadowJar
 }
@@ -64,3 +64,4 @@ publish.doLast {
     delete rootProject.buildDir
     println("流程结束")
 }
+*/
