@@ -71,7 +71,7 @@ public class CoreInteractors {
                         usageStr.append(usa).append(" ");
                     }
                 }
-                stringBuilder.append("命令: ").append(cmdStr).append("\n")
+                stringBuilder.append("\n").append("命令: ").append(cmdStr).append("\n")
                         .append("用法: ").append(usageStr);
             }
         }
