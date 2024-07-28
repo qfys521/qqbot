@@ -72,7 +72,7 @@ public class CoreInteractors {
                     }
                 }
                 stringBuilder.append("\n").append("命令: ").append(cmdStr).append("\n")
-                        .append("用法: ").append(usageStr);
+                        .append("用法: ").append(usageStr).append("\n");
             }
         }
         messageEvent.send("菜单: \n" + stringBuilder);
