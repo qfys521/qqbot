@@ -73,9 +73,9 @@ public class BotApplication {
         for (Class<? extends JavaPlugin> cl : pluginMainClassList) {
             try {
                 var pl = cl.getDeclaredConstructor().newInstance();
+                PluginManager.getJavaPlugins().add(pl);
                 pl.onLoad();
                 pl.onEnable();
-                PluginManager.getJavaPlugins().add(pl);
             } catch (IllegalAccessException
                      | InstantiationException
                      | NoSuchMethodException
