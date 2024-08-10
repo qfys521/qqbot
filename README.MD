@@ -1,6 +1,8 @@
 # QQBot
 
 --- 
+
+🚧***项目正在维护中，请勿使用***🚧
 使用QQ官方api,   
 java-sdk使用`kloping/qqpd-bot-java`
 > [!IMPORTANT]
