@@ -43,10 +43,14 @@ public class CommandRunner {
             handleMessage(messageEvent);
         }
 */
+/*
         @EventReceiver
         private void onChannel(BaseMessageChannelReceiveEvent messageEvent) {
             handlesMessage(messageEvent);
         }
+        
+*/        
+        
  /*       
         @EventReceiver
         private void onFriend(FriendMessageEvent messageEvent){
@@ -79,12 +83,12 @@ public class CommandRunner {
             handleMessage(messageEvent);
         }
 */
-        //@EventReceiver
-        private void handlesMessage(MessageEvent messageEvent) {
+        @EventReceiver
+        private void handlesMessage(BaseMessageChannelReceiveEvent messageEvent) {
 
         var message = messageEvent.getMessage().get(1).toString().split(" ")[1];
             Method method = commandMap.get(message);
-            if (method != null) {
+            if (method == null) return;
                 try {
                     method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), messageEvent);
                 } catch (Exception e) {
@@ -92,7 +96,7 @@ public class CommandRunner {
                     messageEvent.send(usage != null ? usage : "不正确的用法。" + e.toString());
                     throw new RuntimeException(e);
                 }
-            }
+            
             
         }
     
@@ -102,7 +106,7 @@ public class CommandRunner {
 
             String message = messageEvent.getMessage().get(0).toString().replaceFirst(" ", "").split(" ")[0];
             Method method = commandMap.get(message);
-            if (method != null) {
+            if (method == null) return;
                 try {
                     method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), messageEvent);
                 } catch (Exception e) {
@@ -110,7 +114,7 @@ public class CommandRunner {
                     messageEvent.send(usage != null ? usage : "不正确的用法。" + e.toString());
                     throw new RuntimeException(e);
                 }
-            }
+            
         }
 
         private String getUsage(Method method) {
