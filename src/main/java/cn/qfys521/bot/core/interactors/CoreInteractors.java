@@ -481,7 +481,7 @@ public class CoreInteractors {
             coin.updateLastDate(event.getSender().getOpenid());
             configApplication.saveOrFail();
         } else {
-            event.send("您已经签到过啦,请明天再试吧!\n" + "上一次签到时间:" + new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(coin.getLastDate().get(event.getSender().getOpenid())) + "\n您的Coin数量:" + coin.getCoinCount(event.getSender().getOpenid()));
+            event.send("您已经签到过啦,请明天再试吧!\n" + "上一次签到时间:" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(coin.getLastDate().get(event.getSender().getOpenid())) + "\n您的Coin数量:" + coin.getCoinCount(event.getSender().getOpenid()));
         }
         configApplication.saveOrFail();
     }
