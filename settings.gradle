@@ -2,9 +2,14 @@ pluginManagement {
     plugins {
         id 'org.jetbrains.kotlin.jvm' version '1.9.22'
     }
+    repositories {
+        maven { url 'https://mirrors.cloud.tencent.com/nexus/repository/maven-public/' }
+        mavenCentral()
+        gradlePluginPortal()
+        mavenLocal()
+    }
 }
 plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '0.5.0'
 }
 rootProject.name = 'qqbot'
-

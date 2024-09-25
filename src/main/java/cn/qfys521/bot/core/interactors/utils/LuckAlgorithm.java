@@ -10,6 +10,8 @@
 
 package cn.qfys521.bot.core.interactors.interactors.utils;
 
+import cn.qfys521.bot.SendEmail;
+
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
@@ -17,6 +19,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
+
+import static cn.qfys521.bot.BotApplication.cause;
 
 public class LuckAlgorithm {
 
@@ -145,6 +149,7 @@ public class LuckAlgorithm {
 //			System.out.println(code);
             return code;
         } catch (IllegalArgumentException ex) {
+            SendEmail.sendEmail(ex.toString() ,cause(ex.getStackTrace()));
             // base64解码错误
             return -1;
         } catch (NoSuchAlgorithmException | InvalidKeyException ex) {

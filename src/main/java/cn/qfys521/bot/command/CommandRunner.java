@@ -10,6 +10,7 @@
 
 package cn.qfys521.bot.command;
 
+import cn.qfys521.bot.SendEmail;
 import cn.qfys521.bot.annotation.Command;
 import cn.qfys521.bot.annotation.Usage;
 import io.github.kloping.qqbot.api.v2.MessageV2Event;
@@ -21,6 +22,8 @@ import io.github.kloping.qqbot.impl.message.BaseMessageChannelReceiveEvent;
 
 import java.lang.reflect.Method;
 import java.util.*;
+
+import static cn.qfys521.bot.BotApplication.cause;
 
 
 @SuppressWarnings("unused")
@@ -37,84 +40,35 @@ public class CommandRunner {
             }
             commandMap = Collections.unmodifiableMap(map);
         }
-/*
-        @EventReceiver
-        private void onGroup(GroupMessageEvent messageEvent) {
-            handleMessage(messageEvent);
-        }
-*/
-/*
-        @EventReceiver
-        private void onChannel(BaseMessageChannelReceiveEvent messageEvent) {
-            handlesMessage(messageEvent);
-        }
-        
-*/        
-        
- /*       
-        @EventReceiver
-        private void onFriend(FriendMessageEvent messageEvent){
-            handleMessage(messageEvent);
-        }
-    */
-        /*
-        private void handleMessage(MessageV2Event messageEvent) {
 
-            String message = messageEvent.getMessage().get(0).toString().replaceFirst(" ", "").split(" ")[0];
-            Method method = commandMap.get(message);
-            if (method != null) {
-                try {
-                    method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), messageEvent);
-                } catch (Exception e) {
-                    String usage = getUsage(method);
-                    messageEvent.send(usage != null ? usage : "不正确的用法。" + e.toString());
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-    
-       @EventReceiver
-        private void onQQMessage(MessageEvent messageEvent){
-            handlesMessage(messageEvent);
-        }
-
-        @EventReceiver
-        private void onChannelMessage(MessageEvent messageEvent){
-            handleMessage(messageEvent);
-        }
-*/
         @EventReceiver
         private void handlesMessage(BaseMessageChannelReceiveEvent messageEvent) {
 
-        var message = messageEvent.getMessage().get(1).toString().split(" ")[1];
-            Method method = commandMap.get(message);
-            if (method == null) return;
-                try {
-                    method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), messageEvent);
-                } catch (Exception e) {
-                    String usage = getUsage(method);
-                    messageEvent.send(usage != null ? usage : "不正确的用法。" + e.toString());
-                    throw new RuntimeException(e);
-                }
-            
-            
+            var message = messageEvent.getMessage().get(1).toString().split(" ")[1];
+            sendMessage(messageEvent, message);
+
+
         }
-    
+
 
         @EventReceiver
         private void handleMessage(MessageEvent messageEvent) {
 
             String message = messageEvent.getMessage().get(0).toString().replaceFirst(" ", "").split(" ")[0];
+            sendMessage(messageEvent, message);
+
+        }
+
+        private void sendMessage(MessageEvent messageEvent, String message) {
             Method method = commandMap.get(message);
             if (method == null) return;
-                try {
-                    method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), messageEvent);
-                } catch (Exception e) {
-                    String usage = getUsage(method);
-                    messageEvent.send(usage != null ? usage : "不正确的用法。" + e.toString());
-                    throw new RuntimeException(e);
-                }
-            
+            try {
+                method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), messageEvent);
+            } catch (Exception e) {
+                String usage = getUsage(method);
+                messageEvent.send(usage != null ? usage : "不正确的用法。" + e.toString());
+                SendEmail.sendEmail(e.toString() ,cause(e.getStackTrace()));
+            }
         }
 
         private String getUsage(Method method) {

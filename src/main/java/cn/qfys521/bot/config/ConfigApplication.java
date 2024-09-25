@@ -11,6 +11,7 @@
 package cn.qfys521.bot.config;
 
 
+import cn.qfys521.bot.SendEmail;
 import cn.qfys521.bot.exception.ConfigException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
@@ -19,6 +20,8 @@ import lombok.SneakyThrows;
 
 import java.io.File;
 import java.io.IOException;
+
+import static cn.qfys521.bot.BotApplication.cause;
 
 public abstract class ConfigApplication {
     Object t;
@@ -36,7 +39,7 @@ public abstract class ConfigApplication {
         try {
             objectMapper.writeValue(file, t);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            SendEmail.sendEmail(e.toString() ,cause(e.getStackTrace()));
         }
     }
 
@@ -46,6 +49,7 @@ public abstract class ConfigApplication {
             return t = objectMapper.readValue(file, t.getClass());
         } catch (IOException e) {
             if (e instanceof MismatchedInputException) {
+                SendEmail.sendEmail(e.toString() ,cause(e.getStackTrace()));
                 throw new ConfigException("Config file is empty or invalid", e);
             } else {
                 throw new ConfigException("Failed to read config file", e);
@@ -64,7 +68,7 @@ public abstract class ConfigApplication {
                 file.createNewFile();
                 objectMapper.writeValue(file, t);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                SendEmail.sendEmail(e.toString() ,cause(e.getStackTrace()));
             }
         }
     }

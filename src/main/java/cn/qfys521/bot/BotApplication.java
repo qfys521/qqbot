@@ -55,61 +55,18 @@ public class BotApplication {
             start();
             loadPlugin();
         } catch (Exception e) {
-// 收件人电子邮箱
-        String to = "qfys520@vip.qq.com";
-
-        // 发件人电子邮箱
-        String from = "notice@codethink.cn";
-
-        // 指定发送邮件的主机为 localhost
-        String host = "smtp.feishu.cn";
-
-        // 获取系统属性
-        Properties props = System.getProperties();
-
-        // 设置邮件服务器
-        props.setProperty("mail.smtp.host", host);
-        props.put("mail.smtp.auth", "true");
-       /* props.setProperty("mail.user", "notice");
-        props.setProperty("mail.password", "NaCHHMTcS9xnSDue");
-        */
-        // 获取默认session对象
-        Session session = Session.getDefaultInstance(props,new Authenticator(){
-        public PasswordAuthentication getPasswordAuthentication()
-        {
-         return new PasswordAuthentication("notice@codethink.cn", "NaCHHMTcS9xnSDue"); //发件人邮件用户名、授权码
-        }
-       });
-
-        try {
-            // 创建默认的 MimeMessage 对象
-            MimeMessage message = new MimeMessage(session);
-
-            // Set From: 头部头字段
-            message.setFrom(new InternetAddress(from));
-
-            // Set To: 头部头字段
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
-
-            // Set Subject: 头部头字段
-            message.setSubject("This is the Subject Line!");
-
-            // 设置消息体
-            message.setText(e.toString());
-
-            // 发送消息
-            Transport.send(message);
-            System.out.println("Sent message successfully....");
-            System.exit(-1);
-        } catch (MessagingException mex) {
-            mex.printStackTrace();
-            System.exit(-1);
-        }
+            SendEmail.sendEmail(e.toString() ,cause(e.getStackTrace()));
         
         }
 
     }
-
+    public static String cause(StackTraceElement[] e) {
+        StringBuilder sb = new StringBuilder();
+        for (StackTraceElement ste : e) {
+            sb.append(ste.toString()).append("\n");
+        }
+        return sb.toString();
+    }
     @SuppressWarnings("all")
     private static File loggerFileInit() {
         File file = new File("log/" + new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + ".log");
@@ -120,7 +77,7 @@ public class BotApplication {
             try {
                 file.createNewFile();
             } catch (IOException e) {
-                e.printStackTrace();
+                SendEmail.sendEmail(e.toString() ,cause(e.getStackTrace()));
             }
         }
         return file;
@@ -140,7 +97,7 @@ public class BotApplication {
                      | NoSuchMethodException
                      | InvocationTargetException e) {
                 getLogger().error("发生了异常，请报告给管理员。\n");
-                throwAs(e);
+                SendEmail.sendEmail(e.toString() ,cause(e.getStackTrace()));
             }
         }
     }
@@ -155,7 +112,7 @@ public class BotApplication {
                 try {
                     classes.add(PluginLoader.loadJar(f.getAbsolutePath()));
                 } catch (IOException | ClassNotFoundException e) {
-                    throwAs(e);
+                    SendEmail.sendEmail(e.toString() ,cause(e.getStackTrace()));
                 }
             }
         }
@@ -221,7 +178,7 @@ public class BotApplication {
                 System.out.flush();
             }
         } catch (Exception e) {
-            e.printStackTrace(System.out);
+            SendEmail.sendEmail(e.toString() ,cause(e.getStackTrace()));
         }
     }
 

@@ -61,7 +61,7 @@ public class BotApplication {
             try {
                 file.createNewFile();
             } catch (IOException e) {
-                e.printStackTrace();
+                SendEmail.sendEmail(e.toString() ,cause(e.getStackTrace()));
             }
         }
         return file;
@@ -81,7 +81,7 @@ public class BotApplication {
                      | NoSuchMethodException
                      | InvocationTargetException e) {
                 getLogger().error("发生了异常，请报告给管理员。\n");
-                throwAs(e);
+                SendEmail.sendEmail(e.toString() ,cause(e.getStackTrace()));
             }
         }
     }
@@ -96,7 +96,7 @@ public class BotApplication {
                 try {
                     classes.add(PluginLoader.loadJar(f.getAbsolutePath()));
                 } catch (IOException | ClassNotFoundException e) {
-                    throwAs(e);
+                    SendEmail.sendEmail(e.toString() ,cause(e.getStackTrace()));
                 }
             }
         }
@@ -162,7 +162,7 @@ public class BotApplication {
                 System.out.flush();
             }
         } catch (Exception e) {
-            e.printStackTrace(System.out);
+            SendEmail.sendEmail(e.toString() ,cause(e.getStackTrace()));
         }
     }
 

@@ -10,6 +10,7 @@
 
 package cn.qfys521.bot.core.interactors;
 
+import cn.qfys521.bot.SendEmail;
 import cn.qfys521.bot.annotation.Author;
 import cn.qfys521.bot.annotation.Command;
 import cn.qfys521.bot.annotation.Usage;
@@ -59,15 +60,13 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
 
-import static cn.qfys521.bot.BotApplication.getLogger;
-import static cn.qfys521.bot.BotApplication.starter;
 import java.lang.reflect.Method;
 import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
 
-import static cn.qfys521.bot.BotApplication.getLogger;
+import static cn.qfys521.bot.BotApplication.*;
 
 @SuppressWarnings("unused")
 @Author("qfys521")
@@ -345,6 +344,7 @@ public class CoreInteractors {
         try {
             event.send(get.getUrlData("https://api.oick.cn/yulu/api.php"));
         } catch (Exception e) {
+            SendEmail.sendEmail(e.toString() ,cause(e.getStackTrace()));
             event.send("请联系管理员."
                     + e.getMessage()
             );
@@ -401,6 +401,7 @@ public class CoreInteractors {
         try {
             event.send(get.getUrlData("https://api.oick.cn/dog/api.php"));
         } catch (Exception e) {
+            SendEmail.sendEmail(e.toString() ,cause(e.getStackTrace()));
             event.send("请联系管理员."
                     + e.getMessage()
             );
@@ -413,6 +414,7 @@ public class CoreInteractors {
         try {
             event.send(get.getUrlData("https://api.oick.cn/dutang/api.php"));
         } catch (Exception e) {
+            SendEmail.sendEmail(e.toString() ,cause(e.getStackTrace()));
             event.send("请联系管理员."
                     + e.getMessage()
             );
@@ -425,6 +427,7 @@ public class CoreInteractors {
         try {
             event.send(get.getUrlData("https://api.oick.cn/yiyan/api.php"));
         } catch (Exception e) {
+            SendEmail.sendEmail(e.toString() ,cause(e.getStackTrace()));
             event.send("请联系管理员."
                     + e.getMessage()
             );
@@ -504,6 +507,7 @@ public class CoreInteractors {
            // event.send(b.getId() + "\n" + b.getId() + "\n" + b.getClass());
             event.send("PlayerName:" + PlayerName + "\n" + "离线uuid为: " + offline.replaceAll("-", "") + "\n" + "正版uuid为:" + online);
         } catch (Exception e) {
+            SendEmail.sendEmail(e.toString() ,cause(e.getStackTrace()));
             event.send("PlayerName:" + PlayerName + "\n" + "离线uuid为: " + offline.replaceAll("-", "") + "\n" + "啊这。。。。该玩家没有正版呢(悲)");
         }
     }
@@ -538,6 +542,7 @@ public class CoreInteractors {
                 sb.append(");" + "\n");
             }
         } catch (Exception e) {
+            SendEmail.sendEmail(e.toString() ,cause(e.getStackTrace()));
             throw new Exception(e);
         }
         sb.append("\n");
@@ -560,6 +565,7 @@ public class CoreInteractors {
                 sb.append(");" + "\n");
             }
         } catch (Exception e) {
+            SendEmail.sendEmail(e.toString() ,cause(e.getStackTrace()));
             throw new Exception(e);
         }
         sb.append("\n");
@@ -577,6 +583,7 @@ public class CoreInteractors {
             }
 
         } catch (Exception e) {
+            SendEmail.sendEmail(e.toString() ,cause(e.getStackTrace()));
             throw new Exception(e);
         }
         sb.append(" } " + "\n");
