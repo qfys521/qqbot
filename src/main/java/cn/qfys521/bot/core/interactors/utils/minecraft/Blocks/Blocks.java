@@ -8,17 +8,14 @@
  * Coding moderately is beneficial to the brain, but overindulgence in coding is harmful to the body. Arrange your time reasonably and enjoy a happy life.
  */
 
-package cn.qfys521.bot.core.interactors.interactors.utils.minecraft.Blocks;
+package cn.qfys521.bot.core.interactors.utils.minecraft.Blocks;
 
 import java.util.HashMap;
 
 /**
  * 未来可能会实现set()，现在已咕咕咕 <br/>
  *
- * @author qfys521 <br/>
- * private String BlockName; <br/>
- * private String BlockChineseName; <br/>
- * <br/>
+ * @author qfys521 <br/> private String BlockName; <br/> private String BlockChineseName; <br/> <br/>
  * 注:未来请新添加get()和set()，此版本的get(Str)请保留作为向下兼容使用。 <br/>
  */
 @SuppressWarnings("ALL")
@@ -29,7 +26,9 @@ public class Blocks {
      * getBlockName()
      *
      * @param BlockChineseName 方块中文名<br/>
+     *
      * @return 方块名或者null <br/>
+     *
      * @author qfys521 <br/>
      */
     public String getBlockName(String BlockChineseName) {
@@ -940,7 +939,9 @@ public class Blocks {
      * getBlockChineseName()
      *
      * @param BlockName 方块名<br/>
+     *
      * @return 方块中文名或者null <br/>
+     *
      * @author qfys521
      */
     public String getBlockChineseName(String BlockName) {

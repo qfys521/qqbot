@@ -8,7 +8,7 @@
  * Coding moderately is beneficial to the brain, but overindulgence in coding is harmful to the body. Arrange your time reasonably and enjoy a happy life.
  */
 
-package cn.qfys521.bot.core.interactors.interactors.utils.minecraft.Effects;
+package cn.qfys521.bot.core.interactors.utils.minecraft.Effects;
 
 
 import java.util.HashMap;
@@ -16,10 +16,7 @@ import java.util.HashMap;
 /**
  * 未来可能会实现set()，现在已咕咕咕 <br/>
  *
- * @author qfys521 <br/>
- * private String EffectName; <br/>
- * private String EffectChineseName; <br/>
- * <br/>
+ * @author qfys521 <br/> private String EffectName; <br/> private String EffectChineseName; <br/> <br/>
  * 注:未来请新添加get()和set()，此版本的get(Str)请保留作为向下兼容使用。 <br/>
  */
 public class Effects {
@@ -29,7 +26,9 @@ public class Effects {
      * getEffectName()
      *
      * @param EffectChineseName Effect中文名<br/>
+     *
      * @return EffectName或者null <br/>
+     *
      * @author qfys521
      */
     public String getEffectName(String EffectChineseName) {
@@ -79,7 +78,9 @@ public class Effects {
      * getEffectChineseName()
      *
      * @param EffectName EffectName<br/>
+     *
      * @return Effect中文名或者null <br/>
+     *
      * @author qfys521
      */
     public String getEffectChineseName(String EffectName) {

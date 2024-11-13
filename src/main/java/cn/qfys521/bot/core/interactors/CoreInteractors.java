@@ -10,67 +10,42 @@
 
 package cn.qfys521.bot.core.interactors;
 
+import static cn.qfys521.bot.BotApplication.cause;
 import cn.qfys521.bot.SendEmail;
 import cn.qfys521.bot.annotation.Author;
 import cn.qfys521.bot.annotation.Command;
 import cn.qfys521.bot.annotation.Usage;
 import cn.qfys521.bot.command.RegisterCommand;
+import cn.qfys521.bot.config.ConfigApplication;
+import cn.qfys521.bot.config.DataConfigApplication;
+import cn.qfys521.bot.core.interactors.config.Coin;
+import cn.qfys521.bot.core.interactors.config.GetId;
+import cn.qfys521.bot.core.interactors.config.Jrrp;
 import cn.qfys521.bot.core.interactors.utils.*;
+import cn.qfys521.bot.core.interactors.utils.minecraft.algorithm.FuzzyMatcher;
+import cn.qfys521.bot.core.interactors.utils.minecraft.algorithm.PrepopulatedList;
+import cn.qfys521.bot.core.interactors.utils.minecraft.all;
 import cn.qfys521.bot.core.plugin.JavaPlugin;
 import cn.qfys521.bot.core.plugin.PluginManager;
 import cn.qfys521.bot.event.MessageEventKt;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import io.github.kloping.qqbot.api.message.MessageEvent;
-import io.github.kloping.qqbot.entities.ex.Markdown;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import cn.qfys521.bot.annotation.Author;
-import cn.qfys521.bot.annotation.Command;
-import cn.qfys521.bot.annotation.Usage;
-import cn.qfys521.bot.config.ConfigApplication;
-import cn.qfys521.bot.config.DataConfigApplication;
-import cn.qfys521.bot.event.MessageEventKt;
-import cn.qfys521.bot.core.interactors.interactors.config.Coin;
-import cn.qfys521.bot.core.interactors.interactors.config.GetId;
-import cn.qfys521.bot.core.interactors.interactors.config.Jrrp;
-import cn.qfys521.bot.core.interactors.interactors.utils.*;
-import cn.qfys521.bot.core.interactors.interactors.utils.minecraft.algorithm.FuzzyMatcher;
-import cn.qfys521.bot.core.interactors.interactors.utils.minecraft.algorithm.PrepopulatedList;
-import cn.qfys521.bot.core.interactors.interactors.utils.minecraft.all;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import cn.qfys521.util.RandomUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.kloping.qqbot.api.message.MessageEvent;
-import io.github.kloping.qqbot.entities.ex.Image;
-import io.github.kloping.qqbot.entities.ex.Keyboard;
-import io.github.kloping.qqbot.entities.ex.Markdown;
-import io.github.kloping.qqbot.entities.ex.MessageAsyncBuilder;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.*;
-
-import java.lang.reflect.Method;
-import java.net.URLEncoder;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.*;
-
-import static cn.qfys521.bot.BotApplication.*;
+import java.util.concurrent.ThreadLocalRandom;
+import org.quartz.simpl.RAMJobStore;
 
 @SuppressWarnings("unused")
 @Author("qfys521")
 public class CoreInteractors {
+    final HttpUtils get = new HttpUtils();
+    StringBuilder sb = new StringBuilder();
+
     @Usage({"/help"})
     @Command({"/help"})
     public void helpMenu(MessageEvent<?, ?> messageEvent) {
@@ -94,29 +69,28 @@ public class CoreInteractors {
             Usage usage = method.getAnnotation(Usage.class);
             if (command == null) continue;
             if (!command.inCommandList()) continue;
-                StringBuilder cmdStr = new StringBuilder();
-                for (String cmd : command.value()) {
-                    cmdStr.append("\n").append(cmd).append(" ");
-                }
-                StringBuilder usageStr = new StringBuilder();
+            StringBuilder cmdStr = new StringBuilder();
+            for (String cmd : command.value()) {
+                cmdStr.append("\n").append(cmd).append(" ");
+            }
+            StringBuilder usageStr = new StringBuilder();
 
-                if (usage == null) {
-                    usageStr.append("暂无用法。");
-                } else {
-                    for (String usa : usage.value()) {
-                        usageStr.append("\n").append(usa).append(" ");
-                    }
+            if (usage == null) {
+                usageStr.append("暂无用法。");
+            } else {
+                for (String usa : usage.value()) {
+                    usageStr.append("\n").append(usa).append(" ");
                 }
-                stringBuilder.append("\n").append("命令: ").append(cmdStr).append("\n")
-                        .append("用法: ").append(usageStr).append("\n");
-            
+            }
+            stringBuilder.append("\n").append("命令: ").append(cmdStr).append("\n")
+                    .append("用法: ").append(usageStr).append("\n");
+
         }
         messageEvent.send("菜单: \n" + stringBuilder);
     }
 
-
     @Command({"/echo", "/复述", "/say", "/说"})
-    @Usage({"/echo <Message>", "/say <Message>", "/说 <消息>", "/复述 <消息>" , "*** 该命令为开发者命令，普通用户正常情况下无法遇见该命令，还请不要随意使用。"})
+    @Usage({"/echo <Message>", "/say <Message>", "/说 <消息>", "/复述 <消息>", "*** 该命令为开发者命令，普通用户正常情况下无法遇见该命令，还请不要随意使用。"})
     public void echo(MessageEvent<?, ?> event) {
         var tmp = MessageEventKt.getOriginalContent(event).split(" ");
         tmp[0] = tmp[1] = "";
@@ -129,7 +103,7 @@ public class CoreInteractors {
     public void about(MessageEvent<?, ?> messageEvent) {
         StringBuilder stringBuilder = new StringBuilder();
         String a = """
-                                
+                
                 -={千枫Bot}=-
                 为您带来一些Simple小功能
                 ======作者======
@@ -284,8 +258,6 @@ public class CoreInteractors {
             }
         }
     }
-    final HttpUtils get = new HttpUtils();
-    StringBuilder sb = new StringBuilder();
 
     @Command(value = {"/重置jrrp", "/resetJrrp"}, inCommandList = false)
     @Usage({"/重置jrrp", "/resetJrrp"})
@@ -316,7 +288,7 @@ public class CoreInteractors {
             event.send("您的人品值为:100!100!100!");
         } else if (code == 0) {
             event.send(
-                    """
+                            """
                             请悉知:本插件绝对不会有任何对于任何用户有负面性的针对的影响。
                             本插件jrrp算法采用加密算法，且没有任何的set()方法。
                             在使用本插件时，请确保您有足够的心态，倘若因为该结果的原因导致您做出包括但不限于以下行为时:
@@ -344,7 +316,7 @@ public class CoreInteractors {
         try {
             event.send(get.getUrlData("https://api.oick.cn/yulu/api.php"));
         } catch (Exception e) {
-            SendEmail.sendEmail(e.toString() ,cause(e.getStackTrace()));
+            SendEmail.sendEmail(e.toString(), cause(e.getStackTrace()));
             event.send("请联系管理员."
                     + e.getMessage()
             );
@@ -401,7 +373,7 @@ public class CoreInteractors {
         try {
             event.send(get.getUrlData("https://api.oick.cn/dog/api.php"));
         } catch (Exception e) {
-            SendEmail.sendEmail(e.toString() ,cause(e.getStackTrace()));
+            SendEmail.sendEmail(e.toString(), cause(e.getStackTrace()));
             event.send("请联系管理员."
                     + e.getMessage()
             );
@@ -414,7 +386,7 @@ public class CoreInteractors {
         try {
             event.send(get.getUrlData("https://api.oick.cn/dutang/api.php"));
         } catch (Exception e) {
-            SendEmail.sendEmail(e.toString() ,cause(e.getStackTrace()));
+            SendEmail.sendEmail(e.toString(), cause(e.getStackTrace()));
             event.send("请联系管理员."
                     + e.getMessage()
             );
@@ -427,7 +399,7 @@ public class CoreInteractors {
         try {
             event.send(get.getUrlData("https://api.oick.cn/yiyan/api.php"));
         } catch (Exception e) {
-            SendEmail.sendEmail(e.toString() ,cause(e.getStackTrace()));
+            SendEmail.sendEmail(e.toString(), cause(e.getStackTrace()));
             event.send("请联系管理员."
                     + e.getMessage()
             );
@@ -476,7 +448,7 @@ public class CoreInteractors {
         Coin coin = (Coin) configApplication.getDataOrFail();
         if (!coin.getLastSign(event.getSender().getOpenid())) {
             int c = Math.abs(new Random().nextInt(100));
-            coin.addLastCoin(event.getSender().getOpenid(), c);
+            coin.addCoin(event.getSender().getOpenid(), c);
             event.send("签到成功!\n"
                     + "当前时间为" + new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date()) + "\n"
                     + "您本次签到,获得了" + c + "枚Coin,您当前一共拥有" + coin.getCoinCount(event.getSender().getOpenid()) + "枚Coin."
@@ -499,15 +471,15 @@ public class CoreInteractors {
         String offline = object.toString();
         try {
             String request = get.getUrlData("https://api.mojang.com/users/profiles/minecraft/" + PlayerName);
-           // event.send(request);
+            // event.send(request);
 
             ObjectMapper objectMapper = new ObjectMapper();
             GetId b = objectMapper.readValue(request, GetId.class);
             String online = b.getId();
-           // event.send(b.getId() + "\n" + b.getId() + "\n" + b.getClass());
+            // event.send(b.getId() + "\n" + b.getId() + "\n" + b.getClass());
             event.send("PlayerName:" + PlayerName + "\n" + "离线uuid为: " + offline.replaceAll("-", "") + "\n" + "正版uuid为:" + online);
         } catch (Exception e) {
-            SendEmail.sendEmail(e.toString() ,cause(e.getStackTrace()));
+            SendEmail.sendEmail(e.toString(), cause(e.getStackTrace()));
             event.send("PlayerName:" + PlayerName + "\n" + "离线uuid为: " + offline.replaceAll("-", "") + "\n" + "啊这。。。。该玩家没有正版呢(悲)");
         }
     }
@@ -542,7 +514,7 @@ public class CoreInteractors {
                 sb.append(");" + "\n");
             }
         } catch (Exception e) {
-            SendEmail.sendEmail(e.toString() ,cause(e.getStackTrace()));
+            SendEmail.sendEmail(e.toString(), cause(e.getStackTrace()));
             throw new Exception(e);
         }
         sb.append("\n");
@@ -565,7 +537,7 @@ public class CoreInteractors {
                 sb.append(");" + "\n");
             }
         } catch (Exception e) {
-            SendEmail.sendEmail(e.toString() ,cause(e.getStackTrace()));
+            SendEmail.sendEmail(e.toString(), cause(e.getStackTrace()));
             throw new Exception(e);
         }
         sb.append("\n");
@@ -583,7 +555,7 @@ public class CoreInteractors {
             }
 
         } catch (Exception e) {
-            SendEmail.sendEmail(e.toString() ,cause(e.getStackTrace()));
+            SendEmail.sendEmail(e.toString(), cause(e.getStackTrace()));
             throw new Exception(e);
         }
         sb.append(" } " + "\n");
@@ -611,22 +583,22 @@ public class CoreInteractors {
 
     @Usage("/友情链接")
     @Command("/友情链接")
-    public void friendLink(MessageEvent event){
-        ConfigApplication configApplication = new DataConfigApplication(new FriendLink() , "friendLink.json");
-        FriendLink friendLink = (FriendLink)configApplication.getDataOrFail();
+    public void friendLink(MessageEvent event) {
+        ConfigApplication configApplication = new DataConfigApplication(new FriendLink(), "friendLink.json");
+        FriendLink friendLink = (FriendLink) configApplication.getDataOrFail();
         var arrayList = friendLink.getLinks();
-        if (arrayList==null){
+        if (arrayList == null) {
             event.send("暂未添加友情链接");
             return;
         }
         StringBuilder stringBuilder = new StringBuilder();
-        for (var list:arrayList){
+        for (var list : arrayList) {
             stringBuilder.append("\n").append(list.getName()).append("(").append(list.getOfficialGroup()).append(")");
         }
         event.send(stringBuilder.toString());
     }
 
-    @Command(value = "/添加友情链接" , inCommandList = false)
+    @Command(value = "/添加友情链接", inCommandList = false)
     @Usage("/添加友情链接 <名称> <群号>")
     public void addFriendLink(MessageEvent event) {
         ConfigApplication configApplication = new DataConfigApplication(new FriendLink(), "friendLink.json");
@@ -647,6 +619,68 @@ public class CoreInteractors {
         // 保存更新后的 FriendLink 对象到配置文件
         configApplication.saveOrFail();
         event.send("已添加成功");
+    }
+
+    @Command("/抽奖")
+    @Usage("/抽奖 <金币数量>")
+    public void chouJiang(MessageEvent event) {
+        ConfigApplication configApplication = new DataConfigApplication(new Coin() , "coin.json");
+        Coin c = (Coin) configApplication.getDataOrFail();
+        String[] tmp = MessageEventKt.getOriginalContent(event).trim().split(" ");
+        if (! (tmp.length == 2)) {
+            return;
+        }
+        if (Long.parseLong(tmp[1]) >= Integer.MAX_VALUE){
+            event.send("投入的数量不可以大于2147483647哦~！");
+            return;
+        }
+        int count = Integer.parseInt(tmp[1]);
+
+        if (c.getCoinCount(event.getSender().getOpenid()) < count) {
+            event.send("您没有那么多金币qwq");
+            return;
+        }
+        if (count<=0) {
+            event.send("抽奖投入的数量不可以小于0哦~");
+            return;
+        }
+        int r = RandomUtil.randomInt(2*count);
+
+        if (c.getCoinCount(event.getSender().getOpenid()) <0){
+            event.send("您当前的金币余额不足QWQ，金币可以从每日签到中获取哦~");
+            return;
+        }
+
+        c.addCoin(event.getSender().getOpenid() , -1*count);
+        if (RandomUtil.randomLong(Long.MAX_VALUE) == 39){
+            c.addCoin(event.getSender().getOpenid() , 393939);
+            event.send("?");
+            event.send("当您看到这句话的时候，您或许不知道发生了什么。");
+            event.send("您以极其罕见的概率抽中了393939枚金币,他的概率为: ***1/Long.MAX_VALUE***。");
+            event.send("那么，我祝您在未来的日子里依旧可以好运，孩子。");
+            return;
+        }else {
+            c.addCoin(event.getSender().getOpenid(), r);
+        }
+
+        if (c.getCoinCount(event.getSender().getOpenid()) < 0){
+            event.send("太惨啦，您输光光啦~");
+        }
+        event.send("您抽中了"+r+"枚金币，您当前剩余金币数量为: "+c.getCoinCount(event.getSender().getOpenid()));
+        configApplication.saveOrFail();
+
+    }
+
+    @Command("/我的信息")
+    public void AboutMe(MessageEvent event) {
+        ConfigApplication configApplication = new DataConfigApplication(new Coin() , "coin.json");
+        Coin c = (Coin) configApplication.getDataOrFail();
+        event.send(
+        "您的Openid为: "+event.getSender().getOpenid()
+        +"\n您的Id为: "+event.getSender().getId()
+                +"\n您的金币数量为: "+c.getCoinCount(event.getSender().getOpenid())
+
+        );
     }
 }
 

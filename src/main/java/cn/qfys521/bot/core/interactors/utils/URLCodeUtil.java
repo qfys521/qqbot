@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 public class URLCodeUtil {
     /**
      * @param obj obj
+     *
      * @return URLEncode
      */
     public String URLCodeEncode(Object obj) {
@@ -30,6 +31,7 @@ public class URLCodeUtil {
 
     /**
      * @param obj obj
+     *
      * @return URLDecode
      */
     public String URLCodeDecode(Object obj) {

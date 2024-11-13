@@ -21,6 +21,7 @@ import java.security.NoSuchAlgorithmException;
 public class MD5Util {
     /**
      * @param obj obj
+     *
      * @return new BigInteger(1, digest).toString(16)
      */
     public String toMD5(Object obj) {

@@ -27,7 +27,9 @@ public class PluginLoader {
      * 加载jar文件
      *
      * @param jarFilePath jar文件路径
+     *
      * @return
+     *
      * @throws IOException
      * @throws ClassNotFoundException
      */
@@ -42,7 +44,9 @@ public class PluginLoader {
      * 获得ClassLoader
      *
      * @param jarFilePath jar文件路径
+     *
      * @return
+     *
      * @throws MalformedURLException
      */
     public static final ClassLoader getClassLoader(String jarFilePath) throws MalformedURLException {
@@ -60,7 +64,9 @@ public class PluginLoader {
      *
      * @param classLoader    classLoader
      * @param propertiesName 文件名称
+     *
      * @return
+     *
      * @throws IOException
      */
     public static Properties getProperties(ClassLoader classLoader, String propertiesName) throws IOException {
@@ -75,7 +81,9 @@ public class PluginLoader {
      *
      * @param classLoader classLoader
      * @param className   全类名
+     *
      * @return
+     *
      * @throws ClassNotFoundException
      */
     public static Class loadClass(ClassLoader classLoader, String className) throws ClassNotFoundException {

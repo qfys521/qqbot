@@ -13,7 +13,6 @@ package cn.qfys521.bot.command;
 
 import cn.qfys521.bot.annotation.Author;
 import cn.qfys521.bot.annotation.Command;
-
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 

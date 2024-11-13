@@ -1,13 +1,12 @@
 package cn.qfys521.bot;
 
+import java.util.Properties;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.util.Properties;
 
 public class SendEmail {
     /**
-     *
      * @param subject 标题
      * @param content 正文
      */
@@ -56,10 +55,8 @@ public class SendEmail {
             // 发送消息
             Transport.send(message);
             System.out.println("Sent message successfully....");
-            System.exit(-1);
         } catch (MessagingException mex) {
             BotApplication.getLogger().error(mex.getMessage());
-            System.exit(-1);
         }
     }
 }

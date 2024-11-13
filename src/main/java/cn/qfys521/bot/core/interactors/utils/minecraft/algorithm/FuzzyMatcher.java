@@ -8,7 +8,7 @@
  * Coding moderately is beneficial to the brain, but overindulgence in coding is harmful to the body. Arrange your time reasonably and enjoy a happy life.
  */
 
-package cn.qfys521.bot.core.interactors.interactors.utils.minecraft.algorithm;
+package cn.qfys521.bot.core.interactors.utils.minecraft.algorithm;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -38,6 +38,7 @@ public class FuzzyMatcher {
 
     /**
      * @param threshold threshold
+     *
      * @return this
      */
     @SuppressWarnings("all")
@@ -57,6 +58,7 @@ public class FuzzyMatcher {
 
     /**
      * @param limit limit
+     *
      * @return this
      */
     public FuzzyMatcher setLimit(int limit) {
@@ -74,6 +76,7 @@ public class FuzzyMatcher {
 
     /**
      * @param str str
+     *
      * @return matches
      */
     public List<Entry<String, Float>> find(String str) {

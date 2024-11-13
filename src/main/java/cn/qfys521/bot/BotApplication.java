@@ -13,41 +13,33 @@ package cn.qfys521.bot;
 
 import cn.qfys521.bot.command.CommandRunner;
 import cn.qfys521.bot.command.RegisterCommand;
-import cn.qfys521.bot.config.ConfigApplication;
 import cn.qfys521.bot.config.CoreConfigApplication;
 import cn.qfys521.bot.core.Bot;
-import cn.qfys521.bot.core.plugin.JavaPlugin;
-import cn.qfys521.bot.core.plugin.PluginManager;
 import cn.qfys521.bot.core.interactors.CoreInteractors;
 import cn.qfys521.bot.core.loader.PluginLoader;
-import io.github.kloping.spt.interfaces.Logger;
+import cn.qfys521.bot.core.plugin.JavaPlugin;
+import cn.qfys521.bot.core.plugin.PluginManager;
 import io.github.kloping.qqbot.Starter;
-import lombok.Data;
-
-import java.util.Properties;
-
-import javax.mail.Authenticator;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+import io.github.kloping.qqbot.network.AuthAndHeartbeat;
+import io.github.kloping.qqbot.network.WebSocketListener;
+import io.github.kloping.spt.annotations.AutoStand;
+import io.github.kloping.spt.interfaces.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Objects;
+import java.util.Scanner;
+import lombok.Data;
+import org.java_websocket.client.WebSocketClient;
 
-
-import static cn.qfys521.bot.exception.ThrowException.throwAs;
 
 public class BotApplication {
     public static Starter starter;
 
-    @SuppressWarnings("all")
     public static void main(String[] args) {
 
         try {
@@ -55,11 +47,12 @@ public class BotApplication {
             start();
             loadPlugin();
         } catch (Exception e) {
-            SendEmail.sendEmail(e.toString() ,cause(e.getStackTrace()));
-        
+            SendEmail.sendEmail(e.toString(), cause(e.getStackTrace()));
+
         }
 
     }
+
     public static String cause(StackTraceElement[] e) {
         StringBuilder sb = new StringBuilder();
         for (StackTraceElement ste : e) {
@@ -67,6 +60,7 @@ public class BotApplication {
         }
         return sb.toString();
     }
+
     @SuppressWarnings("all")
     private static File loggerFileInit() {
         File file = new File("log/" + new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + ".log");
@@ -77,7 +71,7 @@ public class BotApplication {
             try {
                 file.createNewFile();
             } catch (IOException e) {
-                SendEmail.sendEmail(e.toString() ,cause(e.getStackTrace()));
+                SendEmail.sendEmail(e.toString(), cause(e.getStackTrace()));
             }
         }
         return file;
@@ -97,7 +91,7 @@ public class BotApplication {
                      | NoSuchMethodException
                      | InvocationTargetException e) {
                 getLogger().error("发生了异常，请报告给管理员。\n");
-                SendEmail.sendEmail(e.toString() ,cause(e.getStackTrace()));
+                SendEmail.sendEmail(e.toString(), cause(e.getStackTrace()));
             }
         }
     }
@@ -112,7 +106,7 @@ public class BotApplication {
                 try {
                     classes.add(PluginLoader.loadJar(f.getAbsolutePath()));
                 } catch (IOException | ClassNotFoundException e) {
-                    SendEmail.sendEmail(e.toString() ,cause(e.getStackTrace()));
+                    SendEmail.sendEmail(e.toString(), cause(e.getStackTrace()));
                 }
             }
         }
@@ -120,7 +114,7 @@ public class BotApplication {
     }
 
     private static void start() {
-        ConfigApplication configApplication = new CoreConfigApplication(new LoginApplication(), "login.json");
+        CoreConfigApplication configApplication = new CoreConfigApplication(new LoginApplication(), "login.json");
         LoginApplication loginApplication = (LoginApplication) configApplication.getDataOrFail();
         System.out.print("正在准备启动程序...\n");
         registerCommand();
@@ -134,7 +128,7 @@ public class BotApplication {
     @SuppressWarnings("all")
     private static void init() {
         Scanner scanner = new Scanner(System.in, Charset.defaultCharset());
-        ConfigApplication configApplication = new CoreConfigApplication(new LoginApplication(), "login.json");
+        CoreConfigApplication configApplication = new CoreConfigApplication(new LoginApplication(), "login.json");
         File pluginDir = new File("./plugins");
         if (!pluginDir.exists()) pluginDir.mkdirs();
         LoginApplication loginApplication = (LoginApplication) configApplication.getDataOrFail();
@@ -178,7 +172,7 @@ public class BotApplication {
                 System.out.flush();
             }
         } catch (Exception e) {
-            SendEmail.sendEmail(e.toString() ,cause(e.getStackTrace()));
+            SendEmail.sendEmail(e.toString(), cause(e.getStackTrace()));
         }
     }
 
@@ -189,4 +183,19 @@ class LoginApplication {
     private String appId;
     private String token;
     private String secret;
+}
+
+class AutoReConnect implements WebSocketListener {
+    @AutoStand
+    AuthAndHeartbeat authAndHeartbeat;
+
+    @AutoStand
+    Starter starter;
+
+    @Override
+    public boolean onError(WebSocketClient client, Exception e) {
+        //尝试重连
+        authAndHeartbeat.identifyConnect(0, client);
+        return WebSocketListener.super.onError(client, e);
+    }
 }

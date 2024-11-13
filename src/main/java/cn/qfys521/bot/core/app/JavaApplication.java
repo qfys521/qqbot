@@ -10,10 +10,9 @@
 
 package cn.qfys521.bot.core.app;
 
-import lombok.Data;
-
 import java.util.ArrayList;
 import java.util.Arrays;
+import lombok.Data;
 
 public abstract class JavaApplication {
     public abstract void onEnable();

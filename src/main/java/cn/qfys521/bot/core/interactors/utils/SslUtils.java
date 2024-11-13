@@ -8,10 +8,10 @@
  * Coding moderately is beneficial to the brain, but overindulgence in coding is harmful to the body. Arrange your time reasonably and enjoy a happy life.
  */
 
-package cn.qfys521.bot.core.interactors.interactors.utils;
+package cn.qfys521.bot.core.interactors.utils;
 
-import javax.net.ssl.*;
 import java.security.cert.X509Certificate;
+import javax.net.ssl.*;
 
 /**
  * java 信任SSL证书

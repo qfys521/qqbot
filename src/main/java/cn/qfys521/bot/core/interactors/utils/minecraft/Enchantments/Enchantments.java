@@ -8,17 +8,14 @@
  * Coding moderately is beneficial to the brain, but overindulgence in coding is harmful to the body. Arrange your time reasonably and enjoy a happy life.
  */
 
-package cn.qfys521.bot.core.interactors.interactors.utils.minecraft.Enchantments;
+package cn.qfys521.bot.core.interactors.utils.minecraft.Enchantments;
 
 import java.util.HashMap;
 
 /**
  * 未来可能会实现set()，现在已咕咕咕 <br/>
  *
- * @author qfys521 <br/>
- * private String EnchantmentName; <br/>
- * private String EnchantmentChineseName; <br/>
- * <br/>
+ * @author qfys521 <br/> private String EnchantmentName; <br/> private String EnchantmentChineseName; <br/> <br/>
  * 注:未来请新添加get()和set()，此版本的get(Str)请保留作为向下兼容使用。 <br/>
  */
 public class Enchantments {
@@ -28,7 +25,9 @@ public class Enchantments {
      * getEnchantmentName()
      *
      * @param EnchantmentChineseName Enchantment中文名<br/>
+     *
      * @return EnchantmentName或者null <br/>
+     *
      * @author qfys521
      */
     public String getEnchantmentName(String EnchantmentChineseName) {
@@ -83,7 +82,9 @@ public class Enchantments {
      * getEnchantmentChineseName()
      *
      * @param EnchantmentName EnchantmentName<br/>
+     *
      * @return Enchantment中文名或者null <br/>
+     *
      * @author qfys521
      */
     public String getEnchantmentChineseName(String EnchantmentName) {

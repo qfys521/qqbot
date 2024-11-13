@@ -8,19 +8,17 @@
  * Coding moderately is beneficial to the brain, but overindulgence in coding is harmful to the body. Arrange your time reasonably and enjoy a happy life.
  */
 
-package cn.qfys521.bot.core.interactors.interactors.utils;
+package cn.qfys521.bot.core.interactors.utils;
 
-import okhttp3.*;
-
-import javax.net.ssl.HostnameVerifier;
+import static cn.qfys521.bot.core.interactors.utils.SslUtils.trustAllHttpsCertificates;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
-
-import static cn.qfys521.bot.core.interactors.interactors.utils.SslUtils.trustAllHttpsCertificates;
+import javax.net.ssl.HostnameVerifier;
+import okhttp3.*;
 
 /**
  * @author qfys521
@@ -33,7 +31,9 @@ public class HttpUtils {
 
     /**
      * @param url url
+     *
      * @return sb.toString()
+     *
      * @throws IOException IOE
      */
     public String getUrlData(String url) throws Exception {
@@ -63,7 +63,9 @@ public class HttpUtils {
     /**
      * @param Url      Url
      * @param PostData PostData
+     *
      * @return sb.toString()
+     *
      * @throws IOException IOE
      */
     @SuppressWarnings("all")

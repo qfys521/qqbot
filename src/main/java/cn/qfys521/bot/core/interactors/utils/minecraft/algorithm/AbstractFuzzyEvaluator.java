@@ -8,7 +8,7 @@
  * Coding moderately is beneficial to the brain, but overindulgence in coding is harmful to the body. Arrange your time reasonably and enjoy a happy life.
  */
 
-package cn.qfys521.bot.core.interactors.interactors.utils.minecraft.algorithm;
+package cn.qfys521.bot.core.interactors.utils.minecraft.algorithm;
 
 /**
  * @author qfys521
@@ -82,18 +82,21 @@ public abstract class AbstractFuzzyEvaluator {
     /**
      * @param src  src
      * @param dest dest
+     *
      * @return boolean
      */
     protected abstract boolean isCharEqual(char src, char dest);
 
     /**
      * @param ch ch
+     *
      * @return float
      */
     protected abstract float getInsertionDistance(char ch);
 
     /**
      * @param ch ch
+     *
      * @return float
      */
     protected abstract float getDeletionDistance(char ch);
@@ -101,6 +104,7 @@ public abstract class AbstractFuzzyEvaluator {
     /**
      * @param src  src
      * @param dest dest
+     *
      * @return float
      */
     protected abstract float getReplacementDistance(char src, char dest);
@@ -108,6 +112,7 @@ public abstract class AbstractFuzzyEvaluator {
     /**
      * @param head head
      * @param tail tail
+     *
      * @return float
      */
     protected abstract float getTranspositionDistance(char head, char tail);

@@ -8,17 +8,14 @@
  * Coding moderately is beneficial to the brain, but overindulgence in coding is harmful to the body. Arrange your time reasonably and enjoy a happy life.
  */
 
-package cn.qfys521.bot.core.interactors.interactors.utils.minecraft.Entitys;
+package cn.qfys521.bot.core.interactors.utils.minecraft.Entitys;
 
 import java.util.HashMap;
 
 /**
  * 未来可能会实现set()，现在已咕咕咕 <br/>
  *
- * @author qfys521 <br/>
- * private String EntityName; <br/>
- * private String EntityChineseName; <br/>
- * <br/>
+ * @author qfys521 <br/> private String EntityName; <br/> private String EntityChineseName; <br/> <br/>
  * 注:未来请新添加get()和set()，此版本的get(Str)请保留作为向下兼容使用。 <br/>
  */
 @SuppressWarnings("OverwrittenKey")
@@ -29,7 +26,9 @@ public class Entitys {
      * getEntityName()
      *
      * @param EntityChineseName Entity中文名<br/>
+     *
      * @return EntityName或者null <br/>
+     *
      * @author qfys521
      */
     public String getEntityName(String EntityChineseName) {
@@ -156,7 +155,9 @@ public class Entitys {
      * getEntityChineseName()
      *
      * @param EntityName EntityName<br/>
+     *
      * @return Entity中文名或者null <br/>
+     *
      * @author qfys521
      */
     public String getEntityChineseName(String EntityName) {

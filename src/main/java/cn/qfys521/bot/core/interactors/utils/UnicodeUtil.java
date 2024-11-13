@@ -21,6 +21,7 @@ public class UnicodeUtil {
 
     /**
      * @param string string
+     *
      * @return unicodeBytes
      */
     public String unicodeEncode(String string) {
@@ -38,6 +39,7 @@ public class UnicodeUtil {
 
     /**
      * @param string string
+     *
      * @return string
      */
     public String unicodeDecode(String string) {

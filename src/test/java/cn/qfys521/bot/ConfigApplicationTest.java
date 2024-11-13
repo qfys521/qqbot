@@ -17,9 +17,6 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
-import java.io.Console;
-import java.util.Scanner;
-
 public class ConfigApplicationTest {
     @SneakyThrows
     @Test

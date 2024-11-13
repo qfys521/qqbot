@@ -8,19 +8,17 @@
  * Coding moderately is beneficial to the brain, but overindulgence in coding is harmful to the body. Arrange your time reasonably and enjoy a happy life.
  */
 
-package cn.qfys521.bot.core.interactors.interactors.utils;
+package cn.qfys521.bot.core.interactors.utils;
 
+import static cn.qfys521.bot.BotApplication.cause;
 import cn.qfys521.bot.SendEmail;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
-
-import static cn.qfys521.bot.BotApplication.cause;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 
 public class LuckAlgorithm {
 
@@ -29,6 +27,7 @@ public class LuckAlgorithm {
     /**
      * @param identifier identifier
      * @param key        key
+     *
      * @return int
      */
     public static int get(long identifier, String key) {
@@ -39,6 +38,7 @@ public class LuckAlgorithm {
      * @param date       date
      * @param identifier identifier
      * @param key        key
+     *
      * @return int
      */
     // 获取特定日期的数据
@@ -50,17 +50,19 @@ public class LuckAlgorithm {
      * @param day        day
      * @param identifier identifier
      * @param key        key
+     *
      * @return int
      */
     // 获取特定天数的数据(用于测试随机分布)
     public static int get(int day, long identifier, String key) {
         int code = rfc4226(getSeed(day, identifier), key, 8);
         // 返回值是均匀分布的1到100
-        return code%101;
+        return code % 101;
     }
 
     /**
      * @param date date
+     *
      * @return int
      */
     // 获取自公元1年初以来经过的天数
@@ -76,6 +78,7 @@ public class LuckAlgorithm {
     /**
      * @param day        day
      * @param identifier identifier
+     *
      * @return long
      */
     // 二进制拼接日期与QQ号，生成64bit种子，范围约为公元45900年和12位QQ号
@@ -86,6 +89,7 @@ public class LuckAlgorithm {
     /**
      * @param seed seed
      * @param key  key
+     *
      * @return int
      */
     // 核心算法符合标准HOTP算法(RFC4226)，方便快速迁移到具有该库的其他平台
@@ -100,6 +104,7 @@ public class LuckAlgorithm {
      * @param seed   seed
      * @param key    key
      * @param digits digits
+     *
      * @return int
      */
     public static int rfc4226(long seed, String key, int digits) {
@@ -110,6 +115,7 @@ public class LuckAlgorithm {
      * @param seed   seed
      * @param key    key
      * @param digits digits
+     *
      * @return int
      */
     public static int rfc4226(long seed, byte[] key, int digits) {
@@ -149,7 +155,7 @@ public class LuckAlgorithm {
 //			System.out.println(code);
             return code;
         } catch (IllegalArgumentException ex) {
-            SendEmail.sendEmail(ex.toString() ,cause(ex.getStackTrace()));
+            SendEmail.sendEmail(ex.toString(), cause(ex.getStackTrace()));
             // base64解码错误
             return -1;
         } catch (NoSuchAlgorithmException | InvalidKeyException ex) {

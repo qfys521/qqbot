@@ -8,10 +8,7 @@
  * Coding moderately is beneficial to the brain, but overindulgence in coding is harmful to the body. Arrange your time reasonably and enjoy a happy life.
  */
 
-package cn.qfys521.bot.core.interactors.interactors.config;
-
-import lombok.Getter;
-import lombok.Setter;
+package cn.qfys521.bot.core.interactors.config;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -19,6 +16,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Optional;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -47,7 +46,7 @@ public class Coin {
     }
 
 
-    public void addLastCoin(String name, long c) {
+    public void addCoin(String name, long c) {
         if (coin == null) {
             coin = new HashMap<>(); // 初始化 coin HashMap
         }

@@ -10,10 +10,9 @@
 
 package cn.qfys521.bot.core.plugin;
 
-import lombok.Getter;
-
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
 
 public class PluginManager {
     @Getter

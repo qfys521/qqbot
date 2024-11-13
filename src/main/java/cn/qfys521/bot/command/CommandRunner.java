@@ -10,20 +10,17 @@
 
 package cn.qfys521.bot.command;
 
+import static cn.qfys521.bot.BotApplication.cause;
 import cn.qfys521.bot.SendEmail;
 import cn.qfys521.bot.annotation.Command;
 import cn.qfys521.bot.annotation.Usage;
-import io.github.kloping.qqbot.api.v2.MessageV2Event;
-import io.github.kloping.qqbot.api.v2.GroupMessageEvent;
-import io.github.kloping.qqbot.api.v2.FriendMessageEvent;
 import io.github.kloping.qqbot.api.message.MessageEvent;
 import io.github.kloping.qqbot.impl.ListenerHost;
 import io.github.kloping.qqbot.impl.message.BaseMessageChannelReceiveEvent;
-
 import java.lang.reflect.Method;
-import java.util.*;
-
-import static cn.qfys521.bot.BotApplication.cause;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @SuppressWarnings("unused")
@@ -67,7 +64,7 @@ public class CommandRunner {
             } catch (Exception e) {
                 String usage = getUsage(method);
                 messageEvent.send(usage != null ? usage : "不正确的用法。" + e.toString());
-                SendEmail.sendEmail(e.toString() ,cause(e.getStackTrace()));
+                SendEmail.sendEmail(e.toString(), cause(e.getStackTrace()));
             }
         }
 

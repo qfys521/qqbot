@@ -11,14 +11,13 @@
 package cn.qfys521.bot.core.app;
 
 import io.github.kloping.qqbot.Starter;
-import io.github.kloping.qqbot.api.Intents;
 import io.github.kloping.qqbot.network.AuthAndHeartbeat;
 import io.github.kloping.qqbot.network.WebSocketListener;
 import io.github.kloping.spt.annotations.AutoStand;
 import org.java_websocket.client.WebSocketClient;
 
-public class AutoRestart implements WebSocketListener{
-    
+public class AutoRestart implements WebSocketListener {
+
     @AutoStand
     AuthAndHeartbeat authAndHeartbeat;
 
@@ -31,6 +30,6 @@ public class AutoRestart implements WebSocketListener{
         authAndHeartbeat.identifyConnect(0, client);
         return WebSocketListener.super.onError(client, e);
     }
-    
-    
+
+
 }
