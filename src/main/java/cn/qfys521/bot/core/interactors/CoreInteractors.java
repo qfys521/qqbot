@@ -624,49 +624,55 @@ public class CoreInteractors {
     @Command("/抽奖")
     @Usage("/抽奖 <金币数量>")
     public void chouJiang(MessageEvent event) {
-        ConfigApplication configApplication = new DataConfigApplication(new Coin() , "coin.json");
-        Coin c = (Coin) configApplication.getDataOrFail();
         String[] tmp = MessageEventKt.getOriginalContent(event).trim().split(" ");
-        if (! (tmp.length == 2)) {
+        if (tmp.length != 2) {
             return;
-        }
-        if (Long.parseLong(tmp[1]) >= Integer.MAX_VALUE){
-            event.send("投入的数量不可以大于2147483647哦~！");
+        }//确认参数是否正确
+
+        ConfigApplication configApplication = new DataConfigApplication(new Coin() , "coin.json");
+        Coin userDataConfig = (Coin) configApplication.getDataOrFail();
+
+        if (userDataConfig.getCoinCount(event.getSender().getOpenid()) <=0){
+            event.send("您当前的金币余额不足QWQ，金币可以从每日签到中获取哦~");
             return;
-        }
+        }//确保自己金币数量不为0
+
+
+        if (Long.parseLong(tmp[1]) >= Integer.MAX_VALUE/10){
+            event.send("投入的数量不可以大于214748364.7哦~！");
+            return;
+        }//确保为2.1亿以内
         int count = Integer.parseInt(tmp[1]);
 
-        if (c.getCoinCount(event.getSender().getOpenid()) < count) {
+        if (userDataConfig.getCoinCount(event.getSender().getOpenid()) < count) {
             event.send("您没有那么多金币qwq");
             return;
-        }
+        }//确保不超出自己范围
+
         if (count<=0) {
             event.send("抽奖投入的数量不可以小于0哦~");
             return;
-        }
-        int r = RandomUtil.randomInt(2*count);
+        } //确保投入的数量不为0
 
-        if (c.getCoinCount(event.getSender().getOpenid()) <0){
-            event.send("您当前的金币余额不足QWQ，金币可以从每日签到中获取哦~");
-            return;
-        }
+        int randomInt = RandomUtil.randomInt(2*count);
 
-        c.addCoin(event.getSender().getOpenid() , -1*count);
+        userDataConfig.addCoin(event.getSender().getOpenid() , -1*count);
+
         if (RandomUtil.randomLong(Long.MAX_VALUE) == 39){
-            c.addCoin(event.getSender().getOpenid() , 393939);
+            userDataConfig.addCoin(event.getSender().getOpenid() , 393939);
             event.send("?");
             event.send("当您看到这句话的时候，您或许不知道发生了什么。");
             event.send("您以极其罕见的概率抽中了393939枚金币,他的概率为: ***1/Long.MAX_VALUE***。");
             event.send("那么，我祝您在未来的日子里依旧可以好运，孩子。");
             return;
-        }else {
-            c.addCoin(event.getSender().getOpenid(), r);
         }
 
-        if (c.getCoinCount(event.getSender().getOpenid()) < 0){
+        userDataConfig.addCoin(event.getSender().getOpenid(), randomInt);
+
+        if (userDataConfig.getCoinCount(event.getSender().getOpenid()) <= 0){
             event.send("太惨啦，您输光光啦~");
         }
-        event.send("您抽中了"+r+"枚金币，您当前剩余金币数量为: "+c.getCoinCount(event.getSender().getOpenid()));
+        event.send("您抽中了"+randomInt+"枚金币，您当前剩余金币数量为: "+userDataConfig.getCoinCount(event.getSender().getOpenid()));
         configApplication.saveOrFail();
 
     }
