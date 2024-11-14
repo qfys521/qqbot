@@ -653,8 +653,8 @@ public class CoreInteractors {
         } //确保投入的数量不为0
 
         var coinc = RandomUtil.randomBoolean() ?
-                -RandomUtil.randomInt((int) (2 * (0.35 * count)))
-                :RandomUtil.randomInt((int) (2.00000000000001 * (0.35 * count)));
+                Math.abs (new Random().nextInt ((int) (2.00000000000001 * 2 * (0.35 * count)*1.5)))
+                :-Math.abs (new Random().nextInt ((int) (2.00000000000001 * 2 * (0.35 * count)*1)));
         if (RandomUtil.randomLong(Long.MAX_VALUE) == 39) {
             userDataConfig.addCoin(event.getSender().getOpenid(), 393939);
             event.send("?");
