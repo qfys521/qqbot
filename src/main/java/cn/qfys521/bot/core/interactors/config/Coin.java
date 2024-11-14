@@ -14,31 +14,33 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.HashMap;
+
 import java.util.Optional;
+
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class Coin {
-    public HashMap<String, Long> coin;
-    public HashMap<String, Long> lastDate;
+    public ConcurrentHashMap<String, Long> coin;
+    public ConcurrentHashMap<String, Long> lastDate;
 
     public Coin() {
-        coin = new HashMap<>();
-        lastDate = new HashMap<>();
+        coin = new ConcurrentHashMap<>();
+        lastDate = new ConcurrentHashMap<>();
     }
 
-    public long getCoinCount(String name) {
+    synchronized public long getCoinCount(String name) {
         if (coin == null) {
             return 0;
         }
         return coin.getOrDefault(name, 0L);
     }
 
-    public boolean getLastSign(String name) {
-        Optional<HashMap<String, Long>> lastDateOptional = Optional.ofNullable(lastDate);
+    synchronized public boolean getLastSign(String name) {
+        Optional<ConcurrentHashMap<String, Long>> lastDateOptional = Optional.ofNullable(lastDate);
         Optional<Long> lastDateStringOptional = lastDateOptional.map(m -> m.getOrDefault(name, 0L));
         Long lastDate = lastDateStringOptional.orElse(0L);
         return new SimpleDateFormat("yyyy-MM-dd").format(new Date(lastDate))
@@ -46,17 +48,17 @@ public class Coin {
     }
 
 
-    public void addCoin(String name, long c) {
+    synchronized public void addCoin(String name, long c) {
         if (coin == null) {
-            coin = new HashMap<>(); // 初始化 coin HashMap
+            coin = new ConcurrentHashMap<>(); // 初始化 coin ConcurrentHashMap
         }
         long coinCount = getCoinCount(name);
         coin.put(name, coinCount + c);
     }
 
-    public void updateLastDate(String name) {
+    synchronized public void updateLastDate(String name) {
         if (lastDate == null) {
-            lastDate = new HashMap<>(); // 初始化 lastDate HashMap
+            lastDate = new ConcurrentHashMap<>(); // 初始化 lastDate ConcurrentHashMap
         }
         lastDate.put(name, System.currentTimeMillis());
     }

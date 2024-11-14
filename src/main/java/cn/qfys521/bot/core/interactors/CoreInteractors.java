@@ -37,8 +37,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
-import org.quartz.simpl.RAMJobStore;
 
 @SuppressWarnings("unused")
 @Author("qfys521")
@@ -288,7 +286,7 @@ public class CoreInteractors {
             event.send("您的人品值为:100!100!100!");
         } else if (code == 0) {
             event.send(
-                            """
+                    """
                             请悉知:本插件绝对不会有任何对于任何用户有负面性的针对的影响。
                             本插件jrrp算法采用加密算法，且没有任何的set()方法。
                             在使用本插件时，请确保您有足够的心态，倘若因为该结果的原因导致您做出包括但不限于以下行为时:
@@ -447,7 +445,7 @@ public class CoreInteractors {
         ConfigApplication configApplication = new DataConfigApplication(new Coin(), "coin.json");
         Coin coin = (Coin) configApplication.getDataOrFail();
         if (!coin.getLastSign(event.getSender().getOpenid())) {
-            int c = Math.abs(new Random().nextInt(100));
+            int c = Math.abs(new Random().nextInt(1000));
             coin.addCoin(event.getSender().getOpenid(), c);
             event.send("签到成功!\n"
                     + "当前时间为" + new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date()) + "\n"
@@ -623,22 +621,22 @@ public class CoreInteractors {
 
     @Command("/抽奖")
     @Usage("/抽奖 <金币数量>")
-    public void chouJiang(MessageEvent event) {
+    synchronized public void chouJiang(MessageEvent event) {
         String[] tmp = MessageEventKt.getOriginalContent(event).trim().split(" ");
         if (tmp.length != 2) {
             return;
         }//确认参数是否正确
 
-        ConfigApplication configApplication = new DataConfigApplication(new Coin() , "coin.json");
+        ConfigApplication configApplication = new DataConfigApplication(new Coin(), "coin.json");
         Coin userDataConfig = (Coin) configApplication.getDataOrFail();
 
-        if (userDataConfig.getCoinCount(event.getSender().getOpenid()) <=0){
+        if (userDataConfig.getCoinCount(event.getSender().getOpenid()) <= 0) {
             event.send("您当前的金币余额不足QWQ，金币可以从每日签到中获取哦~");
             return;
         }//确保自己金币数量不为0
 
 
-        if (Long.parseLong(tmp[1]) >= Integer.MAX_VALUE/10){
+        if (Long.parseLong(tmp[1]) >= Integer.MAX_VALUE / 10) {
             event.send("投入的数量不可以大于214748364.7哦~！");
             return;
         }//确保为2.1亿以内
@@ -649,17 +647,16 @@ public class CoreInteractors {
             return;
         }//确保不超出自己范围
 
-        if (count<=0) {
+        if (count <= 0) {
             event.send("抽奖投入的数量不可以小于0哦~");
             return;
         } //确保投入的数量不为0
 
-        int randomInt = RandomUtil.randomInt(2*count);
-
-        userDataConfig.addCoin(event.getSender().getOpenid() , -1*count);
-
-        if (RandomUtil.randomLong(Long.MAX_VALUE) == 39){
-            userDataConfig.addCoin(event.getSender().getOpenid() , 393939);
+        var coinc = RandomUtil.randomBoolean() ?
+                -RandomUtil.randomInt((int) (2 * (0.35 * count)))
+                :RandomUtil.randomInt((int) (2.00000000000001 * (0.35 * count)));
+        if (RandomUtil.randomLong(Long.MAX_VALUE) == 39) {
+            userDataConfig.addCoin(event.getSender().getOpenid(), 393939);
             event.send("?");
             event.send("当您看到这句话的时候，您或许不知道发生了什么。");
             event.send("您以极其罕见的概率抽中了393939枚金币,他的概率为: ***1/Long.MAX_VALUE***。");
@@ -667,27 +664,29 @@ public class CoreInteractors {
             return;
         }
 
-        userDataConfig.addCoin(event.getSender().getOpenid(), randomInt);
+        userDataConfig.addCoin(event.getSender().getOpenid(), coinc);
 
-        if (userDataConfig.getCoinCount(event.getSender().getOpenid()) <= 0){
+        if (userDataConfig.getCoinCount(event.getSender().getOpenid()) <= 0) {
+            userDataConfig.getCoin().put(event.getSender().getOpenid() , 0L);
             event.send("太惨啦，您输光光啦~");
         }
-        event.send("您抽中了"+randomInt+"枚金币，您当前剩余金币数量为: "+userDataConfig.getCoinCount(event.getSender().getOpenid()));
+        event.send("您抽中了" + coinc + "枚金币，您当前剩余金币数量为: " + userDataConfig.getCoinCount(event.getSender().getOpenid()));
         configApplication.saveOrFail();
 
     }
 
     @Command("/我的信息")
     public void AboutMe(MessageEvent event) {
-        ConfigApplication configApplication = new DataConfigApplication(new Coin() , "coin.json");
+        ConfigApplication configApplication = new DataConfigApplication(new Coin(), "coin.json");
         Coin c = (Coin) configApplication.getDataOrFail();
         event.send(
-        "您的Openid为: "+event.getSender().getOpenid()
-        +"\n您的Id为: "+event.getSender().getId()
-                +"\n您的金币数量为: "+c.getCoinCount(event.getSender().getOpenid())
+                "您的Openid为: " + event.getSender().getOpenid()
+                        + "\n您的Id为: " + event.getSender().getId()
+                        + "\n您的金币数量为: " + c.getCoinCount(event.getSender().getOpenid())
 
         );
     }
+
 }
 
 
