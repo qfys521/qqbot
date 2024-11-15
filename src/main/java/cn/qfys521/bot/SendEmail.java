@@ -11,7 +11,7 @@ public class SendEmail {
      * @param content 正文
      */
     public static void sendEmail(String subject, String content) {
-        if (false) {
+        if (true) {
             // 收件人电子邮箱
             String to = "qfys520@vip.qq.com";
 

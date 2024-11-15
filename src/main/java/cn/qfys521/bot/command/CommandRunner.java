@@ -56,7 +56,7 @@ public class CommandRunner {
         @EventReceiver
         private void handleMessage(MessageEvent messageEvent) {
             String message = messageEvent.getMessage().get(0).toString().replaceFirst(" ", "").split(" ")[0];
-            System.out.println(message);
+            //System.out.println(message);
             if (message.startsWith("\"<")) message = messageEvent.getMessage().get(1).toString().replaceFirst(" ", "");
             sendMessage(messageEvent, message);
 
