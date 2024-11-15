@@ -15,6 +15,7 @@ import cn.qfys521.bot.SendEmail;
 import cn.qfys521.bot.annotation.Command;
 import cn.qfys521.bot.annotation.Usage;
 import io.github.kloping.qqbot.api.message.MessageEvent;
+import io.github.kloping.qqbot.api.v2.FriendMessageEvent;
 import io.github.kloping.qqbot.impl.ListenerHost;
 import io.github.kloping.qqbot.impl.message.BaseMessageChannelReceiveEvent;
 import java.lang.reflect.Method;
@@ -42,6 +43,10 @@ public class CommandRunner {
         private void handlesMessage(BaseMessageChannelReceiveEvent messageEvent) {
 
             var message = messageEvent.getMessage().get(1).toString().split(" ")[1];
+
+            if (message.startsWith("<@!"+messageEvent.getSender().getOpenid()+ "> ")) message = message.replaceFirst("<@!"+messageEvent.getSender().getOpenid()+ "> ", "");
+
+            if (message.startsWith(" ")) message = message.replaceFirst(" ", "");
             sendMessage(messageEvent, message);
 
 
@@ -50,8 +55,9 @@ public class CommandRunner {
 
         @EventReceiver
         private void handleMessage(MessageEvent messageEvent) {
-
             String message = messageEvent.getMessage().get(0).toString().replaceFirst(" ", "").split(" ")[0];
+            System.out.println(message);
+            if (message.startsWith("\"<")) message = messageEvent.getMessage().get(1).toString().replaceFirst(" ", "");
             sendMessage(messageEvent, message);
 
         }

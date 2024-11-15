@@ -47,19 +47,6 @@ public class CoreInteractors {
     @Usage({"/help"})
     @Command({"/help"})
     public void helpMenu(MessageEvent<?, ?> messageEvent) {
-//        ArrayList<Method> method = RegisterCommand.methodArrayList;
-//        StringBuilder stringBuilder = new StringBuilder();
-//        stringBuilder.append("指令菜单\n");
-//        for (Method methods : method) {
-//            Command command = methods.getAnnotation(Command.class);
-//            if (command != null) {
-//                if (command.inCommandList()) {
-//                    stringBuilder.append("\n")
-//                            .append(Arrays.toString(methods.getAnnotation(Command.class).value()));
-//                }
-//            }
-//        }
-//        messageEvent.send(stringBuilder.toString());
         ArrayList<Method> commandMethods = RegisterCommand.methodArrayList;
         StringBuilder stringBuilder = new StringBuilder();
         for (Method method : commandMethods) {
@@ -269,7 +256,7 @@ public class CoreInteractors {
     @SuppressWarnings("all")
     @Command({"/jrrp", "/今日人品"})
     @Usage({"/jrrp", "/今日人品"})
-    public void jrrp(MessageEvent event) {
+    public void jrrp(MessageEvent<?,?> event) {
         long userID = event.getSender().getOpenid().hashCode();
         ConfigApplication configApplication = new DataConfigApplication(new Jrrp(), "jrrp.json");
         Jrrp jrrp = (Jrrp) configApplication.getDataOrFail();
@@ -302,7 +289,7 @@ public class CoreInteractors {
 
     @Command({"/time", "/时间"})
     @Usage({"/time", "/时间", "*** 该命令为开发者命令，普通用户正常情况下无法遇见该命令，还请不要随意使用。"})
-    public void time(MessageEvent event) {
+    public void time(MessageEvent<?,?> event) {
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         event.send("now time is: " + sdf.format(date));
@@ -310,7 +297,7 @@ public class CoreInteractors {
 
     @Command({"/yulu", "/语录", "/随机语录"})
     @Usage({"/yulu", "/语录", "/随机语录"})
-    public void yulu(MessageEvent event) {
+    public void yulu(MessageEvent<?,?> event) {
         try {
             event.send(get.getUrlData("https://api.oick.cn/yulu/api.php"));
         } catch (Exception e) {
@@ -324,7 +311,7 @@ public class CoreInteractors {
     @Command(value = {"/setu", "/涩图", "/色图", "/涩涩"}, inCommandList = false)
     @Usage({"/setu", "/涩图", "/色图", "/涩涩"})
     @SuppressWarnings("all")
-    public void setu(MessageEvent event) {
+    public void setu(MessageEvent<?,?> event) {
 /*
         try {
             Markdown markdown = new Markdown("102010154_1703343254");
@@ -367,7 +354,7 @@ public class CoreInteractors {
 
     @Command({"/tgou", "/舔狗", "/随机舔狗"})
     @Usage({"/tgou", "/舔狗", "/随机舔狗"})
-    public void tgou(MessageEvent event) {
+    public void tgou(MessageEvent<?,?> event) {
         try {
             event.send(get.getUrlData("https://api.oick.cn/dog/api.php"));
         } catch (Exception e) {
@@ -380,7 +367,7 @@ public class CoreInteractors {
 
     @Command({"/du", "/毒鸡汤", "/毒汤"})
     @Usage({"/du", "/毒鸡汤", "/毒汤"})
-    public void du(MessageEvent event) {
+    public void du(MessageEvent<?,?> event) {
         try {
             event.send(get.getUrlData("https://api.oick.cn/dutang/api.php"));
         } catch (Exception e) {
@@ -393,7 +380,7 @@ public class CoreInteractors {
 
     @Command({"/yiyan", "/一言", "/随机一言"})
     @Usage({"/yiyan", "/一言", "/随机一言"})
-    public void yiyan(MessageEvent event) {
+    public void yiyan(MessageEvent<?,?> event) {
         try {
             event.send(get.getUrlData("https://api.oick.cn/yiyan/api.php"));
         } catch (Exception e) {
@@ -407,7 +394,7 @@ public class CoreInteractors {
 
     @Command({"/getID", "/获取ID", "/ID对照"})
     @Usage({"/getID <name>", "/获取ID <name>", "/ID对照 <name>", "*** 该命令为开发者命令，普通用户正常情况下无法遇见该命令，还请不要随意使用。"})
-    public void getID(MessageEvent event) {
+    public void getID(MessageEvent<?,?> event) {
         String[] oriMessage = MessageEventKt.getOriginalContent(event).split(" ");
         if (oriMessage[2] == null) {
             event.send("用法: /getID <参数>");
@@ -441,7 +428,7 @@ public class CoreInteractors {
 
     @Command({"/签到", "/sign"})
     @Usage({"/签到", "/sign"})
-    public void sign(MessageEvent event) {
+    public void sign(MessageEvent<?,?> event) {
         ConfigApplication configApplication = new DataConfigApplication(new Coin(), "coin.json");
         Coin coin = (Coin) configApplication.getDataOrFail();
         if (!coin.getLastSign(event.getSender().getOpenid())) {
@@ -461,7 +448,7 @@ public class CoreInteractors {
 
     @Command({"/getPlayerUUID", "/获取玩家UUID", "/玩家UUID获取"})
     @Usage({"/getPlayerUUID <PlayerName>", "/获取玩家UUID <PlayerName>", "/玩家UUID获取 <PlayerName>", "*** 该命令为开发者命令，普通用户正常情况下无法遇见该命令，还请不要随意使用。"})
-    public void getPlayerUUID(MessageEvent event) {
+    public void getPlayerUUID(MessageEvent<?,?> event) {
         String oriMessage = MessageEventKt.getOriginalContent(event);
         String PlayerName = oriMessage.split(" ")[2].replaceAll(" ", "");
         String tmp = "OfflinePlayer:" + PlayerName;
@@ -484,7 +471,7 @@ public class CoreInteractors {
 
     @Command({"/类查询"})
     @Usage({"/类查询 <ClassForName>", "*** 该命令为开发者命令，普通用户正常情况下无法遇见该命令，还请不要随意使用。"})
-    public void ReflectionInteractor(MessageEvent event) throws Exception {
+    public void ReflectionInteractor(MessageEvent<?,?> event) throws Exception {
         String name = MessageEventKt.getOriginalContent(event).split(" ")[2];
         Class<?> cl = Class.forName(name);
         Class<?> superclass = cl.getSuperclass();
@@ -562,13 +549,13 @@ public class CoreInteractors {
 
     @Command({"/生成UUID"})
     @Usage({"/生成UUID", "*** 该命令为开发者命令，普通用户正常情况下无法遇见该命令，还请不要随意使用。"})
-    public void newUUID(MessageEvent event) {
+    public void newUUID(MessageEvent<?,?> event) {
         event.send(UUID.randomUUID().toString());
     }
 
     @Command({"/批量UUID"})
     @Usage({"/批量UUID <count[0,5)>", "*** 该命令为开发者命令，普通用户正常情况下无法遇见该命令，还请不要随意使用。"})
-    public void newUUID_(MessageEvent event) {
+    public void newUUID_(MessageEvent<?,?> event) {
         int oriMessage = Integer.parseInt(MessageEventKt.getOriginalContent(event).split(" ")[2]);
         if (oriMessage > 0 && oriMessage <= 5) {
             StringBuilder stringBuilder = new StringBuilder();
@@ -581,7 +568,7 @@ public class CoreInteractors {
 
     @Usage("/友情链接")
     @Command("/友情链接")
-    public void friendLink(MessageEvent event) {
+    public void friendLink(MessageEvent<?,?> event) {
         ConfigApplication configApplication = new DataConfigApplication(new FriendLink(), "friendLink.json");
         FriendLink friendLink = (FriendLink) configApplication.getDataOrFail();
         var arrayList = friendLink.getLinks();
@@ -598,7 +585,7 @@ public class CoreInteractors {
 
     @Command(value = "/添加友情链接", inCommandList = false)
     @Usage("/添加友情链接 <名称> <群号>")
-    public void addFriendLink(MessageEvent event) {
+    public void addFriendLink(MessageEvent<?,?> event) {
         ConfigApplication configApplication = new DataConfigApplication(new FriendLink(), "friendLink.json");
         FriendLink friendLink = (FriendLink) configApplication.getDataOrFail();
         ArrayList<Link> links = friendLink.getLinks();
@@ -621,62 +608,29 @@ public class CoreInteractors {
 
     @Command("/抽奖")
     @Usage("/抽奖 <金币数量>")
-    synchronized public void chouJiang(MessageEvent event) {
+    synchronized public void chouJiang(MessageEvent<?,?> event) {
         String[] tmp = MessageEventKt.getOriginalContent(event).trim().split(" ");
-        if (tmp.length != 2) {
-            return;
-        }//确认参数是否正确
-
-        ConfigApplication configApplication = new DataConfigApplication(new Coin(), "coin.json");
-        Coin userDataConfig = (Coin) configApplication.getDataOrFail();
-
-        if (userDataConfig.getCoinCount(event.getSender().getOpenid()) <= 0) {
-            event.send("您当前的金币余额不足QWQ，金币可以从每日签到中获取哦~");
-            return;
-        }//确保自己金币数量不为0
-
-
-        if (Long.parseLong(tmp[1]) >= Integer.MAX_VALUE / 10) {
-            event.send("投入的数量不可以大于214748364.7哦~！");
-            return;
-        }//确保为2.1亿以内
-        int count = Integer.parseInt(tmp[1]);
-
-        if (userDataConfig.getCoinCount(event.getSender().getOpenid()) < count) {
-            event.send("您没有那么多金币qwq");
-            return;
-        }//确保不超出自己范围
-
-        if (count <= 0) {
-            event.send("抽奖投入的数量不可以小于0哦~");
-            return;
-        } //确保投入的数量不为0
-
-        var coinc = RandomUtil.randomBoolean() ?
-                Math.abs (new Random().nextInt ((int) (2.00000000000001 * 2 * (0.35 * count)*1.5)))
-                :-Math.abs (new Random().nextInt ((int) (2.00000000000001 * 2 * (0.35 * count)*1)));
-        if (RandomUtil.randomLong(Long.MAX_VALUE) == 39) {
-            userDataConfig.addCoin(event.getSender().getOpenid(), 393939);
-            event.send("?");
-            event.send("当您看到这句话的时候，您或许不知道发生了什么。");
-            event.send("您以极其罕见的概率抽中了393939枚金币,他的概率为: ***1/Long.MAX_VALUE***。");
-            event.send("那么，我祝您在未来的日子里依旧可以好运，孩子。");
+        if (tmp.length != 2) return;
+        var tCount = Integer.parseInt(tmp[1]);
+        var userOpenId = event.getSender().getOpenid();
+        var dataConfigApplication = new DataConfigApplication(new Coin(), "coin.json");
+        var save = (Coin)dataConfigApplication.getDataOrFail();
+        var hasCount =  save.getCoinCount(userOpenId);
+        var randCount = RandomUtil.randomInt(tCount*2);
+        save.addCoin(userOpenId , tCount*-1);
+        save.addCoin(userOpenId, randCount);
+        dataConfigApplication.saveOrFail();
+        if (save.getCoinCount(userOpenId) < 0) {
+            event.send("太惨啦，您输光光啦!");
+            save.getCoin().put(userOpenId, 0);
+            dataConfigApplication.saveOrFail();
             return;
         }
-
-        userDataConfig.addCoin(event.getSender().getOpenid(), coinc);
-
-        if (userDataConfig.getCoinCount(event.getSender().getOpenid()) <= 0) {
-            userDataConfig.getCoin().put(event.getSender().getOpenid() , 0L);
-            event.send("太惨啦，您输光光啦~");
-        }
-        event.send("您抽中了" + coinc + "枚金币，您当前剩余金币数量为: " + userDataConfig.getCoinCount(event.getSender().getOpenid()));
-        configApplication.saveOrFail();
-
+        event.send("本次抽奖，您投入了: "+tCount +"枚金币，您收获了: "+randCount+"枚金币 ， 您当前的金币数量为: "+save.getCoinCount(userOpenId));
     }
 
     @Command("/我的信息")
-    public void AboutMe(MessageEvent event) {
+    public void AboutMe(MessageEvent<?,?> event) {
         ConfigApplication configApplication = new DataConfigApplication(new Coin(), "coin.json");
         Coin c = (Coin) configApplication.getDataOrFail();
         event.send(

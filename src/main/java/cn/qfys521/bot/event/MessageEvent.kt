@@ -10,6 +10,7 @@
 package cn.qfys521.bot.event
 
 import io.github.kloping.qqbot.api.message.MessageEvent
+import io.github.kloping.qqbot.api.v2.FriendMessageEvent
 
 
 val MessageEvent<*, *>.originalContent: String
@@ -22,7 +23,12 @@ private fun getMessage(messageEvent: MessageEvent<*, *>): String {
         if (messageEvent.message[0].toString() == String.format("<@!%s>", messageEvent.sender.bot.id))
             continue
         else
-            str.append(i.toString()).append(" ")
+            if(i.toString().startsWith(" ")){
+                var tmp = i.toString().replaceFirst(" ", "")
+                str.append(i.toString()).append(" ")
+            }else{
+                str.append(i.toString()).append(" ")
+            }
     }
     return str.toString()
 }
