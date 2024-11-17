@@ -24,25 +24,22 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Coin {
-    public ConcurrentHashMap<String, Integer> coin;
-    public ConcurrentHashMap<String, Long> lastDate;
+    public ConcurrentHashMap<String, Integer> coin = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<String, Long> lastDate = new ConcurrentHashMap<>();
 
-    public Coin() {
-        coin = new ConcurrentHashMap<>();
-        lastDate = new ConcurrentHashMap<>();
-    }
 
     synchronized public int getCoinCount(String name) {
         if (coin == null) {
             return 0;
         }
-        return coin.getOrDefault((Object) name, 0);
+        return coin.getOrDefault(name, 0);
     }
 
     synchronized public boolean getLastSign(String name) {
-        Optional<ConcurrentHashMap<String, Long>> lastDateOptional = Optional.ofNullable(lastDate);
-        Optional<Long> lastDateStringOptional = lastDateOptional.map(m -> m.getOrDefault(name, 0L));
-        int lastDate = 0;
+        if (lastDate.getOrDefault(name , null) == null) {
+            lastDate.put(name, 0L);
+        }
+        var lastDate = this.lastDate.getOrDefault(name, 0L);
         return new SimpleDateFormat("yyyy-MM-dd").format(new Date(lastDate))
                 .equals(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
     }
