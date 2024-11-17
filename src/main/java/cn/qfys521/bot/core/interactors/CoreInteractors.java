@@ -615,6 +615,11 @@ public class CoreInteractors {
         var userOpenId = event.getSender().getOpenid();
         var dataConfigApplication = new DataConfigApplication(new Coin(), "coin.json");
         var save = (Coin)dataConfigApplication.getDataOrFail();
+        if (tCount > save.getCoinCount(userOpenId)) {
+            event.send("呜呜，您没有那么多金币qwq...");
+            event.send("您的金币数量为: "+save.getCoinCount(userOpenId));
+            return;
+        }
         var hasCount =  save.getCoinCount(userOpenId);
         var randCount = RandomUtil.randomInt(tCount*2);
         save.addCoin(userOpenId , tCount*-1);
