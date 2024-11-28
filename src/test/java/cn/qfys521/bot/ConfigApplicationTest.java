@@ -10,8 +10,8 @@
 
 package cn.qfys521.bot;
 
-import cn.qfys521.bot.config.ConfigApplication;
-import cn.qfys521.bot.config.CoreConfigApplication;
+import cn.qfys521.bot.core.config.ConfigApplication;
+import cn.qfys521.bot.core.config.CoreConfigApplication;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
