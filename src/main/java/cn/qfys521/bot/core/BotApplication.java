@@ -15,6 +15,7 @@ import cn.qfys521.bot.core.command.CommandRunner;
 import cn.qfys521.bot.core.command.RegisterCommand;
 import cn.qfys521.bot.core.config.CoreConfigApplication;
 import cn.qfys521.bot.core.core.Bot;
+import cn.qfys521.bot.core.core.app.SendEmail;
 import cn.qfys521.bot.plugin.core.CoreInteractors;
 import cn.qfys521.bot.core.core.loader.PluginLoader;
 import cn.qfys521.bot.core.core.plugin.JavaPlugin;

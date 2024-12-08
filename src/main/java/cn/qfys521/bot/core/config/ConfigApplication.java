@@ -12,7 +12,7 @@ package cn.qfys521.bot.core.config;
 
 
 import static cn.qfys521.bot.core.BotApplication.cause;
-import cn.qfys521.bot.core.SendEmail;
+import cn.qfys521.bot.core.core.app.SendEmail;
 import cn.qfys521.bot.core.exception.ConfigException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;

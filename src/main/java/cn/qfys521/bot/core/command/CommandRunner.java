@@ -11,7 +11,7 @@
 package cn.qfys521.bot.core.command;
 
 import static cn.qfys521.bot.core.BotApplication.cause;
-import cn.qfys521.bot.core.SendEmail;
+import cn.qfys521.bot.core.core.app.SendEmail;
 import cn.qfys521.bot.core.annotation.Command;
 import cn.qfys521.bot.core.annotation.Usage;
 import io.github.kloping.qqbot.api.message.MessageEvent;

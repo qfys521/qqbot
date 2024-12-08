@@ -1,7 +1,7 @@
 package cn.qfys521.bot.plugin.qfPlugin;
 
 import static cn.qfys521.bot.core.BotApplication.cause;
-import cn.qfys521.bot.core.SendEmail;
+import cn.qfys521.bot.core.core.app.SendEmail;
 import cn.qfys521.bot.core.annotation.Author;
 import cn.qfys521.bot.core.annotation.Command;
 import cn.qfys521.bot.core.annotation.Usage;
@@ -397,14 +397,15 @@ public class qfPluginInteractors {
     }
 
     @Command("/抽奖")
-    @Usage("/抽奖 <金币数量>")
+    @Usage("/抽奖 <金币数量/梭哈>")
     synchronized public void chouJiang(MessageEvent<?,?> event) {
         String[] tmp = MessageEventKt.getOriginalContent(event).trim().split(" ");
         if (tmp.length != 2) return;
-        var tCount = Integer.parseInt(tmp[1]);
         var userOpenId = event.getSender().getOpenid();
         var dataConfigApplication = new DataConfigApplication(new Coin(), "coin.json");
         var save = (Coin)dataConfigApplication.getDataOrFail();
+        int tCount = Objects.equals(tmp[1], "梭哈")? save.getCoinCount(userOpenId) : Integer.parseInt(tmp[1]);
+        if (tCount <=0) event.send("不能投入为0哦qwq");
         if (tCount > save.getCoinCount(userOpenId)) {
             event.send("呜呜，您没有那么多金币qwq...");
             event.send("您的金币数量为: "+save.getCoinCount(userOpenId));

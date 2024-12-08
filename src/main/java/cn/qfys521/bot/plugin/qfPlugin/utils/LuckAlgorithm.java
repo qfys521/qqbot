@@ -11,7 +11,7 @@
 package cn.qfys521.bot.plugin.qfPlugin.utils;
 
 import static cn.qfys521.bot.core.BotApplication.cause;
-import cn.qfys521.bot.core.SendEmail;
+import cn.qfys521.bot.core.core.app.SendEmail;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;

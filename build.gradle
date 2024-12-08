@@ -10,7 +10,7 @@ plugins {
 //apply from: rootProject.file('publish.gradle')
 
 group = 'cn.qfys521'
-version = '1.0.1-SNAPSHOT'
+version = '1.1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -64,7 +64,7 @@ shadowJar {
     manifest {
         attributes.put("Project", gradle.getRootProject().getName())
         attributes.put("Implementation-Version", archiveVersion)
-        attributes.put("Main-Class", "cn.qfys521.bot.BotApplication")
+        attributes.put("Main-Class", "cn.qfys521.bot.core.BotApplication")
         attributes.put("JavaVersion", JavaVersion.VERSION_17)
         attributes.put("Build-Date", new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()))
         attributes.put("Github", 'https://www.github.com/codethink-cn/qqbot')
