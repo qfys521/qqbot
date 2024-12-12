@@ -11,9 +11,11 @@
 package cn.qfys521.bot.core.command;
 
 import static cn.qfys521.bot.core.BotApplication.cause;
+import static cn.qfys521.bot.core.BotApplication.getLogger;
 import cn.qfys521.bot.core.core.app.SendEmail;
 import cn.qfys521.bot.core.annotation.Command;
 import cn.qfys521.bot.core.annotation.Usage;
+import io.github.kloping.qqbot.api.SendAble;
 import io.github.kloping.qqbot.api.message.MessageEvent;
 import io.github.kloping.qqbot.impl.ListenerHost;
 import io.github.kloping.qqbot.impl.message.BaseMessageChannelReceiveEvent;
@@ -36,25 +38,22 @@ public class CommandRunner {
         }
 
         @EventReceiver
-        private void handlesMessage(BaseMessageChannelReceiveEvent messageEvent) {
+        private void handlesMessage(MessageEvent messageEvent) {
+            var rawMessage = messageEvent.getRawMessage().getContent();
+            String message = null;
+            while(true){
+                if (rawMessage.startsWith(String.format("<@!%s>" , messageEvent.getBot().getInfo().getId()))){
+                    rawMessage = rawMessage.replaceFirst(String.format(String.format("<@!%s>" , messageEvent.getBot().getInfo().getId())) , "");
+                } else if (rawMessage.startsWith(" ")) {
+                    rawMessage = rawMessage.replaceFirst(" ", "");
+                }else {
+                    message = rawMessage;
+                    break;
+                }
+            }
 
-            var message = messageEvent.getMessage().get(1).toString().split(" ")[1];
-
-            if (message.startsWith("<@!"+messageEvent.getSender().getOpenid()+ "> ")) message = message.replaceFirst("<@!"+messageEvent.getSender().getOpenid()+ "> ", "");
-
-            if (message.startsWith(" ")) message = message.replaceFirst(" ", "");
-            sendMessage(messageEvent, message);
-
-
-        }
-
-
-        @EventReceiver
-        private void handleMessage(MessageEvent messageEvent) {
-            String message = messageEvent.getMessage().get(0).toString().replaceFirst(" ", "").split(" ")[0];
-            //System.out.println(message);
-            if (message.startsWith("\"<")) message = messageEvent.getMessage().get(1).toString().replaceFirst(" ", "");
-            sendMessage(messageEvent, message);
+            //System.out.println("CommandRunner.handlesMessage" + "\""+message+"\"");
+            sendMessage(messageEvent , message.split(" ")[0]);
 
         }
 
