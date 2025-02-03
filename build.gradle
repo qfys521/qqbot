@@ -10,9 +10,10 @@ plugins {
 //apply from: rootProject.file('publish.gradle')
 
 group = 'cn.qfys521'
-version = '1.1.1'
+version = '1.2.3-SNAPSHOT'
 
 repositories {
+    mavenLocal()
     mavenCentral()
     maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
     maven { url 'https://maven.aliyun.com/repository/public' }
@@ -39,7 +40,10 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor")
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-
+    implementation("cn.qfys521:drewImage:1.0-SNAPSHOT") {
+        exclude group: 'com.alibaba.*'
+        exclude(group: 'com.fasterxml.*')
+    }
 
     testAnnotationProcessor("org.projectlombok:lombok:1.18.28")
     testCompileOnly('org.projectlombok:lombok:1.18.28')
@@ -72,4 +76,6 @@ shadowJar {
         attributes.put("Build-Script", "Gradle")
         attributes.put("Build-Script-Version", gradle.gradleVersion)
     }
+    archiveBaseName.set("$rootProject.name")
+    minimize()
 }

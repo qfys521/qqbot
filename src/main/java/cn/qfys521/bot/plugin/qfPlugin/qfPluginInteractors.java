@@ -1,35 +1,52 @@
 package cn.qfys521.bot.plugin.qfPlugin;
 
 import static cn.qfys521.bot.core.BotApplication.cause;
-import cn.qfys521.bot.core.core.app.SendEmail;
+import static cn.qfys521.bot.core.BotApplication.getLogger;
 import cn.qfys521.bot.core.annotation.Author;
 import cn.qfys521.bot.core.annotation.Command;
 import cn.qfys521.bot.core.annotation.Usage;
 import cn.qfys521.bot.core.config.ConfigApplication;
 import cn.qfys521.bot.core.config.DataConfigApplication;
+import cn.qfys521.bot.core.core.app.SendEmail;
 import cn.qfys521.bot.core.event.MessageEventKt;
+import cn.qfys521.bot.core.exception.ThrowException;
 import cn.qfys521.bot.plugin.core.utils.Base64Util;
-import cn.qfys521.bot.plugin.qfPlugin.utils.HttpUtils;
 import cn.qfys521.bot.plugin.qfPlugin.config.Coin;
 import cn.qfys521.bot.plugin.qfPlugin.config.GetId;
 import cn.qfys521.bot.plugin.qfPlugin.config.Jrrp;
+import cn.qfys521.bot.plugin.qfPlugin.config.UserLOL;
 import cn.qfys521.bot.plugin.qfPlugin.utils.FriendLink;
+import cn.qfys521.bot.plugin.qfPlugin.utils.HttpUtils;
 import cn.qfys521.bot.plugin.qfPlugin.utils.Link;
 import cn.qfys521.bot.plugin.qfPlugin.utils.LuckAlgorithm;
 import cn.qfys521.bot.plugin.qfPlugin.utils.minecraft.algorithm.FuzzyMatcher;
 import cn.qfys521.bot.plugin.qfPlugin.utils.minecraft.algorithm.PrepopulatedList;
 import cn.qfys521.bot.plugin.qfPlugin.utils.minecraft.all;
+import cn.qfys521.drewImage.ItemKt;
+import cn.qfys521.string.SuppressWarningsStrings;
 import cn.qfys521.util.RandomUtil;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.kloping.qqbot.api.SendAble;
 import io.github.kloping.qqbot.api.message.MessageEvent;
+import io.github.kloping.qqbot.entities.ex.Image;
+import io.github.kloping.qqbot.entities.ex.PlainText;
+import io.github.kloping.qqbot.entities.ex.msg.MessageChain;
+import java.awt.event.ItemEvent;
+import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.URL;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import okhttp3.*;
 
 @Author("qfys521")
+@SuppressWarnings(SuppressWarningsStrings.UNUSED)
 public class qfPluginInteractors {
     final HttpUtils get = new HttpUtils();
     StringBuilder sb = new StringBuilder();
@@ -46,7 +63,7 @@ public class qfPluginInteractors {
     @SuppressWarnings("all")
     @Command({"/jrrp", "/今日人品"})
     @Usage({"/jrrp", "/今日人品"})
-    public void jrrp(MessageEvent<?,?> event) {
+    public void jrrp(MessageEvent<?, ?> event) {
         long userID = event.getSender().getOpenid().hashCode();
         ConfigApplication configApplication = new DataConfigApplication(new Jrrp(), "jrrp.json");
         Jrrp jrrp = (Jrrp) configApplication.getDataOrFail();
@@ -79,7 +96,7 @@ public class qfPluginInteractors {
 
     @Command({"/time", "/时间"})
     @Usage({"/time", "/时间", "*** 该命令为开发者命令，普通用户正常情况下无法遇见该命令，还请不要随意使用。"})
-    public void time(MessageEvent<?,?> event) {
+    public void time(MessageEvent<?, ?> event) {
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         event.send("now time is: " + sdf.format(date));
@@ -87,7 +104,7 @@ public class qfPluginInteractors {
 
     @Command({"/yulu", "/语录", "/随机语录"})
     @Usage({"/yulu", "/语录", "/随机语录"})
-    public void yulu(MessageEvent<?,?> event) {
+    public void yulu(MessageEvent<?, ?> event) {
         try {
             event.send(get.getUrlData("https://api.oick.cn/yulu/api.php"));
         } catch (Exception e) {
@@ -101,7 +118,7 @@ public class qfPluginInteractors {
     @Command(value = {"/setu", "/涩图", "/色图", "/涩涩"}, inCommandList = false)
     @Usage({"/setu", "/涩图", "/色图", "/涩涩"})
     @SuppressWarnings("all")
-    public void setu(MessageEvent<?,?> event) {
+    public void setu(MessageEvent<?, ?> event) {
 /*
         try {
             Markdown markdown = new Markdown("102010154_1703343254");
@@ -144,7 +161,7 @@ public class qfPluginInteractors {
 
     @Command({"/tgou", "/舔狗", "/随机舔狗"})
     @Usage({"/tgou", "/舔狗", "/随机舔狗"})
-    public void tgou(MessageEvent<?,?> event) {
+    public void tgou(MessageEvent<?, ?> event) {
         try {
             event.send(get.getUrlData("https://api.oick.cn/dog/api.php"));
         } catch (Exception e) {
@@ -157,7 +174,7 @@ public class qfPluginInteractors {
 
     @Command({"/du", "/毒鸡汤", "/毒汤"})
     @Usage({"/du", "/毒鸡汤", "/毒汤"})
-    public void du(MessageEvent<?,?> event) {
+    public void du(MessageEvent<?, ?> event) {
         try {
             event.send(get.getUrlData("https://api.oick.cn/dutang/api.php"));
         } catch (Exception e) {
@@ -170,7 +187,7 @@ public class qfPluginInteractors {
 
     @Command({"/yiyan", "/一言", "/随机一言"})
     @Usage({"/yiyan", "/一言", "/随机一言"})
-    public void yiyan(MessageEvent<?,?> event) {
+    public void yiyan(MessageEvent<?, ?> event) {
         try {
             event.send(get.getUrlData("https://api.oick.cn/yiyan/api.php"));
         } catch (Exception e) {
@@ -184,7 +201,7 @@ public class qfPluginInteractors {
 
     @Command({"/getID", "/获取ID", "/ID对照"})
     @Usage({"/getID <name>", "/获取ID <name>", "/ID对照 <name>", "*** 该命令为开发者命令，普通用户正常情况下无法遇见该命令，还请不要随意使用。"})
-    public void getID(MessageEvent<?,?> event) {
+    public void getID(MessageEvent<?, ?> event) {
         String[] oriMessage = MessageEventKt.getOriginalContent(event).split(" ");
         if (oriMessage[2] == null) {
             event.send("用法: /getID <参数>");
@@ -218,11 +235,11 @@ public class qfPluginInteractors {
 
     @Command({"/签到", "/sign"})
     @Usage({"/签到", "/sign"})
-    public void sign(MessageEvent<?,?> event) {
+    public void sign(MessageEvent<?, ?> event) {
         ConfigApplication configApplication = new DataConfigApplication(new Coin(), "coin.json");
         Coin coin = (Coin) configApplication.getDataOrFail();
         if (!coin.getLastSign(event.getSender().getOpenid())) {
-            int c = Math.abs(new Random().nextInt(1000));
+            int c = Math.abs(new Random().nextInt(100));
             coin.addCoin(event.getSender().getOpenid(), c);
             event.send("签到成功!\n"
                     + "当前时间为" + new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date()) + "\n"
@@ -238,7 +255,7 @@ public class qfPluginInteractors {
 
     @Command({"/getPlayerUUID", "/获取玩家UUID", "/玩家UUID获取"})
     @Usage({"/getPlayerUUID <PlayerName>", "/获取玩家UUID <PlayerName>", "/玩家UUID获取 <PlayerName>", "*** 该命令为开发者命令，普通用户正常情况下无法遇见该命令，还请不要随意使用。"})
-    public void getPlayerUUID(MessageEvent<?,?> event) {
+    public void getPlayerUUID(MessageEvent<?, ?> event) {
         String oriMessage = MessageEventKt.getOriginalContent(event);
         String PlayerName = oriMessage.split(" ")[2].replaceAll(" ", "");
         String tmp = "OfflinePlayer:" + PlayerName;
@@ -261,7 +278,7 @@ public class qfPluginInteractors {
 
     @Command({"/类查询"})
     @Usage({"/类查询 <ClassForName>", "*** 该命令为开发者命令，普通用户正常情况下无法遇见该命令，还请不要随意使用。"})
-    public void ReflectionInteractor(MessageEvent<?,?> event) throws Exception {
+    public void ReflectionInteractor(MessageEvent<?, ?> event) throws Exception {
         String name = MessageEventKt.getOriginalContent(event).split(" ")[2];
         Class<?> cl = Class.forName(name);
         Class<?> superclass = cl.getSuperclass();
@@ -339,13 +356,13 @@ public class qfPluginInteractors {
 
     @Command({"/生成UUID"})
     @Usage({"/生成UUID", "*** 该命令为开发者命令，普通用户正常情况下无法遇见该命令，还请不要随意使用。"})
-    public void newUUID(MessageEvent<?,?> event) {
+    public void newUUID(MessageEvent<?, ?> event) {
         event.send(UUID.randomUUID().toString());
     }
 
     @Command({"/批量UUID"})
     @Usage({"/批量UUID <count[0,5)>", "*** 该命令为开发者命令，普通用户正常情况下无法遇见该命令，还请不要随意使用。"})
-    public void newUUID_(MessageEvent<?,?> event) {
+    public void newUUID_(MessageEvent<?, ?> event) {
         int oriMessage = Integer.parseInt(MessageEventKt.getOriginalContent(event).split(" ")[2]);
         if (oriMessage > 0 && oriMessage <= 5) {
             StringBuilder stringBuilder = new StringBuilder();
@@ -358,7 +375,7 @@ public class qfPluginInteractors {
 
     @Usage("/友情链接")
     @Command("/友情链接")
-    public void friendLink(MessageEvent<?,?> event) {
+    public void friendLink(MessageEvent<?, ?> event) {
         ConfigApplication configApplication = new DataConfigApplication(new FriendLink(), "friendLink.json");
         FriendLink friendLink = (FriendLink) configApplication.getDataOrFail();
         var arrayList = friendLink.getLinks();
@@ -375,7 +392,7 @@ public class qfPluginInteractors {
 
     @Command(value = "/添加友情链接", inCommandList = false)
     @Usage("/添加友情链接 <名称> <群号>")
-    public void addFriendLink(MessageEvent<?,?> event) {
+    public void addFriendLink(MessageEvent<?, ?> event) {
         ConfigApplication configApplication = new DataConfigApplication(new FriendLink(), "friendLink.json");
         FriendLink friendLink = (FriendLink) configApplication.getDataOrFail();
         ArrayList<Link> links = friendLink.getLinks();
@@ -398,35 +415,49 @@ public class qfPluginInteractors {
 
     @Command("/抽奖")
     @Usage("/抽奖 <金币数量/梭哈>")
-    synchronized public void chouJiang(MessageEvent<?,?> event) {
+    synchronized public void chouJiang(MessageEvent<?, ?> event) {
         String[] tmp = MessageEventKt.getOriginalContent(event).trim().split(" ");
         if (tmp.length != 2) return;
         var userOpenId = event.getSender().getOpenid();
         var dataConfigApplication = new DataConfigApplication(new Coin(), "coin.json");
-        var save = (Coin)dataConfigApplication.getDataOrFail();
-        int tCount = Objects.equals(tmp[1], "梭哈")? save.getCoinCount(userOpenId) : Integer.parseInt(tmp[1]);
-        if (tCount <=0) event.send("不能投入为0哦qwq");
-        if (tCount > save.getCoinCount(userOpenId)) {
-            event.send("呜呜，您没有那么多金币qwq...");
-            event.send("您的金币数量为: "+save.getCoinCount(userOpenId));
+        var save = (Coin) dataConfigApplication.getDataOrFail();
+        if (save.getCoinCount(userOpenId) <=0) {
+            save.getCoin().put(userOpenId, 0);
+            dataConfigApplication.saveOrFail();
+        }
+        int tCount = Objects.equals(tmp[1], "梭哈") ? save.getCoinCount(userOpenId) : Integer.parseInt(tmp[1]);
+        if (tCount <= 0) {
+            event.send("不能投入为0哦qwq");
             return;
         }
-        var hasCount =  save.getCoinCount(userOpenId);
-        var randCount = RandomUtil.randomInt(tCount*2);
-        save.addCoin(userOpenId , tCount*-1);
+        if (tCount > save.getCoinCount(userOpenId)) {
+            event.send("呜呜，您没有那么多金币qwq...");
+            event.send("您的金币数量为: " + save.getCoinCount(userOpenId));
+            return;
+        }
+        var randCount = Math.abs(RandomUtil.randomInt(tCount * 2));
+        //save.addCoin(userOpenId, tCount * -1);
+        var randNum = Math.abs(RandomUtil.randomInt(4));
+        if (randNum % 3 == 0) randCount *= -1;
+
+        if (save.getCoinCount(userOpenId)>5_0000){
+            if (randCount>0) {
+                if(randNum%2==0)randCount *= -1;
+            }
+        }
         save.addCoin(userOpenId, randCount);
-        dataConfigApplication.saveOrFail();
-        if (save.getCoinCount(userOpenId) < 0) {
+        if (save.getCoinCount(userOpenId) <=0) {
             event.send("太惨啦，您输光光啦!");
             save.getCoin().put(userOpenId, 0);
             dataConfigApplication.saveOrFail();
             return;
         }
-        event.send("本次抽奖，您投入了: "+tCount +"枚金币，您收获了: "+randCount+"枚金币 ， 您当前的金币数量为: "+save.getCoinCount(userOpenId));
+        event.send("本次抽奖，您投入了: " + tCount + "枚金币，您收获了: " + randCount + "枚金币 ， 您当前的金币数量为: " + save.getCoinCount(userOpenId));
+        dataConfigApplication.saveOrFail();
     }
 
     @Command("/我的信息")
-    public void AboutMe(MessageEvent<?,?> event) {
+    public void AboutMe(MessageEvent<?, ?> event) {
         ConfigApplication configApplication = new DataConfigApplication(new Coin(), "coin.json");
         Coin c = (Coin) configApplication.getDataOrFail();
         event.send(
@@ -437,4 +468,95 @@ public class qfPluginInteractors {
         );
     }
 
+    @Command("/异常测试")
+    public void throwEx(MessageEvent<?, ?> event) {
+        ThrowException.throwAs(new Exception());
+    }
+
+    @Command("/领取低保")
+    public void HelpMe(MessageEvent<?, ?> event) {
+        var userOpenId = event.getSender().getOpenid();
+        var dataConfigApplication = new DataConfigApplication(new Coin(), "coin.json");
+        var save = (Coin) dataConfigApplication.getDataOrFail();
+        var lolConfigApplication = new DataConfigApplication(new UserLOL(), "userLol.json");
+        var userLol = (UserLOL) lolConfigApplication.getDataOrFail();
+        if (save.getCoinCount(userOpenId)<=0){
+            if (userLol.getCount(event.getSender().getOpenid()) >3  && userLol.getTime(event.getSender().getOpenid())==new SimpleDateFormat("yyyy-MM-dd").format(new Date())) {
+                event.send("您已经领取超过3次了!");
+                return;
+            }
+            save.addCoin(event.getSender().getOpenid(), 1000);
+            userLol.addCount(event.getSender().getOpenid(), 1);
+            userLol.putTime(event.getSender().getOpenid(), System.currentTimeMillis());
+            event.send("领取成功");
+            dataConfigApplication.saveOrFail();
+            lolConfigApplication.saveOrFail();
+            return;
+        }
+        event.send("您尚未达成领取的条件或者您今日已经领取到达了3次！");
+
+    }
+
+    @Command({"/pay" , "/支付" , "/转账"})
+    @Usage("/pay <someone> <count>")
+    public void pay(MessageEvent<?, ?> event) {
+        var cmd = MessageEventKt.getOriginalContent(event);
+        var cmdArr = cmd.split(" ");
+        if (cmdArr.length > 3) {
+            event.send("不正确的用法");
+            return;
+        }
+        var count = Integer.parseInt(cmdArr[2]);
+        if (count <= 0) {
+            event.send("不可以为0或者小于0哦");
+        }
+        var userOpenId = event.getSender().getOpenid();
+        var dataConfigApplication = new DataConfigApplication(new Coin(), "coin.json");
+        var save = (Coin) dataConfigApplication.getDataOrFail();
+        save.addCoin(cmdArr[1], count);
+        save.addCoin(userOpenId, -count);
+        dataConfigApplication.saveOrFail();
+        event.send("已成功转移");
+    }
+
+    @Command({"/mil", "/m"})
+    @Usage("/mil b20")
+    public void mil(MessageEvent<?, ?> event) {
+        new Thread(() -> {
+            try {
+                // 获取用户主目录路径
+                String homePath = System.getProperty("user.home");
+                String scriptPath = homePath + "/milscore/";
+                String imagePath = homePath + "/milscore/output.png";
+
+                event.send("wait a moment...");
+                ItemKt.drewImage(
+                        scriptPath,
+                        scriptPath+"saves.db",
+                        20,
+                        imagePath,
+                        true
+                );
+                // 检查图片文件是否存在
+                File imageFile = new File(imagePath);
+                if (!imageFile.exists()) {
+                    event.send("生成的图片未找到：" + imagePath);
+                    getLogger().waring("Image file not found: " + imagePath);
+                    return;
+                }
+                byte[] imageBytes = Files.readAllBytes(imageFile.toPath());
+
+                // 构建消息链并发送
+                MessageChain messageChain = new MessageChain();
+
+                messageChain.add(new Image(imageBytes));
+                event.send(messageChain);
+            } catch (Exception e) {
+                // 错误处理
+                event.send("出现了错误: " + e.getMessage());
+                getLogger().error("执行出错");
+                getLogger().error(e.toString());
+            }
+        }).start();
+    }
 }

@@ -11,22 +11,23 @@
 package cn.qfys521.bot.core.command;
 
 import static cn.qfys521.bot.core.BotApplication.cause;
-import static cn.qfys521.bot.core.BotApplication.getLogger;
-import cn.qfys521.bot.core.core.app.SendEmail;
 import cn.qfys521.bot.core.annotation.Command;
 import cn.qfys521.bot.core.annotation.Usage;
-import io.github.kloping.qqbot.api.SendAble;
+import cn.qfys521.bot.core.core.app.SendEmail;
+import cn.qfys521.bot.core.event.MessageEventKt;
 import io.github.kloping.qqbot.api.message.MessageEvent;
 import io.github.kloping.qqbot.impl.ListenerHost;
-import io.github.kloping.qqbot.impl.message.BaseMessageChannelReceiveEvent;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @SuppressWarnings("unused")
 public class CommandRunner {
     public static final ListenerHost listenerHost = new ListenerHost() {
         private final Map<String, Method> commandMap;
+
         {
             Map<String, Method> map = new HashMap<>();
             for (Method method : RegisterCommand.methodArrayList) {
@@ -38,34 +39,28 @@ public class CommandRunner {
         }
 
         @EventReceiver
-        private void handlesMessage(MessageEvent messageEvent) {
-            var rawMessage = messageEvent.getRawMessage().getContent();
-            String message = null;
-            while(true){
-                if (rawMessage.startsWith(String.format("<@!%s>" , messageEvent.getBot().getInfo().getId()))){
-                    rawMessage = rawMessage.replaceFirst(String.format(String.format("<@!%s>" , messageEvent.getBot().getInfo().getId())) , "");
-                } else if (rawMessage.startsWith(" ")) {
-                    rawMessage = rawMessage.replaceFirst(" ", "");
-                }else {
-                    message = rawMessage;
-                    break;
-                }
-            }
+        private void handlesMessage(MessageEvent<?, ?> messageEvent) {
+            var message = MessageEventKt.getOriginalContent(messageEvent);
 
             //System.out.println("CommandRunner.handlesMessage" + "\""+message+"\"");
-            sendMessage(messageEvent , message.split(" ")[0]);
+            sendMessage(messageEvent, message.split(" ")[0]);
 
         }
 
-        private void sendMessage(MessageEvent messageEvent, String message) {
+        private void sendMessage(MessageEvent<?, ?> messageEvent, String message) {
             Method method = commandMap.get(message);
             if (method == null) return;
             try {
                 method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), messageEvent);
             } catch (Exception e) {
                 String usage = getUsage(method);
-                messageEvent.send(usage != null ? usage : "不正确的用法。" + e.toString());
-                SendEmail.sendEmail(e.toString(), cause(e.getStackTrace()));
+                messageEvent.send(usage != null ? usage : "不正确的用法。" + e);
+                var err = e.getSuppressed();
+                StringBuilder builder = new StringBuilder();
+                for (Throwable ste : err) {
+                    builder.append(cause(ste.getStackTrace()));
+                }
+                SendEmail.sendEmail(e.toString(), cause(e.getStackTrace()) + builder);
             }
         }
 

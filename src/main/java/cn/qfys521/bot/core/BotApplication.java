@@ -16,12 +16,13 @@ import cn.qfys521.bot.core.command.RegisterCommand;
 import cn.qfys521.bot.core.config.CoreConfigApplication;
 import cn.qfys521.bot.core.core.Bot;
 import cn.qfys521.bot.core.core.app.SendEmail;
-import cn.qfys521.bot.plugin.core.CoreInteractors;
 import cn.qfys521.bot.core.core.loader.PluginLoader;
 import cn.qfys521.bot.core.core.plugin.JavaPlugin;
 import cn.qfys521.bot.core.core.plugin.PluginManager;
+import cn.qfys521.bot.plugin.core.CoreInteractors;
 import cn.qfys521.bot.plugin.qfPlugin.qfPluginInteractors;
 import io.github.kloping.qqbot.Starter;
+import io.github.kloping.qqbot.api.Intents;
 import io.github.kloping.qqbot.network.AuthAndHeartbeat;
 import io.github.kloping.qqbot.network.WebSocketListener;
 import io.github.kloping.spt.annotations.AutoStand;
@@ -124,6 +125,7 @@ public class BotApplication {
         starter = Bot.login(loginApplication.getAppId(), loginApplication.getToken(), loginApplication.getSecret());
         starter.APPLICATION.logger.setOutFile(file.getAbsolutePath());
         starter.registerListenerHost(CommandRunner.listenerHost);
+        starter.getConfig().setCode(Intents.PUBLIC_INTENTS.and(Intents.GROUP_INTENTS));
         starter.run();
     }
 

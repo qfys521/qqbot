@@ -33,7 +33,7 @@ public class RegisterCommand {
                 Permission permission = m.getAnnotation(Permission.class);
                 if (permission != null) {
                     permissionhashmap.put(m, permission.value());
-                }else {
+                } else {
                     permissionhashmap.put(m, 0);
                 }
             }

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test
 class TestOfSign {
 
     @Test
-    fun testSign(){
+    fun testSign() {
         assert(true)
     }
 

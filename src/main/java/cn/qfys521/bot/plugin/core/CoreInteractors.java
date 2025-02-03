@@ -10,17 +10,21 @@
 
 package cn.qfys521.bot.plugin.core;
 
-import cn.qfys521.bot.core.event.MessageEventKt;
-import cn.qfys521.bot.plugin.core.utils.*;
 import cn.qfys521.bot.core.annotation.Author;
 import cn.qfys521.bot.core.annotation.Command;
 import cn.qfys521.bot.core.annotation.Usage;
 import cn.qfys521.bot.core.command.RegisterCommand;
 import cn.qfys521.bot.core.core.plugin.JavaPlugin;
 import cn.qfys521.bot.core.core.plugin.PluginManager;
+import cn.qfys521.bot.core.event.MessageEventKt;
+import cn.qfys521.bot.plugin.core.utils.Base64Util;
+import cn.qfys521.bot.plugin.core.utils.MD5Util;
+import cn.qfys521.bot.plugin.core.utils.URLCodeUtil;
+import cn.qfys521.bot.plugin.core.utils.UnicodeUtil;
 import io.github.kloping.qqbot.api.message.MessageEvent;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 @SuppressWarnings("unused")
 @Author("qfys521")

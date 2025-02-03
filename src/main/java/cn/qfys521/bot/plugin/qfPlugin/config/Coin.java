@@ -14,7 +14,6 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
-
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,7 +33,7 @@ public class Coin {
     }
 
     synchronized public boolean getLastSign(String name) {
-        if (lastDate.getOrDefault(name , null) == null) {
+        if (lastDate.getOrDefault(name, null) == null) {
             lastDate.put(name, 0L);
         }
         var lastDate = this.lastDate.getOrDefault(name, 0L);

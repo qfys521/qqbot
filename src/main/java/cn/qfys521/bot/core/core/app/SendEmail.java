@@ -1,14 +1,7 @@
 package cn.qfys521.bot.core.core.app;
 
-import cn.qfys521.bot.core.BotApplication;
 import cn.qfys521.bot.core.config.CoreConfigApplication;
-import cn.qfys521.bot.plugin.core.CoreInteractors;
-import java.util.Properties;
-import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import lombok.Data;
-import lombok.Setter;
 
 public class SendEmail {
     /**
@@ -25,7 +18,7 @@ public class SendEmail {
 
     public static void sendEmail(String subject, String content) {
         //return;
-        CoreConfigApplication configApplication = new CoreConfigApplication(new mailConfig() , "mail.json");
+        CoreConfigApplication configApplication = new CoreConfigApplication(new mailConfig(), "mail.json");
         mailConfig config = (mailConfig) configApplication.getDataOrFail();
         var sendEmail = new EmailSender.EmailSenderBuilder()
                 .subject(subject)
@@ -39,14 +32,13 @@ public class SendEmail {
         sendEmail.send();
 
 
-
-
     }
 
 
 }
+
 @Data
-class mailConfig{
+class mailConfig {
     private String host;
     private String senderName;
     private String password;

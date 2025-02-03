@@ -17,18 +17,20 @@ val MessageEvent<*, *>.originalContent: String
 
 
 private fun getMessage(messageEvent: MessageEvent<*, *>): String {
-    val str: StringBuilder = StringBuilder()
-    for (i in messageEvent.message) {
-        if (messageEvent.message[0].toString() == String.format("<@!%s>", messageEvent.sender.bot.id))
-            continue
-        else
-            if(i.toString().startsWith(" ")){
-                var tmp = i.toString().replaceFirst(" ", "")
-                str.append(i.toString()).append(" ")
-            }else{
-                str.append(i.toString()).append(" ")
-            }
+    var rawMessage = messageEvent.rawMessage.content
+    val message: String
+    while (true) {
+        if (rawMessage.startsWith(java.lang.String.format("<@!%s>", messageEvent.bot.info.id))) {
+            rawMessage =
+                rawMessage.replaceFirst(String.format(java.lang.String.format("<@!%s>", messageEvent.bot.info.id)), "")
+        } else if (rawMessage.startsWith(" ")) {
+            rawMessage = rawMessage.replaceFirst(" ", "")
+        } else {
+            message = rawMessage
+            break
+        }
     }
-    return str.toString()
+
+    return message
 }
 

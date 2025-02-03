@@ -11,15 +11,15 @@ import lombok.Data;
 @Data
 @Builder()
 public class EmailSender {
+    Properties props;
     private String host;
     private String senderName;
     private String password;
     private String to;
     private String subject;
     private String body;
-    Properties props;
 
-    public void send(){
+    public void send() {
         props.setProperty("mail.smtp.host", host);
         props.put("mail.smtp.auth", "true");
         Session session = Session.getDefaultInstance(props, new Authenticator() {
@@ -47,7 +47,6 @@ public class EmailSender {
             // 发送消息
             Transport.send(message);
             BotApplication.getLogger().info("Sent message successfully!");
-
 
 
         } catch (MessagingException mex) {
