@@ -10,7 +10,7 @@ plugins {
 //apply from: rootProject.file('publish.gradle')
 
 group = 'cn.qfys521'
-version = '1.2.3-SNAPSHOT'
+version = '1.2.5-SNAPSHOT'
 
 repositories {
     mavenLocal()
@@ -40,7 +40,7 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor")
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation("cn.qfys521:drewImage:1.0-SNAPSHOT") {
+    implementation("cn.qfys521:drewImage:1.1-SNAPSHOT") {
         exclude group: 'com.alibaba.*'
         exclude(group: 'com.fasterxml.*')
     }
@@ -77,5 +77,5 @@ shadowJar {
         attributes.put("Build-Script-Version", gradle.gradleVersion)
     }
     archiveBaseName.set("$rootProject.name")
-    minimize()
+    // minimize()
 }

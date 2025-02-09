@@ -28,22 +28,23 @@ import cn.qfys521.util.RandomUtil;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.kloping.qqbot.api.SendAble;
 import io.github.kloping.qqbot.api.message.MessageEvent;
 import io.github.kloping.qqbot.entities.ex.Image;
+import io.github.kloping.qqbot.entities.ex.Markdown;
 import io.github.kloping.qqbot.entities.ex.PlainText;
 import io.github.kloping.qqbot.entities.ex.msg.MessageChain;
-import java.awt.event.ItemEvent;
-import java.io.*;
+import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.net.URL;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
-import okhttp3.*;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 
 @Author("qfys521")
 @SuppressWarnings(SuppressWarningsStrings.UNUSED)
@@ -60,14 +61,30 @@ public class qfPluginInteractors {
         configApplication.saveOrFail();
     }
 
-    @SuppressWarnings("all")
-    @Command({"/jrrp", "/今日人品"})
-    @Usage({"/jrrp", "/今日人品"})
-    public void jrrp(MessageEvent<?, ?> event) {
+
+    @Command({"/签到", "/sign"})
+    @Usage({"/签到", "/sign"})
+    public void sign(MessageEvent<?, ?> event) {
+        ConfigApplication application = new DataConfigApplication(new Coin(), "coin.json");
+        Coin coin = (Coin) application.getDataOrFail();
         long userID = event.getSender().getOpenid().hashCode();
         ConfigApplication configApplication = new DataConfigApplication(new Jrrp(), "jrrp.json");
         Jrrp jrrp = (Jrrp) configApplication.getDataOrFail();
         String KEY = null;
+        StringBuilder stringBuilder = new StringBuilder();
+
+        if (!coin.getLastSign(event.getSender().getOpenid())) {
+            int c = Math.abs(new Random().nextInt(100));
+            coin.addCoin(event.getSender().getOpenid(), c);
+            stringBuilder.append("签到成功!\n"
+                    + "当前时间为" + new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date()) + "\n"
+                    + "您本次签到,获得了" + c + "枚Coin,您当前一共拥有" + coin.getCoinCount(event.getSender().getOpenid()) + "枚Coin."
+            ).append("\n");
+            coin.updateLastDate(event.getSender().getOpenid());
+        } else {
+            stringBuilder.append("您已经签到过啦!\n" + "上一次签到时间:" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(coin.getLastDate().get(event.getSender().getOpenid())) + "\n您的Coin数量:" + coin.getCoinCount(event.getSender().getOpenid())).append("\n");
+        }
+
         if (jrrp.getKey() == null) {
             KEY = Base64Util.encode(UUID.randomUUID().toString());
             jrrp.setKey(KEY);
@@ -77,8 +94,9 @@ public class qfPluginInteractors {
         }
         int code = LuckAlgorithm.get(userID, KEY);
         if (code == 100) {
-            event.send("您的人品值为:100!100!100!");
+            stringBuilder.append("您的人品值为:100!100!100!");
         } else if (code == 0) {
+            event.send("正在触发今日人品中...");
             event.send(
                     """
                             请悉知:本插件绝对不会有任何对于任何用户有负面性的针对的影响。
@@ -90,8 +108,12 @@ public class qfPluginInteractors {
                             """.trim());
             event.send("很抱歉，您的今日人品值为0。");
         } else {
-            event.send("您的今日人品为: " + code);
+            stringBuilder.append("您的今日人品为: " + code);
         }
+
+        event.send(stringBuilder.toString());
+
+
     }
 
     @Command({"/time", "/时间"})
@@ -119,10 +141,10 @@ public class qfPluginInteractors {
     @Usage({"/setu", "/涩图", "/色图", "/涩涩"})
     @SuppressWarnings("all")
     public void setu(MessageEvent<?, ?> event) {
-/*
+
         try {
-            Markdown markdown = new Markdown("102010154_1703343254");
-            getLogger().info("markdown");
+//            Markdown markdown = new Markdown("102010154_1703343254");
+//            getLogger().info("markdown");
             OkHttpClient client = new OkHttpClient.Builder()
                     .addInterceptor(chain -> {
                         Request originalRequest = chain.request();
@@ -136,27 +158,35 @@ public class qfPluginInteractors {
                     .url("https://api.lolicon.app/setu/v2?size=original&r18=0&excludeAI=true")
                     .build();
             String result = Objects.requireNonNull(client.newCall(request).execute().body()).string();
-            getLogger().info(result);
+           // getLogger().info(result);
             JSONObject jsonObject = JSON.parseObject(result);
             JSONObject data = jsonObject.getJSONArray("data").getJSONObject(0);
             JSONObject urlsObject = data.getJSONObject("urls");
             String originalUrl = urlsObject.getString("original");
-            markdown.addParam("title" , data.getString("title"))
-                    .addParam("msg1" , "作者: "+data.getString("author"))
-                    .addParam("msg2" , "pid: "+data.getString("pid"))
-                    .addParam("msg3" , "标签: "+ Arrays.toString(data.getJSONArray("tags").toArray(new String[0])))
-                    .addParam("msg4" , "上传时间: "+ LocalDateTime.ofEpochSecond(data.getLong("uploadDate")/1000, 0, ZoneOffset.ofHours(8)))
-                    .addParam("msg5" , "所在页数: "+ data.getInteger("p")+1)
-                    .addParam("img_name" , data.getString("title")).addParam("w" , String.valueOf(data.getInteger("width")))
-                    .addParam("h" , String.valueOf(data.getInteger("height")))
-                    .addParam("url" , originalUrl);
-            event.send(markdown);
+
+            MessageChain messageChain = new MessageChain();
+            messageChain.add(new PlainText("作者: "+ data.getString("author")));
+            messageChain.add(new PlainText("pid: " + data.getString("pid")));
+            messageChain.add(new PlainText("标签: " + Arrays.toString(data.getJSONArray("tags").toArray(new String[0]))));
+            messageChain.add(new PlainText("上传时间: " + LocalDateTime.ofEpochSecond(data.getLong("uploadDate") / 1000, 0, ZoneOffset.ofHours(8))));
+            messageChain.add(new PlainText("所在页数: " + data.getInteger("p") + 1));
+            messageChain.add(new Image(originalUrl));
+
+//            markdown.addParam("title", data.getString("title"))
+//                    .addParam("msg1", "作者: " + data.getString("author"))
+//                    .addParam("msg2", "pid: " + data.getString("pid"))
+//                    .addParam("msg3", "标签: " + Arrays.toString(data.getJSONArray("tags").toArray(new String[0])))
+//                    .addParam("msg4", "上传时间: " + LocalDateTime.ofEpochSecond(data.getLong("uploadDate") / 1000, 0, ZoneOffset.ofHours(8)))
+//                    .addParam("msg5", "所在页数: " + data.getInteger("p") + 1)
+//                    .addParam("img_name", data.getString("title")).addParam("w", String.valueOf(data.getInteger("width")))
+//                    .addParam("h", String.valueOf(data.getInteger("height")))
+//                    .addParam("url", originalUrl);
+//            event.send(markdown);
+            event.send(messageChain);
         } catch (Exception e) {
             event.send("请联系管理员.");
             getLogger().waring(e.toString());
         }
-        */
-        event.send("由于该机器人所在平台监管政策要求，该命令已被禁止使用。将在下一次版本更新后移除");
     }
 
     @Command({"/tgou", "/舔狗", "/随机舔狗"})
@@ -233,25 +263,6 @@ public class qfPluginInteractors {
         }
     }
 
-    @Command({"/签到", "/sign"})
-    @Usage({"/签到", "/sign"})
-    public void sign(MessageEvent<?, ?> event) {
-        ConfigApplication configApplication = new DataConfigApplication(new Coin(), "coin.json");
-        Coin coin = (Coin) configApplication.getDataOrFail();
-        if (!coin.getLastSign(event.getSender().getOpenid())) {
-            int c = Math.abs(new Random().nextInt(100));
-            coin.addCoin(event.getSender().getOpenid(), c);
-            event.send("签到成功!\n"
-                    + "当前时间为" + new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date()) + "\n"
-                    + "您本次签到,获得了" + c + "枚Coin,您当前一共拥有" + coin.getCoinCount(event.getSender().getOpenid()) + "枚Coin."
-            );
-            coin.updateLastDate(event.getSender().getOpenid());
-            configApplication.saveOrFail();
-        } else {
-            event.send("您已经签到过啦,请明天再试吧!\n" + "上一次签到时间:" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(coin.getLastDate().get(event.getSender().getOpenid())) + "\n您的Coin数量:" + coin.getCoinCount(event.getSender().getOpenid()));
-        }
-        configApplication.saveOrFail();
-    }
 
     @Command({"/getPlayerUUID", "/获取玩家UUID", "/玩家UUID获取"})
     @Usage({"/getPlayerUUID <PlayerName>", "/获取玩家UUID <PlayerName>", "/玩家UUID获取 <PlayerName>", "*** 该命令为开发者命令，普通用户正常情况下无法遇见该命令，还请不要随意使用。"})
@@ -421,7 +432,7 @@ public class qfPluginInteractors {
         var userOpenId = event.getSender().getOpenid();
         var dataConfigApplication = new DataConfigApplication(new Coin(), "coin.json");
         var save = (Coin) dataConfigApplication.getDataOrFail();
-        if (save.getCoinCount(userOpenId) <=0) {
+        if (save.getCoinCount(userOpenId) <= 0) {
             save.getCoin().put(userOpenId, 0);
             dataConfigApplication.saveOrFail();
         }
@@ -440,13 +451,13 @@ public class qfPluginInteractors {
         var randNum = Math.abs(RandomUtil.randomInt(4));
         if (randNum % 3 == 0) randCount *= -1;
 
-        if (save.getCoinCount(userOpenId)>5_0000){
-            if (randCount>0) {
-                if(randNum%2==0)randCount *= -1;
+        if (save.getCoinCount(userOpenId) > 5_0000) {
+            if (randCount > 0) {
+                if (randNum % 2 == 0) randCount *= -1;
             }
         }
         save.addCoin(userOpenId, randCount);
-        if (save.getCoinCount(userOpenId) <=0) {
+        if (save.getCoinCount(userOpenId) <= 0) {
             event.send("太惨啦，您输光光啦!");
             save.getCoin().put(userOpenId, 0);
             dataConfigApplication.saveOrFail();
@@ -480,8 +491,8 @@ public class qfPluginInteractors {
         var save = (Coin) dataConfigApplication.getDataOrFail();
         var lolConfigApplication = new DataConfigApplication(new UserLOL(), "userLol.json");
         var userLol = (UserLOL) lolConfigApplication.getDataOrFail();
-        if (save.getCoinCount(userOpenId)<=0){
-            if (userLol.getCount(event.getSender().getOpenid()) >3  && userLol.getTime(event.getSender().getOpenid())==new SimpleDateFormat("yyyy-MM-dd").format(new Date())) {
+        if (save.getCoinCount(userOpenId) <= 0) {
+            if (userLol.getCount(event.getSender().getOpenid()) > 3 && userLol.getTime(event.getSender().getOpenid()) == new SimpleDateFormat("yyyy-MM-dd").format(new Date())) {
                 event.send("您已经领取超过3次了!");
                 return;
             }
@@ -497,7 +508,7 @@ public class qfPluginInteractors {
 
     }
 
-    @Command({"/pay" , "/支付" , "/转账"})
+    @Command({"/pay", "/支付", "/转账"})
     @Usage("/pay <someone> <count>")
     public void pay(MessageEvent<?, ?> event) {
         var cmd = MessageEventKt.getOriginalContent(event);
@@ -527,18 +538,19 @@ public class qfPluginInteractors {
                 // 获取用户主目录路径
                 String homePath = System.getProperty("user.home");
                 String scriptPath = homePath + "/milscore/";
-                String imagePath = homePath + "/milscore/output.png";
+                String imagePath = scriptPath;
 
                 event.send("wait a moment...");
                 ItemKt.drewImage(
                         scriptPath,
-                        scriptPath+"saves.db",
+                        scriptPath + "saves.db",
                         20,
                         imagePath,
-                        true
+                        false
                 );
                 // 检查图片文件是否存在
-                File imageFile = new File(imagePath);
+                // sleep(3000);
+                File imageFile = new File(imagePath + "/result.png");
                 if (!imageFile.exists()) {
                     event.send("生成的图片未找到：" + imagePath);
                     getLogger().waring("Image file not found: " + imagePath);

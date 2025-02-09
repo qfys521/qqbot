@@ -199,6 +199,7 @@ class AutoReConnect implements WebSocketListener {
 
     @Override
     public boolean onError(WebSocketClient client, Exception e) {
+        client.reconnect();
         //尝试重连
         authAndHeartbeat.identifyConnect(0, client);
         return WebSocketListener.super.onError(client, e);
