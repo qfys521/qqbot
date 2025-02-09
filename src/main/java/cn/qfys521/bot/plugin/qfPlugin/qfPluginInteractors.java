@@ -61,6 +61,10 @@ public class qfPluginInteractors {
         configApplication.saveOrFail();
     }
 
+    @Command({"/jrrp" , "/今日人品"})
+    public void jrrp(MessageEvent event){
+        event.send("该命令已被废弃，请使用 /签到 命令");
+    }
 
     @Command({"/签到", "/sign"})
     @Usage({"/签到", "/sign"})
@@ -166,10 +170,10 @@ public class qfPluginInteractors {
 
             MessageChain messageChain = new MessageChain();
             messageChain.add(new PlainText("作者: "+ data.getString("author")));
-            messageChain.add(new PlainText("pid: " + data.getString("pid")));
-            messageChain.add(new PlainText("标签: " + Arrays.toString(data.getJSONArray("tags").toArray(new String[0]))));
-            messageChain.add(new PlainText("上传时间: " + LocalDateTime.ofEpochSecond(data.getLong("uploadDate") / 1000, 0, ZoneOffset.ofHours(8))));
-            messageChain.add(new PlainText("所在页数: " + data.getInteger("p") + 1));
+            messageChain.add(new PlainText("\n"+"pid: " + data.getString("pid")));
+           // messageChain.add(new PlainText("\n"+"标签: " + Arrays.toString(data.getJSONArray("tags").toArray(new String[0]))));
+            messageChain.add(new PlainText("\n"+"上传时间: " + LocalDateTime.ofEpochSecond(data.getLong("uploadDate") / 1000, 0, ZoneOffset.ofHours(8))));
+            messageChain.add(new PlainText("\n"+"所在页数: " + data.getInteger("p") + 1));
             messageChain.add(new Image(originalUrl));
 
 //            markdown.addParam("title", data.getString("title"))
