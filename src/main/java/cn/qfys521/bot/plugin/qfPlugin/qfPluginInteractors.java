@@ -26,6 +26,7 @@ import cn.qfys521.drewImage.ItemKt;
 import cn.qfys521.string.SuppressWarningsStrings;
 import cn.qfys521.util.RandomUtil;
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.kloping.qqbot.api.message.MessageEvent;
@@ -116,7 +117,8 @@ public class qfPluginInteractors {
         }
 
         event.send(stringBuilder.toString());
-
+        configApplication.saveOrFail();
+        application.saveOrFail();
 
     }
 
@@ -141,10 +143,64 @@ public class qfPluginInteractors {
         }
     }
 
-    @Command(value = {"/setu", "/涩图", "/色图", "/涩涩"}, inCommandList = false)
-    @Usage({"/setu", "/涩图", "/色图", "/涩涩"})
+    @Command(value = {"/随机东方图" }, inCommandList = false)
+    public void meitu3(MessageEvent<? , ?> event){
+        try {
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .addInterceptor(chain -> {
+                        Request originalRequest = chain.request();
+                        Request requestWithUserAgent = originalRequest.newBuilder()
+                                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
+                                .build();
+                        return chain.proceed(requestWithUserAgent);
+                    })
+                    .build();
+            Request request = new Request.Builder()
+                    .url("https://img.paulzzh.com/touhou/random?type=json")
+                    .build();
+            String result = Objects.requireNonNull(client.newCall(request).execute().body()).string();
+            JSONObject jsonObject = JSON.parseObject(result);
+            MessageChain messageChain = new MessageChain();
+            messageChain.add(new PlainText("author: " + jsonObject.getString("author")));
+            messageChain.add(new PlainText("\n" + "id: " + jsonObject.getString("id")));
+            messageChain.add(new Image(jsonObject.getString("jpegurl")));
+
+            event.send(messageChain);
+        }catch (Exception e){
+            event.send("请联系管理员.");
+            getLogger().waring(e.toString());
+        }
+    }
+    @Command(value = {"/meitu2" , "/美图2" , "/色图2"}, inCommandList = false)
+    public void meitu2(MessageEvent<? , ?> event){
+        try {
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .addInterceptor(chain -> {
+                        Request originalRequest = chain.request();
+                        Request requestWithUserAgent = originalRequest.newBuilder()
+                                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
+                                .build();
+                        return chain.proceed(requestWithUserAgent);
+                    })
+                    .build();
+            Request request = new Request.Builder()
+                    .url("https://www.dmoe.cc/random.php?return=json")
+                    .build();
+            String result = Objects.requireNonNull(client.newCall(request).execute().body()).string();
+            event.send( new Image(
+                            JSON.parseObject(result).getString("imgurl")
+                    )
+            );
+        }catch (Exception e){
+            event.send("请联系管理员.");
+            getLogger().waring(e.toString());
+        }
+    }
+
+    @Command(value = {"/meitu", "/美图", "/色图", "/涩涩"}, inCommandList = false)
+    @Usage({"/meitu", "/美图", "/色图", "/涩涩"})
     @SuppressWarnings("all")
-    public void setu(MessageEvent<?, ?> event) {
+    public void meitu(MessageEvent<?, ?> event) {
 
         try {
 //            Markdown markdown = new Markdown("102010154_1703343254");
@@ -159,22 +215,14 @@ public class qfPluginInteractors {
                     })
                     .build();
             Request request = new Request.Builder()
-                    .url("https://api.lolicon.app/setu/v2?size=original&r18=0&excludeAI=true")
+                    .url("https://moe.jitsu.top/api/?type=json")
                     .build();
             String result = Objects.requireNonNull(client.newCall(request).execute().body()).string();
            // getLogger().info(result);
             JSONObject jsonObject = JSON.parseObject(result);
-            JSONObject data = jsonObject.getJSONArray("data").getJSONObject(0);
-            JSONObject urlsObject = data.getJSONObject("urls");
-            String originalUrl = urlsObject.getString("original");
-
+            JSONArray jsonArray = jsonObject.getJSONArray("pics");
             MessageChain messageChain = new MessageChain();
-            messageChain.add(new PlainText("作者: "+ data.getString("author")));
-            messageChain.add(new PlainText("\n"+"pid: " + data.getString("pid")));
-           // messageChain.add(new PlainText("\n"+"标签: " + Arrays.toString(data.getJSONArray("tags").toArray(new String[0]))));
-            messageChain.add(new PlainText("\n"+"上传时间: " + LocalDateTime.ofEpochSecond(data.getLong("uploadDate") / 1000, 0, ZoneOffset.ofHours(8))));
-            messageChain.add(new PlainText("\n"+"所在页数: " + data.getInteger("p") + 1));
-            messageChain.add(new Image(originalUrl));
+            messageChain.add(new Image(jsonArray.getString(0)));
 
 //            markdown.addParam("title", data.getString("title"))
 //                    .addParam("msg1", "作者: " + data.getString("author"))
