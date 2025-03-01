@@ -39,6 +39,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.URI;
+import java.net.URL;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -146,24 +148,8 @@ public class qfPluginInteractors {
     @Command(value = {"/随机东方图" }, inCommandList = false)
     public void meitu3(MessageEvent<? , ?> event){
         try {
-            OkHttpClient client = new OkHttpClient.Builder()
-                    .addInterceptor(chain -> {
-                        Request originalRequest = chain.request();
-                        Request requestWithUserAgent = originalRequest.newBuilder()
-                                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
-                                .build();
-                        return chain.proceed(requestWithUserAgent);
-                    })
-                    .build();
-            Request request = new Request.Builder()
-                    .url("https://img.paulzzh.com/touhou/random?type=json")
-                    .build();
-            String result = Objects.requireNonNull(client.newCall(request).execute().body()).string();
-            JSONObject jsonObject = JSON.parseObject(result);
             MessageChain messageChain = new MessageChain();
-            messageChain.add(new PlainText("author: " + jsonObject.getString("author")));
-            messageChain.add(new PlainText("\n" + "id: " + jsonObject.getString("id")));
-            messageChain.add(new Image(jsonObject.getString("jpegurl")));
+            messageChain.add(new Image("https://img.paulzzh.com/touhou/random"));
 
             event.send(messageChain);
         }catch (Exception e){

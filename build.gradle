@@ -10,7 +10,7 @@ plugins {
 //apply from: rootProject.file('publish.gradle')
 
 group = 'cn.qfys521'
-version = '1.2.5-SNAPSHOT'
+version = '1.2.7-SNAPSHOT'
 
 repositories {
     mavenLocal()
