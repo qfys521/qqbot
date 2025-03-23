@@ -46,6 +46,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
+import java.util.stream.Collectors;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
@@ -465,46 +466,168 @@ public class qfPluginInteractors {
     @Command("/抽奖")
     @Usage("/抽奖 <金币数量/梭哈>")
     synchronized public void chouJiang(MessageEvent<?, ?> event) {
-        String[] tmp = MessageEventKt.getOriginalContent(event).trim().split(" ");
-        if (tmp.length != 2) return;
-        var userOpenId = event.getSender().getOpenid();
-        var dataConfigApplication = new DataConfigApplication(new Coin(), "coin.json");
-        var save = (Coin) dataConfigApplication.getDataOrFail();
-        if (save.getCoinCount(userOpenId) <= 0) {
-            save.getCoin().put(userOpenId, 0);
-            dataConfigApplication.saveOrFail();
-        }
-        int tCount = Objects.equals(tmp[1], "梭哈") ? save.getCoinCount(userOpenId) : Integer.parseInt(tmp[1]);
-        if (tCount <= 0) {
-            event.send("不能投入为0哦qwq");
-            return;
-        }
-        if (tCount > save.getCoinCount(userOpenId)) {
-            event.send("呜呜，您没有那么多金币qwq...");
-            event.send("您的金币数量为: " + save.getCoinCount(userOpenId));
-            return;
-        }
-        var randCount = Math.abs(RandomUtil.randomInt(tCount * 2));
-        //save.addCoin(userOpenId, tCount * -1);
-        var randNum = Math.abs(RandomUtil.randomInt(4));
-        if (randNum % 3 == 0) randCount *= -1;
-
-        if (save.getCoinCount(userOpenId) > 5_0000) {
-            if (randCount > 0) {
-                if (randNum % 2 == 0) randCount *= -1;
+        try {
+            // 参数解析
+            String[] args = MessageEventKt.getOriginalContent(event).split(" ");
+            if (args.length != 2) {
+                event.send("格式错误！正确用法：/抽奖 100 或 /抽奖 梭哈");
+                return;
             }
+
+            // 初始化数据
+            String userId = event.getSender().getId();
+            DataConfigApplication coinApp = new DataConfigApplication(new Coin(), "coin.json");
+            Coin coinData = (Coin) coinApp.getDataOrFail();
+            int userCoins = coinData.getCoinCount(userId);
+
+            // 解析投入金额
+            int x = parseBetAmount(args[1], userCoins);
+            if (x <= 0 || x > userCoins) {
+                event.send("投入金额无效！当前余额：" + userCoins);
+                return;
+            }
+
+            // 动态调节因子
+            double dynamicFactor = calculateDynamicFactor(coinData);
+            boolean isHighRoller = userCoins > 50000;
+
+            // 保底机制处理
+            long lastGuarantee = coinData.getLastGuaranteeTime().getOrDefault(userId, 0L);
+            int threshold = coinData.getFailThreshold().getOrDefault(userId, 3);
+            int failCount = coinData.getFailCount().getOrDefault(userId, 0);
+
+            // 保底衰减逻辑
+            if (System.currentTimeMillis() - lastGuarantee < 259200000L) { // 3天
+                threshold = Math.min(threshold + 2, 10);
+            }
+
+            // 抽奖结果生成
+            int result;
+            boolean useGuarantee = (failCount >= threshold);
+            if (useGuarantee) {
+                result = generateGuaranteedResult(x, isHighRoller);
+                coinData.getLastGuaranteeTime().put(userId, System.currentTimeMillis());
+                failCount = 0;
+                threshold = 3;
+            } else {
+                result = generateDynamicResult(x, isHighRoller, dynamicFactor);
+                failCount = result < 0 ? failCount + 1 : 0;
+            }
+
+            // 收益封顶处理
+            result = applyProfitCap(result, x, isHighRoller);
+
+            // 更新数据
+            int newCoins = Math.max(userCoins + result, 0);
+            coinData.getCoin().put(userId, newCoins);
+            coinData.getFailCount().put(userId, failCount);
+            coinData.getFailThreshold().put(userId, threshold);
+            coinApp.saveOrFail();
+
+            // 发送结果
+            String msg = String.format("抽奖结果：%s%d金币（余额：%d）",
+                    result >= 0 ? "+" : "", result, newCoins);
+            event.send(msg);
+
+        } catch (Exception e) {
+            event.send("抽奖失败，请稍后重试");
+            e.printStackTrace();
         }
-        save.addCoin(userOpenId, randCount);
-        if (save.getCoinCount(userOpenId) <= 0) {
-            event.send("太惨啦，您输光光啦!");
-            save.getCoin().put(userOpenId, 0);
-            dataConfigApplication.saveOrFail();
-            return;
-        }
-        event.send("本次抽奖，您投入了: " + tCount + "枚金币，您收获了: " + randCount + "枚金币 ， 您当前的金币数量为: " + save.getCoinCount(userOpenId));
-        dataConfigApplication.saveOrFail();
     }
 
+    // 投入金额解析
+    private int parseBetAmount(String arg, int balance) {
+        if ("梭哈".equals(arg)) return balance;
+        try {
+            int amount = Integer.parseInt(arg);
+            return Math.min(amount, balance);
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+    }
+
+    // 动态因子计算
+    private double calculateDynamicFactor(Coin coinData) {
+        int total = coinData.getCoin().values().stream().mapToInt(Integer::intValue).sum();
+        return Math.max(0.5, 1.0 - (total - 1000000) / 5000000.0);
+    }
+
+    // 动态结果生成
+    private int generateDynamicResult(int x, boolean isHighRoller, double factor) {
+        Random rand = new Random();
+        double baseProb = isHighRoller ? 0.2 : 0.4;
+        double actualProb = baseProb * factor;
+
+        if (rand.nextDouble() < actualProb) {
+            return rand.nextInt((int)(x * 0.5)) + (int)(x * 0.5); // [0.5x, x]
+        } else {
+            int loss = rand.nextInt(isHighRoller ? (int)(x * 0.3) : (int)(x * 0.2))
+                    + (isHighRoller ? (int)(x * 0.2) : (int)(x * 0.1));
+            return -loss; // 高玩:[-0.5x, -0.2x], 普通:[-0.3x, -0.1x]
+        }
+    }
+
+    // 保底结果生成
+    private int generateGuaranteedResult(int x, boolean isHighRoller) {
+        Random rand = new Random();
+        return isHighRoller
+                ? rand.nextInt((int)(x * 0.6)) + (int)(x * 0.4) // [0.4x, x]
+                : rand.nextInt((int)(x * 0.8)) + (int)(x * 0.2); // [0.2x, x]
+    }
+
+    // 收益封顶
+    private int applyProfitCap(int result, int x, boolean isHighRoller) {
+        int maxGain = isHighRoller ? 5000 : 10000;
+        int maxLoss = isHighRoller ? -x : -x/2;
+        return Math.min(Math.max(result, maxLoss), maxGain);
+    }
+    @Command("/金币统计")
+    @Usage("查看全服金币分布")
+    synchronized public void coinStats(MessageEvent<?, ?> event) {
+        try {
+            DataConfigApplication coinApp = new DataConfigApplication(new Coin(), "coin.json");
+            Coin coinData = (Coin) coinApp.getDataOrFail();
+
+            // 全服统计
+            int total = coinData.getCoin().values().stream().mapToInt(Integer::intValue).sum();
+
+            // 排行榜
+            List<Map.Entry<String, Integer>> top10 = coinData.getCoin().entrySet().stream()
+                    .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                    .limit(10)
+                    .toList();
+
+            // 动态概率
+            double factor = calculateDynamicFactor(coinData);
+            String probInfo = String.format("普通用户正率: %.1f%%\n高玩用户正率: %.1f%%",
+                    40.0 * factor, 20.0 * factor);
+
+            // 构建消息
+            StringBuilder sb = new StringBuilder();
+            sb.append("=== 全服金币统计 ===\n");
+            sb.append("总流通量: ").append(String.format("%,d", total)).append("\n\n");
+            sb.append("🏆 富豪榜 TOP10:\n");
+
+            for (int i = 0; i < top10.size(); i++) {
+                String maskedId = maskUserId(top10.get(i).getKey());
+                sb.append(i+1).append(". ").append(maskedId)
+                        .append(" : ").append(String.format("%,d", top10.get(i).getValue()))
+                        .append("\n");
+            }
+
+            sb.append("\n").append(probInfo);
+            event.send(sb.toString());
+
+        } catch (Exception e) {
+            event.send("统计信息获取失败");
+        }
+    }
+
+    // ID脱敏
+    private String maskUserId(String id) {
+        if (id.length() <= 6) return "******";
+        return id.substring(0, 3) + "***" + id.substring(id.length()-3);
+    }
     @Command("/我的信息")
     public void AboutMe(MessageEvent<?, ?> event) {
         ConfigApplication configApplication = new DataConfigApplication(new Coin(), "coin.json");

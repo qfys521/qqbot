@@ -7,7 +7,6 @@
  * This file `Coin.java` is licensed under the `AGPL-3.0` license.
  * Coding moderately is beneficial to the brain, but overindulgence in coding is harmful to the body. Arrange your time reasonably and enjoy a happy life.
  */
-
 package cn.qfys521.bot.plugin.qfPlugin.config;
 
 import java.text.SimpleDateFormat;
@@ -21,39 +20,40 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Coin {
+    // 基础金币数据
     public ConcurrentHashMap<String, Integer> coin = new ConcurrentHashMap<>();
     public ConcurrentHashMap<String, Long> lastDate = new ConcurrentHashMap<>();
 
+    // 抽奖扩展字段
+    public ConcurrentHashMap<String, Integer> failCount = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<String, Long> lastGuaranteeTime = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<String, Integer> failThreshold = new ConcurrentHashMap<>();
+
+    // 初始化方法
+    public Coin() {
+        if (coin == null) coin = new ConcurrentHashMap<>();
+        if (lastDate == null) lastDate = new ConcurrentHashMap<>();
+        if (failCount == null) failCount = new ConcurrentHashMap<>();
+        if (lastGuaranteeTime == null) lastGuaranteeTime = new ConcurrentHashMap<>();
+        if (failThreshold == null) failThreshold = new ConcurrentHashMap<>();
+    }
 
     synchronized public int getCoinCount(String name) {
-        if (coin == null) {
-            return 0;
-        }
         return coin.getOrDefault(name, 0);
     }
 
     synchronized public boolean getLastSign(String name) {
-        if (lastDate.getOrDefault(name, null) == null) {
-            lastDate.put(name, 0L);
-        }
-        var lastDate = this.lastDate.getOrDefault(name, 0L);
-        return new SimpleDateFormat("yyyy-MM-dd").format(new Date(lastDate))
+        Long last = lastDate.get(name);
+        if (last == null) return false;
+        return new SimpleDateFormat("yyyy-MM-dd").format(new Date(last))
                 .equals(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
     }
 
-
     synchronized public void addCoin(String name, int c) {
-        if (coin == null) {
-            coin = new ConcurrentHashMap<>(); // 初始化 coin ConcurrentHashMap
-        }
-        int coinCount = getCoinCount(name);
-        coin.put(name, coinCount + c);
+        coin.put(name, getCoinCount(name) + c);
     }
 
     synchronized public void updateLastDate(String name) {
-        if (lastDate == null) {
-            lastDate = new ConcurrentHashMap<>(); // 初始化 lastDate ConcurrentHashMap
-        }
         lastDate.put(name, System.currentTimeMillis());
     }
 }
