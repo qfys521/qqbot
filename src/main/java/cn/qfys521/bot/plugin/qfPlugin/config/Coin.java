@@ -31,11 +31,6 @@ public class Coin {
 
     // 初始化方法
     public Coin() {
-        if (coin == null) coin = new ConcurrentHashMap<>();
-        if (lastDate == null) lastDate = new ConcurrentHashMap<>();
-        if (failCount == null) failCount = new ConcurrentHashMap<>();
-        if (lastGuaranteeTime == null) lastGuaranteeTime = new ConcurrentHashMap<>();
-        if (failThreshold == null) failThreshold = new ConcurrentHashMap<>();
     }
 
     synchronized public int getCoinCount(String name) {

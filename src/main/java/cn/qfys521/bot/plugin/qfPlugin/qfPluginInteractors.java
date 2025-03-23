@@ -158,7 +158,7 @@ public class qfPluginInteractors {
             getLogger().waring(e.toString());
         }
     }
-    @Command(value = {"/meitu2" , "/美图2" , "/色图2"}, inCommandList = false)
+    @Command(value = {"/meitu2" , "/美图2"}, inCommandList = false)
     public void meitu2(MessageEvent<? , ?> event){
         try {
             OkHttpClient client = new OkHttpClient.Builder()
@@ -184,8 +184,8 @@ public class qfPluginInteractors {
         }
     }
 
-    @Command(value = {"/meitu", "/美图", "/色图", "/涩涩"}, inCommandList = false)
-    @Usage({"/meitu", "/美图", "/色图", "/涩涩"})
+    @Command(value = {"/meitu", "/美图"}, inCommandList = false)
+    @Usage({"/meitu", "/美图"})
     @SuppressWarnings("all")
     public void meitu(MessageEvent<?, ?> event) {
 
@@ -577,15 +577,29 @@ public class qfPluginInteractors {
 
     // 收益封顶
     private int applyProfitCap(int result, int x, boolean isHighRoller) {
-        int maxGain = isHighRoller ? 5000 : 10000;
-        int maxLoss = isHighRoller ? -x : -x/2;
-        return Math.min(Math.max(result, maxLoss), maxGain);
+        // 正收益封顶：0.5x ~ 1.2x
+        int minGain = (int) (0.5 * x); // 最小正收益
+        int maxGain = (int) (1.2 * x); // 最大正收益
+
+        // 负收益封顶：-0.5x ~ 0
+        int maxLoss = (int) (-0.5 * x); // 最大负收益
+
+        // 确保结果在 [maxLoss, maxGain] 范围内
+        result = Math.max(result, maxLoss); // 不低于最大负收益
+        result = Math.min(result, maxGain); // 不超过最大正收益
+
+        // 如果结果为正，确保不低于最小正收益
+        if (result > 0) {
+            result = Math.max(result, minGain);
+        }
+
+        return result;
     }
     @Command("/金币统计")
     @Usage("查看全服金币分布")
     synchronized public void coinStats(MessageEvent<?, ?> event) {
         try {
-            DataConfigApplication coinApp = new DataConfigApplication(new Coin(), "coin.json");
+            DataConfigApplication coinApp = new DataConfigApplication(new Coin(  ), "coin.json");
             Coin coinData = (Coin) coinApp.getDataOrFail();
 
             // 全服统计
